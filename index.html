@@ -35,140 +35,132 @@
 </head>
 <body class="bg-honey text-slate-900 bg-grain">
 
-    <header class="relative h-[600px] md:h-[800px] flex items-center justify-center overflow-hidden bg-slate-900">
+    <header class="relative h-[380px] md:h-[800px] flex items-center justify-center overflow-hidden bg-slate-900">
         <!-- Centered Image Container: Stops the "diagonal expansion" by capping the width -->
-        <div class="absolute inset-0 max-w-[1400px] mx-auto">
+        <div class="absolute inset-0 max-w-[1400px] mx-auto px-4 md:px-0">
             <img src="danny.jpg" 
-                 class="w-full h-full object-cover object-[20%_center] opacity-60" alt="Bogabee Apiaries">
+                 class="w-full h-full object-cover object-[20%_center] opacity-60 rounded-[1.5rem] md:rounded-none" alt="Bogabee Apiaries">
             
             <!-- Side Blending: Melts the photo edges into the solid background on wide screens -->
-            <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-900 to-transparent md:block hidden"></div>
-            <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-900 to-transparent md:block hidden"></div>
+            <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-900 to-transparent block"></div>
+            <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-900 to-transparent block"></div>
         </div>
         
         <!-- Cinematic Vignette & Bottom Fade -->
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,transparent_0%,rgba(15,23,42,0.2)_40%,rgba(15,23,42,1)_100%)] md:block hidden"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,transparent_0%,rgba(15,23,42,0.2)_40%,rgba(15,23,42,1)_100%)] block"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900"></div>
         
         <!-- Content perfectly centered -->
         <div class="relative z-10 text-center px-6 flex flex-col items-center">
             <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="block transition transform hover:scale-105">
-                <img src="logo.png" alt="Bogabee Apiaries Logo" class="w-56 md:w-80 mb-4 md:mb-8 drop-shadow-2xl float-animation">
+                <img src="logo.png" alt="Bogabee Apiaries Logo" class="w-24 md:w-80 mb-4 md:mb-8 drop-shadow-2xl float-animation">
             </a>
             
-            <h1 class="text-4xl md:text-7xl text-white mb-4 md:mb-6 italic leading-tight">Monroe's Gold, <br class="hidden md:block"> Captured in a Jar.</h1>
-            <p class="text-base md:text-xl text-slate-100 max-w-xl mx-auto font-light leading-relaxed">
+            <h1 class="text-2xl md:text-7xl text-white mb-3 md:mb-6 italic leading-tight">Monroe's Gold, <br> Captured in a Jar.</h1>
+            <p class="text-[10px] md:text-xl text-slate-100 max-w-xs md:max-w-xl mx-auto font-light leading-relaxed opacity-90">
                 Experience the raw, unfiltered essence of our local seasons. Small-batch honey, harvested with heart.
             </p>
         </div>
     </header>
 
     <!-- Trust Pillars -->
-    <section class="py-24 bg-white border-b border-slate-100">
-        <div class="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
+    <section class="py-12 md:py-24 bg-white border-b border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 grid grid-cols-3 gap-2 md:gap-16 text-center">
             <div class="flex flex-col items-center group">
-                <div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mb-8 transition-all duration-500 group-hover:bg-amber-100 group-hover:scale-110 shadow-sm group-hover:shadow-md">
-                    <svg class="w-12 h-12 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <div class="w-10 h-10 md:w-24 md:h-24 bg-amber-50 rounded-full flex items-center justify-center mb-2 md:mb-8 transition-all duration-500 group-hover:bg-amber-100 group-hover:scale-110 shadow-sm group-hover:shadow-md">
+                    <svg class="w-5 h-5 md:w-12 md:h-12 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </div>
-                <h3 class="font-bold text-slate-900 uppercase tracking-[0.2em] text-sm mb-4">Never Filtered</h3>
-                <p class="text-[10px] md:text-xs text-slate-500 uppercase tracking-[0.15em] leading-relaxed">Retaining all the natural <br>pollen and enzymes</p>
+                <h3 class="font-bold text-slate-900 uppercase tracking-[0.1em] md:tracking-[0.2em] text-[7px] md:text-sm mb-1 md:mb-4">Never Filtered</h3>
+                <p class="text-[6px] md:text-xs text-slate-500 uppercase tracking-widest leading-tight">Natural Pollen <br>& Enzymes</p>
             </div>
             <div class="flex flex-col items-center group">
-                <div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mb-8 transition-all duration-500 group-hover:bg-amber-100 group-hover:scale-110 shadow-sm group-hover:shadow-md">
-                    <svg class="w-12 h-12 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                <div class="w-10 h-10 md:w-24 md:h-24 bg-amber-50 rounded-full flex items-center justify-center mb-2 md:mb-8 transition-all duration-500 group-hover:bg-amber-100 group-hover:scale-110 shadow-sm group-hover:shadow-md">
+                    <svg class="w-5 h-5 md:w-12 md:h-12 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                 </div>
-                <h3 class="font-bold text-slate-900 uppercase tracking-[0.2em] text-sm mb-4">100% Monroe</h3>
-                <p class="text-[10px] md:text-xs text-slate-500 uppercase tracking-[0.15em] leading-relaxed">Sourced directly from <br>local Jersey wildflowers</p>
+                <h3 class="font-bold text-slate-900 uppercase tracking-[0.1em] md:tracking-[0.2em] text-[7px] md:text-sm mb-1 md:mb-4">100% Monroe</h3>
+                <p class="text-[6px] md:text-xs text-slate-500 uppercase tracking-widest leading-tight">Local Jersey <br>Wildflowers</p>
             </div>
             <div class="flex flex-col items-center group">
-                <div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mb-8 transition-all duration-500 group-hover:bg-amber-100 group-hover:scale-110 shadow-sm group-hover:shadow-md">
-                    <svg class="w-12 h-12 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div class="w-10 h-10 md:w-24 md:h-24 bg-amber-50 rounded-full flex items-center justify-center mb-2 md:mb-8 transition-all duration-500 group-hover:bg-amber-100 group-hover:scale-110 shadow-sm group-hover:shadow-md">
+                    <svg class="w-5 h-5 md:w-12 md:h-12 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
-                <h3 class="font-bold text-slate-900 uppercase tracking-[0.2em] text-sm mb-4">Small Batch</h3>
-                <p class="text-[10px] md:text-xs text-slate-500 uppercase tracking-[0.15em] leading-relaxed">Hand-poured and bottled <br>in limited quantities</p>
+                <h3 class="font-bold text-slate-900 uppercase tracking-[0.1em] md:tracking-[0.2em] text-[7px] md:text-sm mb-1 md:mb-4">Small Batch</h3>
+                <p class="text-[6px] md:text-xs text-slate-500 uppercase tracking-widest leading-tight">Hand-Poured <br>& Bottled</p>
             </div>
         </div>
     </section>
 
-    <section class="py-32 px-6 bg-honey">
+    <section class="py-20 md:py-32 px-4 md:px-10 bg-honey">
         <div class="max-w-6xl mx-auto reveal">
-            <div class="text-center mb-20">
-                <span class="text-amber-600 font-bold uppercase tracking-[0.25em] text-xs">The Apiary</span>
-                <h2 class="text-5xl md:text-7xl text-slate-900 mt-4 italic">Artisan Beekeeping.</h2>
+            <div class="text-center mb-12 md:mb-20">
+                <span class="text-amber-600 font-bold uppercase tracking-[0.25em] text-[9px] md:text-xs">The Apiary</span>
+                <h2 class="text-3xl md:text-7xl text-slate-900 mt-3 italic">Artisan Beekeeping.</h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
+            <div class="grid grid-cols-3 gap-2 md:gap-12 items-start">
                 <!-- Left Image (Lower) -->
-                <a href="https://www.instagram.com/p/DSD64yTAeD2/" target="_blank" class="img-link group relative shadow-2xl md:mt-24 rounded-[3rem]">
-                    <img src="honey_overflow.jpg" class="w-full aspect-[4/5] object-cover rounded-[3rem]" alt="Bogabee Honey Bee">
-                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out flex items-center justify-center rounded-[3rem]">
-                        <svg class="w-16 h-16 text-white transform scale-50 group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <a href="https://www.instagram.com/p/DSD64yTAeD2/" target="_blank" class="img-link group relative shadow-2xl mt-8 md:mt-24 rounded-[1rem] md:rounded-[3rem]">
+                    <img src="honey_overflow.jpg" class="w-full aspect-[4/5] object-cover rounded-[1rem] md:rounded-[3rem]" alt="Bogabee Honey Bee">
+                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out flex items-center justify-center rounded-[1rem] md:rounded-[3rem]">
+                        <svg class="w-6 h-6 md:w-16 md:h-16 text-white transform scale-50 group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </div>
                 </a>
                 
                 <!-- Center Image (Higher) -->
-                <a href="https://www.instagram.com/p/Cy7OtE0tx2g/" target="_blank" class="img-link group relative shadow-2xl rounded-[3rem]">
-                    <img src="hello_honey_bee.jpg" class="w-full aspect-[4/5] object-cover rounded-[3rem]" alt="Bogabee Beekeeper">
-                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out flex items-center justify-center rounded-[3rem]">
-                        <svg class="w-16 h-16 text-white transform scale-50 group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <a href="https://www.instagram.com/p/Cy7OtE0tx2g/" target="_blank" class="img-link group relative shadow-2xl mt-0 rounded-[1rem] md:rounded-[3rem]">
+                    <img src="hello_honey_bee.jpg" class="w-full aspect-[4/5] object-cover rounded-[1rem] md:rounded-[3rem]" alt="Bogabee Beekeeper">
+                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out flex items-center justify-center rounded-[1rem] md:rounded-[3rem]">
+                        <svg class="w-6 h-6 md:w-16 md:h-16 text-white transform scale-50 group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </div>
                 </a>
                 
                 <!-- Right Image (Lower) -->
-                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="img-link group relative shadow-2xl md:mt-24 rounded-[3rem]">
-                    <img src="sunflower.jpg" class="w-full aspect-[4/5] object-cover rounded-[3rem]" alt="Bogabee Wildflower Honey Jar">
-                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out flex items-center justify-center rounded-[3rem]">
-                        <svg class="w-16 h-16 text-white transform scale-50 group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <a href="https://www.instagram.com/p/CxQyb3FLfER/?img_index=1" target="_blank" class="img-link group relative shadow-2xl mt-8 md:mt-24 rounded-[1rem] md:rounded-[3rem]">
+                    <img src="sunflower.jpg" class="w-full aspect-[4/5] object-cover rounded-[1rem] md:rounded-[3rem]" alt="Bogabee Wildflower Honey Jar">
+                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out flex items-center justify-center rounded-[1rem] md:rounded-[3rem]">
+                        <svg class="w-6 h-6 md:w-16 md:h-16 text-white transform scale-50 group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </div>
                 </a>
             </div>
-            
-            <!-- <div class="text-center mt-24">
-                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="inline-flex items-center gap-3 text-amber-600 font-bold text-lg group hover:text-amber-700 transition-colors">
-                    <svg class="w-6 h-6 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    Follow the Journey
-                    <span class="group-hover:translate-x-1 transition-transform">→</span>
-                </a>
-            </div> -->
         </div>
     </section>
 
-    <section id="order" class="pt-4 pb-32 px-6 reveal">
+    <section id="order" class="pt-4 pb-32 px-4 md:px-10 reveal">
         <div class="max-w-5xl mx-auto text-center">
-            <span class="text-amber-600 font-bold uppercase tracking-widest text-xs mb-4 block">Limited Harvest</span>
-            <h2 class="text-5xl md:text-7xl mb-16 italic text-slate-900 leading-tight">Secure Your Jar.</h2>
+            <span class="text-amber-600 font-bold uppercase tracking-widest text-[9px] md:text-xs mb-3 md:mb-4 block">Limited Harvest</span>
+            <h2 class="text-3xl md:text-7xl mb-10 md:mb-16 italic text-slate-900 leading-tight">Secure Your Jar.</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20 items-start">
+            <div class="grid grid-cols-3 gap-2 md:gap-12 mb-12 md:mb-20 items-start">
                 <!-- Small Jar -->
                 <div class="group text-center">
-                    <div class="relative shadow-2xl md:mt-16 rounded-[3rem] overflow-hidden transform-gpu transition duration-700 hover:scale-[1.03]">
-                        <img src="product8oz.jpg" class="w-full aspect-[4/5] object-cover rounded-[3rem]" alt="Bogabee Honey Small Jar">
+                    <div class="relative shadow-2xl mt-6 md:mt-16 rounded-[1rem] md:rounded-[3rem] overflow-hidden transform-gpu transition duration-700 hover:scale-[1.03]">
+                        <img src="product8oz.jpg" class="w-full aspect-[4/5] object-cover rounded-[1rem] md:rounded-[3rem]" alt="Bogabee Honey Small Jar">
                     </div>
-                    <p class="mt-8 font-bold text-slate-400 uppercase tracking-[0.2em] text-xs">8oz Small</p>
-                    <p class="mt-2 text-2xl font-serif italic text-slate-900">$9</p>
+                    <p class="mt-3 md:mt-8 font-bold text-slate-400 uppercase tracking-[0.1em] md:tracking-[0.2em] text-[6px] md:text-xs">8oz Small</p>
+                    <p class="mt-0.5 md:mt-2 text-[10px] md:text-2xl font-serif italic text-slate-900">$9</p>
                 </div>
                 <!-- Large/Main Jar -->
                 <div class="group text-center">
-                    <div class="relative shadow-2xl rounded-[3rem] overflow-hidden transform-gpu transition duration-700 hover:scale-[1.03]">
-                        <img src="product16oz.jpg" class="w-full aspect-[4/5] object-cover rounded-[3rem]" alt="Bogabee Honey Main Jar">
+                    <div class="relative shadow-2xl rounded-[1rem] md:rounded-[3rem] overflow-hidden transform-gpu transition duration-700 hover:scale-[1.03]">
+                        <img src="product16oz.jpg" class="w-full aspect-[4/5] object-cover rounded-[1rem] md:rounded-[3rem]" alt="Bogabee Honey Main Jar">
                     </div>
-                    <span class="inline-block mt-8 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2">Most Popular</span>
-                    <p class="font-bold text-amber-600 uppercase tracking-[0.2em] text-xs">16oz Signature</p>
-                    <p class="mt-2 text-3xl font-serif italic text-slate-900">$16</p>
+                    <span class="inline-block mt-3 md:mt-8 bg-amber-100 text-amber-700 text-[5px] md:text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 md:px-3 md:py-1 rounded-full mb-1 md:mb-2">Most Popular</span>
+                    <p class="font-bold text-amber-600 uppercase tracking-[0.1em] md:tracking-[0.2em] text-[6px] md:text-xs leading-none">16oz Signature</p>
+                    <p class="mt-0.5 md:mt-2 text-[12px] md:text-3xl font-serif italic text-slate-900">$16</p>
                 </div>
                 <!-- Medium/Variety Jar -->
                 <div class="group text-center">
-                    <div class="relative shadow-2xl md:mt-16 rounded-[3rem] overflow-hidden transform-gpu transition duration-700 hover:scale-[1.03]">
-                        <img src="product_stocking_stuffer.jpg" class="w-full aspect-[4/5] object-cover rounded-[3rem]" alt="Bogabee Honey Variety Jar">
+                    <div class="relative shadow-2xl mt-6 md:mt-16 rounded-[1rem] md:rounded-[3rem] overflow-hidden transform-gpu transition duration-700 hover:scale-[1.03]">
+                        <img src="product_stocking_stuffer.jpg" class="w-full aspect-[4/5] object-cover rounded-[1rem] md:rounded-[3rem]" alt="Bogabee Honey Variety Jar">
                     </div>
-                    <p class="mt-8 font-bold text-slate-400 uppercase tracking-[0.2em] text-xs">Tasting Mini Jar</p>
-                    <p class="mt-2 text-2xl font-serif italic text-slate-900">$5</p>
+                    <p class="mt-3 md:mt-8 font-bold text-slate-400 uppercase tracking-[0.1em] md:tracking-[0.2em] text-[6px] md:text-xs">Tasting Mini Jar</p>
+                    <p class="mt-0.5 md:mt-2 text-[10px] md:text-2xl font-serif italic text-slate-900">$5</p>
                 </div>
             </div>
 
             <div class="block">
-                <a href="https://www.instagram.com/direct/t/bogabee_apiaries" target="_blank" class="group bg-slate-900 text-white px-12 py-5 rounded-full font-bold text-xl inline-flex items-center gap-4 hover:bg-amber-600 transition-all duration-300 shadow-2xl">
-                    <svg class="w-7 h-7 group-hover:rotate-12 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <a href="https://ig.me/m/bogabee_apiaries" target="_blank" class="group bg-slate-900 text-white px-8 py-3.5 md:px-12 md:py-5 rounded-full font-bold text-xs md:text-xl inline-flex items-center gap-2 md:gap-4 hover:bg-amber-600 transition-all duration-300 shadow-2xl">
+                    <svg class="w-4 h-4 md:w-7 md:h-7 group-hover:rotate-12 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     DM to Order
                 </a>
             </div>

@@ -92,8 +92,8 @@
         function animate(now) {
             const t = now * 0.001;
             
-            // 1. Check for Inactivity (10 seconds)
-            if (!isFlyingAway && !isOffScreen && now - lastMouseMoveTime > 10000) {
+            // 1. Check for Inactivity (6 seconds)
+            if (!isFlyingAway && !isOffScreen && Date.now() - lastMouseMoveTime > 6000) {
                 isFlyingAway = true;
                 // Pick a random direction to fly off
                 const flyAngle = Math.random() * Math.PI * 2;
@@ -118,7 +118,7 @@
             } else if (isFlyingAway) {
                 targetX = flyAwayTargetX;
                 targetY = flyAwayTargetY;
-                ease = 0.08; // Fly away decisively
+                ease = 0.008;
             } else if (!isCrossing && now > nextCrossCheck && Math.random() < 0.25) {
                 // Start Crossover
                 isCrossing = true;

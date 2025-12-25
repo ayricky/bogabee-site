@@ -1,0 +1,36 @@
+.bee {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 32px;
+    z-index: 9999;
+    pointer-events: none;
+    will-change: transform;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    contain: layout style;
+    margin-left: -14px;
+    margin-top: -16px;
+}
+
+@keyframes wing-flap-l {
+    0%, 100% { transform: rotate(-5deg) scaleY(1); }
+    50% { transform: rotate(-20deg) scaleY(0.7); }
+}
+
+@keyframes wing-flap-r {
+    0%, 100% { transform: rotate(5deg) scaleY(1); }
+    50% { transform: rotate(20deg) scaleY(0.7); }
+}
+
+.bee .wing-l {
+    animation: wing-flap-l 0.035s ease-in-out infinite;
+    transform-origin: 18px 16px;
+    will-change: transform;
+}
+
+.bee .wing-r {
+    animation: wing-flap-r 0.035s ease-in-out infinite;
+    transform-origin: 30px 16px;
+    will-change: transform;
+}

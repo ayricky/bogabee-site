@@ -49,7 +49,7 @@
     <header class="relative h-[380px] md:h-[800px] flex items-center justify-center overflow-hidden bg-slate-900">
         <!-- Centered Image Container: Stops the "diagonal expansion" by capping the width -->
         <div class="absolute inset-0 max-w-[1400px] mx-auto px-4 md:px-0">
-            <img src="assets/danny.jpg" 
+            <img id="hero-image" src="assets/danny.jpg" 
                  class="w-full h-full object-cover object-[20%_center] opacity-60 rounded-[1.5rem] md:rounded-none" alt="Bogabee Apiaries">
             
             <!-- Side Blending: Melts the photo edges into the solid background on wide screens -->
@@ -199,6 +199,10 @@
     </footer>
 
     <script>
+        if (window.location.search.includes('gigachad') || window.location.hash === '#gigachad') {
+            document.getElementById('hero-image').src = 'assets/danny-chad.jpg';
+        }
+
         const observerOptions = { threshold: 0.1 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {

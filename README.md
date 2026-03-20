@@ -27,3 +27,7 @@ The interactive bee that follows the cursor is modularized into:
 ## Links
 
 - Instagram: [@bogabee_apiaries](https://www.instagram.com/bogabee_apiaries/)
+
+## Test PR Marker
+
+This line was added to verify the pull request workflow from the local repository.

@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MT39Z35D');</script>
+<!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Party Favors Order | Bogabee Apiaries</title>
@@ -67,8 +74,15 @@
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 9999px; }
 
         /* Navigation */
-        .mobile-menu { transform: translateY(-100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease; opacity: 0; }
-        .mobile-menu.open { transform: translateY(0); opacity: 1; }
+        .nav-fixed { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15); }
+        /* Mobile floating hamburger button */
+        .mobile-fab { transition: transform 0.2s ease; }
+        .mobile-fab:active { transform: scale(0.9); }
+        /* Mobile overlay menu */
+        .mobile-overlay { visibility: hidden; opacity: 0; transition: visibility 0.3s, opacity 0.3s ease; }
+        .mobile-overlay.open { visibility: visible; opacity: 1; }
+        .mobile-panel { transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-overlay.open .mobile-panel { transform: translateY(0); }
         .hamburger-line { transition: all 0.3s ease; }
         .hamburger.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
         .hamburger.active .hamburger-line:nth-child(2) { opacity: 0; }
@@ -80,54 +94,54 @@
 </head>
 <body class="bg-honey text-slate-900 bg-grain min-h-screen flex flex-col">
 
-    <!-- ========== NAVIGATION ========== -->
-    <header class="bg-slate-900 py-4 px-4 md:px-8 relative z-[100]">
-        <div class="max-w-6xl mx-auto flex items-center justify-between">
-            <a href="home.html" class="flex items-center gap-2.5 group z-10">
-                <img src="../assets/logo.png" alt="Bogabee Apiaries" class="w-8 h-8 md:w-10 md:h-10 transition-transform group-hover:scale-110">
-                <span class="text-white font-serif italic text-base md:text-lg hidden sm:inline">Bogabee Apiaries</span>
-            </a>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT39Z35D"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
-            <!-- Desktop Links -->
-            <div class="hidden md:flex items-center gap-8">
-                <a href="home.html" class="nav-link text-slate-300 text-sm font-medium tracking-wide hover:text-amber-400 transition">Home</a>
-                <a href="about.html" class="nav-link text-slate-300 text-sm font-medium tracking-wide hover:text-amber-400 transition">About Us</a>
-                <a href="concept-b-wizard.html" class="nav-link active text-white text-sm font-medium tracking-wide hover:text-amber-400 transition">Party Favors</a>
-                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="text-slate-400 hover:text-amber-400 transition">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    <!-- ========== DESKTOP NAVIGATION ========== -->
+    <nav id="main-nav" class="nav-fixed bg-slate-900 sticky top-0 left-0 right-0 z-[100] px-8 py-3 hidden md:block">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-2.5 group">
+                    <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-10 h-10 transition-transform group-hover:scale-110">
+                    <span class="text-white font-serif italic text-lg">Bogabee Apiaries</span>
                 </a>
-            </div>
-
-            <!-- Mobile Hamburger -->
-            <button id="hamburger-btn" class="hamburger md:hidden z-10 w-10 h-10 flex flex-col items-center justify-center gap-1.5" onclick="toggleMenu()">
-                <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
-                <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
-                <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
-            </button>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="mobile-menu md:hidden absolute top-0 left-0 right-0 bg-slate-900/98 backdrop-blur-xl pt-20 pb-8 px-6">
-            <div class="flex flex-col gap-1">
-                <a href="home.html" class="text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition flex items-center gap-3">
-                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    Home
-                </a>
-                <a href="about.html" class="text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition flex items-center gap-3">
-                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    About Us
-                </a>
-                <a href="concept-b-wizard.html" class="text-white text-lg font-medium py-3 px-4 rounded-xl bg-white/5 flex items-center gap-3">
-                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
-                    Party Favors
-                </a>
-                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition flex items-center gap-3">
-                    <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    Instagram
-                </a>
+                <div class="flex items-center gap-8">
+                    <a href="index.html" class="nav-link text-slate-300 text-sm font-medium tracking-wide hover:text-amber-400 transition">Home</a>
+                    <a href="about.html" class="nav-link text-slate-300 text-sm font-medium tracking-wide hover:text-amber-400 transition">About Us</a>
+                    <a href="party-favors.html" class="nav-link active text-white text-sm font-medium tracking-wide hover:text-amber-400 transition">Party Favors</a>
+                    <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="text-slate-400 hover:text-amber-400 transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                </div>
             </div>
         </div>
-    </header>
+    </nav>
+
+    <!-- ========== MOBILE FLOATING HAMBURGER ========== -->
+    <button id="hamburger-btn" class="hamburger mobile-fab fixed top-4 right-4 z-[110] md:hidden w-12 h-12 bg-slate-900/85 backdrop-blur-md rounded-full shadow-2xl border border-white/10 flex flex-col items-center justify-center gap-1.5" onclick="toggleMenu()">
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+    </button>
+
+    <!-- ========== MOBILE MENU OVERLAY ========== -->
+    <div id="mobile-menu" class="mobile-overlay fixed inset-0 z-[105] md:hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"></div>
+        <div class="mobile-panel relative bg-slate-900 pt-6 pb-8 px-6 shadow-2xl">
+            <div class="flex items-center gap-2.5 mb-8">
+                <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-8 h-8">
+                <span class="text-white font-serif italic text-base">Bogabee Apiaries</span>
+            </div>
+            <div class="space-y-1">
+                <a href="index.html" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Home</a>
+                <a href="about.html" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">About Us</a>
+                <a href="party-favors.html" class="block text-white text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Party Favors</a>
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Instagram</a>
+            </div>
+        </div>
+    </div>
 
     <main class="flex-1 flex flex-col">
         <section class="bg-slate-900 pb-20 pt-8 px-4 text-center">
@@ -179,7 +193,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="aspect-[4/5] overflow-hidden">
-                                <img src="../assets/product_stocking_stuffer.jpg" alt="Mini Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                                <img src="assets/product_stocking_stuffer.jpg" alt="Mini Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
                             </div>
                             <div class="p-3 md:p-4">
                                 <h3 class="font-bold text-sm md:text-base">Mini Jar</h3>
@@ -197,7 +211,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="aspect-[4/5] overflow-hidden">
-                                <img src="../assets/product8oz.jpg" alt="Small Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                                <img src="assets/product8oz.jpg" alt="Small Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
                             </div>
                             <div class="p-3 md:p-4">
                                 <h3 class="font-bold text-sm md:text-base">Small Jar</h3>
@@ -214,7 +228,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="aspect-[4/5] overflow-hidden">
-                                <img src="../assets/product16oz.jpg" alt="Classic Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                                <img src="assets/product16oz.jpg" alt="Classic Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
                             </div>
                             <div class="p-3 md:p-4">
                                 <h3 class="font-bold text-sm md:text-base">Classic Jar</h3>
@@ -259,7 +273,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="addon-img-wrap aspect-square overflow-hidden">
-                                <img src="../assets/addons/dipper.jpg" alt="Honey Dipper" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="assets/addons/dipper.jpg" alt="Honey Dipper" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🪵</span></div>
                             </div>
                             <div class="p-3 text-center">
@@ -276,7 +290,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="addon-img-wrap aspect-square overflow-hidden">
-                                <img src="../assets/addons/charm.jpg" alt="Charm" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="assets/addons/charm.jpg" alt="Charm" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">✨</span></div>
                             </div>
                             <div class="p-3 text-center">
@@ -293,7 +307,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="addon-img-wrap aspect-square overflow-hidden">
-                                <img src="../assets/addons/ribbon.jpg" alt="Ribbon" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="assets/addons/ribbon.jpg" alt="Ribbon" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🎀</span></div>
                             </div>
                             <div class="p-3 text-center">
@@ -310,7 +324,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="addon-img-wrap aspect-square overflow-hidden">
-                                <img src="../assets/addons/twine.jpg" alt="Twine" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="assets/addons/twine.jpg" alt="Twine" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🧵</span></div>
                             </div>
                             <div class="p-3 text-center">
@@ -327,7 +341,7 @@
                                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div class="addon-img-wrap aspect-[2/1] md:aspect-square overflow-hidden">
-                                <img src="../assets/addons/label.jpg" alt="Custom Label" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="assets/addons/label.jpg" alt="Custom Label" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🏷</span></div>
                             </div>
                             <div class="p-3 text-center">
@@ -507,14 +521,14 @@
                     </div>
                     <h2 class="text-2xl md:text-3xl italic mb-3">Request Sent!</h2>
                     <p class="text-slate-400 text-sm max-w-sm mx-auto mb-8">Thank you! We'll review your order and send a quote within 24 hours. Check your email for confirmation.</p>
-                    <a href="home.html" class="inline-block bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm">Back to Bogabee</a>
+                    <a href="index.html" class="inline-block bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm">Back to Bogabee</a>
                 </div>
             </div>
         </div>
     </main>
 
     <footer class="bg-slate-900 text-white py-12 px-6 text-center">
-        <img src="../assets/logo.png" alt="Bogabee Apiaries" class="w-20 mx-auto mb-4 opacity-40 grayscale">
+        <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-20 mx-auto mb-4 opacity-40 grayscale">
         <p class="text-slate-500 text-sm">Bogabee Apiaries | Manalapan Township, NJ</p>
     </footer>
 

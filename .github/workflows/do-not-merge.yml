@@ -1,11 +1,11 @@
-name: Do Not Merge Check
+name: Merge Readiness Check
 
 on:
   pull_request:
-    types: [opened, synchronize, labeled, unlabeled]
+    types: [opened, synchronize, labeled, unlabeled, edited]
 
 jobs:
-  do-not-merge:
+  merge-readiness:
     runs-on: ubuntu-latest
     steps:
       - name: Check for do_not_merge label
@@ -14,5 +14,15 @@ jobs:
             echo "::error::This PR has the 'do_not_merge' label and cannot be merged."
             exit 1
           else
-            echo "No 'do_not_merge' label found. Good to merge!"
+            echo "No 'do_not_merge' label found."
+          fi
+
+      - name: Check for WIP in title
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          if echo "$TITLE" | grep -iq 'WIP'; then
+            echo "::error::This PR is a Work in Progress. Remove 'WIP' from the title when it's ready to merge."
+            exit 1
+          else
+            echo "PR is not marked as Work in Progress."
           fi

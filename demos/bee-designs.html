@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee Cursor Designs — Bogabee Apiaries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-serif { font-family: 'DM Serif Display', serif; }
+        .bg-honey { background-color: #fff9eb; }
+
+        /* Active bee styles */
+        .bee {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 9999;
+            pointer-events: none;
+            will-change: transform;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            contain: layout style;
+        }
+        @keyframes wing-flap-l {
+            0%, 100% { transform: rotate(-5deg) scaleY(1); }
+            50% { transform: rotate(-20deg) scaleY(0.7); }
+        }
+        @keyframes wing-flap-r {
+            0%, 100% { transform: rotate(5deg) scaleY(1); }
+            50% { transform: rotate(20deg) scaleY(0.7); }
+        }
+        .bee .wing-l { animation: wing-flap-l 0.035s ease-in-out infinite; transform-origin: 18px 16px; }
+        .bee .wing-r { animation: wing-flap-r 0.035s ease-in-out infinite; transform-origin: 30px 16px; }
+
+        /* Sparkle trail */
+        @keyframes sparkle-fade { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(0.2); } }
+        .sparkle { position: fixed; pointer-events: none; z-index: 9998; animation: sparkle-fade 0.6s ease-out forwards; }
+
+        /* Pollen trail */
+        @keyframes pollen-fall { 0% { opacity: 0.7; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(30px) scale(0.3); } }
+        .pollen { position: fixed; pointer-events: none; z-index: 9998; animation: pollen-fall 1.2s ease-out forwards; }
+
+        /* Controls */
+        .carousel-controls {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 10000;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(15,23,42,0.95); backdrop-filter: blur(12px);
+            padding: 8px 12px 8px 16px; border-radius: 9999px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .carousel-controls button {
+            width: 40px; height: 40px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.1); color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .carousel-controls button:hover { background: rgba(245,158,11,0.8); }
+        .carousel-controls button:disabled { opacity: 0.3; cursor: default; background: transparent; }
+        .carousel-controls .label { color: white; font-size: 13px; font-weight: 600; min-width: 220px; text-align: center; }
+        .carousel-controls .counter { color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 500; }
+
+        /* Preview card */
+        .preview-card {
+            width: 140px; height: 140px;
+            background: white; border-radius: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid transparent; transition: all 0.2s;
+        }
+        .preview-card.active { border-color: #f59e0b; box-shadow: 0 4px 20px rgba(245,158,11,0.2); }
+        .preview-card:hover { transform: scale(1.05); cursor: pointer; }
+    </style>
+</head>
+<body class="bg-honey text-slate-900 min-h-screen">
+
+    <!-- Header -->
+    <div class="bg-white py-8 px-6 text-center shadow-sm border-b border-slate-100">
+        <h1 class="font-serif italic text-3xl text-slate-900 mb-2">Bee Cursor Designs</h1>
+        <p class="text-slate-400 text-sm">Move your mouse around to see each bee in action. Click prev/next or use arrow keys.</p>
+    </div>
+
+    <!-- Preview grid -->
+    <div class="max-w-5xl mx-auto px-6 py-12">
+        <div class="flex flex-wrap justify-center gap-6 mb-12" id="preview-grid"></div>
+    </div>
+
+    <!-- Content to scroll around in -->
+    <div class="max-w-4xl mx-auto px-6 pb-32">
+        <div class="grid grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl p-8 shadow-sm text-center">
+                <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="font-bold text-sm uppercase tracking-widest text-slate-900 mb-2">Never Filtered</h3>
+                <p class="text-xs text-slate-400">Natural pollen & enzymes</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 shadow-sm text-center">
+                <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                </div>
+                <h3 class="font-bold text-sm uppercase tracking-widest text-slate-900 mb-2">100% New Jersey</h3>
+                <p class="text-xs text-slate-400">Local wildflowers</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 shadow-sm text-center">
+                <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="font-bold text-sm uppercase tracking-widest text-slate-900 mb-2">Small Batch</h3>
+                <p class="text-xs text-slate-400">Hand-poured & bottled</p>
+            </div>
+        </div>
+        <div class="mt-12 grid grid-cols-3 gap-4">
+            <img src="../assets/honey_overflow.jpg" class="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="">
+            <img src="../assets/hello_honey_bee.jpg" class="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="">
+            <img src="../assets/sunflower.jpg" class="w-full aspect-[4/5] object-cover rounded-2xl shadow-lg" alt="">
+        </div>
+    </div>
+
+    <!-- Carousel Controls -->
+    <div class="carousel-controls">
+        <button onclick="prevBee()" id="btn-prev">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <div class="text-center">
+            <div class="label" id="bee-label">1 — Current</div>
+            <div class="counter" id="bee-counter">1 / 10</div>
+        </div>
+        <button onclick="nextBee()" id="btn-next">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
+
+    <script>
+    const beeDesigns = [
+        {
+            name: "Current",
+            desc: "Detailed realistic bee with fuzzy thorax and gradient abdomen",
+            size: { w: 28, h: 32 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="abdomen" x1="24" y1="26" x2="24" y2="50" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#ea580c"/></linearGradient><radialGradient id="thorax" cx="24" cy="19" r="9" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#c9a227"/><stop offset="0.7" stop-color="#6b4423"/><stop offset="1" stop-color="#3d2914"/></radialGradient></defs>
+                <path class="wing-l" d="M17 17 Q4 10 2 4 Q0 -2 8 2 Q16 6 20 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <path class="wing-r" d="M31 17 Q44 10 46 4 Q48 -2 40 2 Q32 6 28 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="url(#abdomen)"/>
+                <path d="M13.5 30 Q24 33 34.5 30" stroke="#1c1917" stroke-width="4" stroke-linecap="round"/>
+                <path d="M14 38 Q24 41 34 38" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M17 44 Q24 46 31 44" stroke="#1c1917" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="url(#thorax)"/>
+                <circle cx="19" cy="17" r="1.5" fill="#a08060" opacity="0.5"/><circle cx="29" cy="17" r="1.5" fill="#a08060" opacity="0.5"/>
+                <circle cx="24" cy="22" r="1.3" fill="#a08060" opacity="0.5"/><circle cx="21" cy="20" r="1.1" fill="#a08060" opacity="0.4"/>
+                <circle cx="27" cy="20" r="1.1" fill="#a08060" opacity="0.4"/><circle cx="24" cy="18" r="1" fill="#a08060" opacity="0.35"/>
+                <circle cx="24" cy="9" r="5.5" fill="#1c1917"/>
+                <ellipse cx="19" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/><ellipse cx="29" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M24 48 L24 53" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Tiny Minimal",
+            desc: "Simple, small, emoji-inspired — less distracting",
+            size: { w: 20, h: 22 },
+            svg: `<svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="wing-l" d="M14 14 Q6 8 5 3 Q4 0 10 4 Q15 7 17 13 Z" fill="rgba(255,255,255,0.7)" stroke="#e5c44a" stroke-width="0.5"/>
+                <path class="wing-r" d="M26 14 Q34 8 35 3 Q36 0 30 4 Q25 7 23 13 Z" fill="rgba(255,255,255,0.7)" stroke="#e5c44a" stroke-width="0.5"/>
+                <ellipse cx="20" cy="28" rx="9" ry="10" fill="#fbbf24"/>
+                <path d="M11.5 24 Q20 26 28.5 24" stroke="#1c1917" stroke-width="3" stroke-linecap="round"/>
+                <path d="M12 30 Q20 32 28 30" stroke="#1c1917" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M14 36 Q20 37 26 36" stroke="#1c1917" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="20" cy="15" r="7" fill="#2c1810"/>
+                <circle cx="20" cy="8" r="4.5" fill="#1c1917"/>
+                <circle cx="17" cy="7.5" r="1.5" fill="#333"/><circle cx="23" cy="7.5" r="1.5" fill="#333"/>
+                <path d="M17 3 Q14 0 11 1" stroke="#1c1917" stroke-width="1" stroke-linecap="round" fill="none"/>
+                <path d="M23 3 Q26 0 29 1" stroke="#1c1917" stroke-width="1" stroke-linecap="round" fill="none"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Chunky Cartoon",
+            desc: "Bold, friendly, thick outlines — playful energy",
+            size: { w: 34, h: 38 },
+            svg: `<svg viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="wing-l" d="M18 18 Q4 10 2 3 Q0 -3 10 3 Q18 8 22 16 Z" fill="rgba(200,230,255,0.7)" stroke="#7ab8e0" stroke-width="1.5"/>
+                <path class="wing-r" d="M34 18 Q48 10 50 3 Q52 -3 42 3 Q34 8 30 16 Z" fill="rgba(200,230,255,0.7)" stroke="#7ab8e0" stroke-width="1.5"/>
+                <ellipse cx="26" cy="38" rx="14" ry="15" fill="#fcd34d" stroke="#1c1917" stroke-width="2.5"/>
+                <path d="M12.5 32 Q26 36 39.5 32" stroke="#1c1917" stroke-width="5" stroke-linecap="round"/>
+                <path d="M13 40 Q26 44 39 40" stroke="#1c1917" stroke-width="4.5" stroke-linecap="round"/>
+                <path d="M16 47 Q26 50 36 47" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+                <ellipse cx="26" cy="20" rx="11" ry="9" fill="#5c3a1e" stroke="#1c1917" stroke-width="2"/>
+                <circle cx="26" cy="9" r="7" fill="#1c1917" stroke="#1c1917" stroke-width="2"/>
+                <circle cx="21" cy="8" r="3" fill="white"/><circle cx="21" cy="8" r="1.5" fill="#1c1917"/>
+                <circle cx="31" cy="8" r="3" fill="white"/><circle cx="31" cy="8" r="1.5" fill="#1c1917"/>
+                <path d="M23 14 Q26 16 29 14" stroke="#1c1917" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M21 3 Q17 -1 12 1" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                <circle cx="12" cy="1" r="1.5" fill="#1c1917"/>
+                <path d="M31 3 Q35 -1 40 1" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                <circle cx="40" cy="1" r="1.5" fill="#1c1917"/>
+                <path d="M26 53 L26 58" stroke="#1c1917" stroke-width="2" stroke-linecap="round"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Golden Glow",
+            desc: "Warm golden bee with soft glow effect — luxe feel",
+            size: { w: 28, h: 32 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><radialGradient id="glow" cx="24" cy="30" r="20" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fbbf24" stop-opacity="0.3"/><stop offset="1" stop-color="#fbbf24" stop-opacity="0"/></radialGradient></defs>
+                <circle cx="24" cy="30" r="20" fill="url(#glow)"/>
+                <path class="wing-l" d="M17 17 Q4 10 2 4 Q0 -2 8 2 Q16 6 20 15 Z" fill="rgba(255,248,220,0.85)" stroke="#c9a227" stroke-width="0.5"/>
+                <path class="wing-r" d="M31 17 Q44 10 46 4 Q48 -2 40 2 Q32 6 28 15 Z" fill="rgba(255,248,220,0.85)" stroke="#c9a227" stroke-width="0.5"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="#f59e0b"/>
+                <path d="M13.5 30 Q24 33 34.5 30" stroke="#92400e" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M14 38 Q24 41 34 38" stroke="#92400e" stroke-width="3" stroke-linecap="round"/>
+                <path d="M17 44 Q24 46 31 44" stroke="#92400e" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="#78350f"/>
+                <circle cx="24" cy="9" r="5.5" fill="#451a03"/>
+                <ellipse cx="19" cy="8" rx="2" ry="2.5" fill="#78350f"/><ellipse cx="29" cy="8" rx="2" ry="2.5" fill="#78350f"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#451a03" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#451a03" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                <path d="M24 48 L24 53" stroke="#451a03" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Sparkle Trail",
+            desc: "Current bee + sparkle particles trailing behind",
+            size: { w: 28, h: 32 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="abdomen5" x1="24" y1="26" x2="24" y2="50" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#ea580c"/></linearGradient><radialGradient id="thorax5" cx="24" cy="19" r="9" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#c9a227"/><stop offset="0.7" stop-color="#6b4423"/><stop offset="1" stop-color="#3d2914"/></radialGradient></defs>
+                <path class="wing-l" d="M17 17 Q4 10 2 4 Q0 -2 8 2 Q16 6 20 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <path class="wing-r" d="M31 17 Q44 10 46 4 Q48 -2 40 2 Q32 6 28 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="url(#abdomen5)"/>
+                <path d="M13.5 30 Q24 33 34.5 30" stroke="#1c1917" stroke-width="4" stroke-linecap="round"/>
+                <path d="M14 38 Q24 41 34 38" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M17 44 Q24 46 31 44" stroke="#1c1917" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="url(#thorax5)"/>
+                <circle cx="19" cy="17" r="1.5" fill="#a08060" opacity="0.5"/><circle cx="29" cy="17" r="1.5" fill="#a08060" opacity="0.5"/>
+                <circle cx="24" cy="9" r="5.5" fill="#1c1917"/>
+                <ellipse cx="19" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/><ellipse cx="29" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M24 48 L24 53" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>`,
+            trail: "sparkle"
+        },
+        {
+            name: "Pollen Trail",
+            desc: "Current bee + falling golden pollen dots",
+            size: { w: 28, h: 32 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="abdomen6" x1="24" y1="26" x2="24" y2="50" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#ea580c"/></linearGradient><radialGradient id="thorax6" cx="24" cy="19" r="9" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#c9a227"/><stop offset="0.7" stop-color="#6b4423"/><stop offset="1" stop-color="#3d2914"/></radialGradient></defs>
+                <path class="wing-l" d="M17 17 Q4 10 2 4 Q0 -2 8 2 Q16 6 20 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <path class="wing-r" d="M31 17 Q44 10 46 4 Q48 -2 40 2 Q32 6 28 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="url(#abdomen6)"/>
+                <path d="M13.5 30 Q24 33 34.5 30" stroke="#1c1917" stroke-width="4" stroke-linecap="round"/>
+                <path d="M14 38 Q24 41 34 38" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M17 44 Q24 46 31 44" stroke="#1c1917" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="url(#thorax6)"/>
+                <circle cx="24" cy="9" r="5.5" fill="#1c1917"/>
+                <ellipse cx="19" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/><ellipse cx="29" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M24 48 L24 53" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>`,
+            trail: "pollen"
+        },
+        {
+            name: "Ghost Bee",
+            desc: "Translucent, ethereal — subtle and classy",
+            size: { w: 28, h: 32 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.4">
+                <path class="wing-l" d="M17 17 Q4 10 2 4 Q0 -2 8 2 Q16 6 20 15 Z" fill="rgba(255,255,255,0.5)" stroke="#d4a012" stroke-width="0.5"/>
+                <path class="wing-r" d="M31 17 Q44 10 46 4 Q48 -2 40 2 Q32 6 28 15 Z" fill="rgba(255,255,255,0.5)" stroke="#d4a012" stroke-width="0.5"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="#fbbf24"/>
+                <path d="M13.5 30 Q24 33 34.5 30" stroke="#1c1917" stroke-width="4" stroke-linecap="round"/>
+                <path d="M14 38 Q24 41 34 38" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M17 44 Q24 46 31 44" stroke="#1c1917" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="#5c3a1e"/>
+                <circle cx="24" cy="9" r="5.5" fill="#1c1917"/>
+                <ellipse cx="19" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/><ellipse cx="29" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M24 48 L24 53" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Pixel Bee",
+            desc: "8-bit retro pixel art style — nostalgic & fun",
+            size: { w: 24, h: 28 },
+            svg: `<svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                <rect x="3" y="0" width="2" height="1" fill="#1c1917"/><rect x="11" y="0" width="2" height="1" fill="#1c1917"/>
+                <rect x="4" y="1" width="2" height="1" fill="#1c1917"/><rect x="10" y="1" width="2" height="1" fill="#1c1917"/>
+                <rect x="5" y="2" width="6" height="2" fill="#1c1917"/>
+                <rect x="6" y="3" width="1" height="1" fill="#555"/><rect x="9" y="3" width="1" height="1" fill="#555"/>
+                <rect x="2" y="4" width="3" height="3" fill="rgba(255,255,255,0.7)"/><rect x="11" y="4" width="3" height="3" fill="rgba(255,255,255,0.7)"/>
+                <rect x="4" y="4" width="8" height="3" fill="#6b4423"/>
+                <rect x="3" y="7" width="10" height="2" fill="#fbbf24"/>
+                <rect x="3" y="9" width="10" height="2" fill="#1c1917"/>
+                <rect x="3" y="11" width="10" height="2" fill="#fbbf24"/>
+                <rect x="3" y="13" width="10" height="2" fill="#1c1917"/>
+                <rect x="4" y="15" width="8" height="2" fill="#fbbf24"/>
+                <rect x="5" y="17" width="6" height="1" fill="#fbbf24"/>
+                <rect x="7" y="18" width="2" height="2" fill="#1c1917"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Flat Modern",
+            desc: "Clean flat design, no gradients — modern & crisp",
+            size: { w: 26, h: 30 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="wing-l" d="M17 17 Q6 11 4 5 Q2 0 9 3 Q16 7 20 15 Z" fill="#e0f2fe" stroke="#93c5fd" stroke-width="0.8"/>
+                <path class="wing-r" d="M31 17 Q42 11 44 5 Q46 0 39 3 Q32 7 28 15 Z" fill="#e0f2fe" stroke="#93c5fd" stroke-width="0.8"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="#fbbf24"/>
+                <rect x="13" y="28" width="22" height="4" rx="1" fill="#1c1917"/>
+                <rect x="13" y="36" width="22" height="3.5" rx="1" fill="#1c1917"/>
+                <rect x="15" y="43" width="18" height="3" rx="1" fill="#1c1917"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="#44403c"/>
+                <circle cx="24" cy="9" r="5.5" fill="#1c1917"/>
+                <circle cx="20" cy="8" r="2" fill="#fbbf24"/><circle cx="28" cy="8" r="2" fill="#fbbf24"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#1c1917" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#1c1917" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <circle cx="13" cy="2" r="1.5" fill="#fbbf24"/><circle cx="35" cy="2" r="1.5" fill="#fbbf24"/>
+            </svg>`,
+            trail: null
+        },
+        {
+            name: "Honeycomb Bee",
+            desc: "Hexagonal pattern on body — geometric & branded",
+            size: { w: 28, h: 32 },
+            svg: `<svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="wing-l" d="M17 17 Q4 10 2 4 Q0 -2 8 2 Q16 6 20 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <path class="wing-r" d="M31 17 Q44 10 46 4 Q48 -2 40 2 Q32 6 28 15 Z" fill="rgba(255,255,255,0.8)" stroke="#d4a012" stroke-width="0.5"/>
+                <ellipse cx="24" cy="36" rx="11" ry="12" fill="#f59e0b"/>
+                <polygon points="20,30 22,28 26,28 28,30 26,32 22,32" fill="#d97706" stroke="#92400e" stroke-width="0.5"/>
+                <polygon points="16,34 18,32 22,32 24,34 22,36 18,36" fill="#d97706" stroke="#92400e" stroke-width="0.5"/>
+                <polygon points="24,34 26,32 30,32 32,34 30,36 26,36" fill="#d97706" stroke="#92400e" stroke-width="0.5"/>
+                <polygon points="20,38 22,36 26,36 28,38 26,40 22,40" fill="#d97706" stroke="#92400e" stroke-width="0.5"/>
+                <polygon points="16,42 18,40 22,40 24,42 22,44 18,44" fill="#d97706" stroke="#92400e" stroke-width="0.5"/>
+                <polygon points="24,42 26,40 30,40 32,42 30,44 26,44" fill="#d97706" stroke="#92400e" stroke-width="0.5"/>
+                <ellipse cx="24" cy="20" rx="9" ry="7.5" fill="#5c3a1e"/>
+                <circle cx="24" cy="9" r="5.5" fill="#1c1917"/>
+                <ellipse cx="19" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/><ellipse cx="29" cy="8" rx="2.2" ry="2.8" fill="#0f0d0a"/>
+                <path d="M20 3.5 Q17 1 13 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M28 3.5 Q31 1 35 2" stroke="#1c1917" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                <path d="M24 48 L24 53" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>`,
+            trail: null
+        }
+    ];
+
+    let current = 0;
+    let beeEl = null;
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let beeX = mouseX, beeY = mouseY, prevBeeX = beeX, prevBeeY = beeY, angle = 0;
+    let trailType = null;
+    let lastTrailTime = 0;
+    const s1 = Math.random()*100, s2 = Math.random()*100, s3 = Math.random()*100;
+    let lastMouseMoveTime = Date.now();
+    let isFlyingAway = false, isOffScreen = false;
+    let flyAwayTargetX = 0, flyAwayTargetY = 0;
+    let isCrossing = false, crossTargetX = 0, crossTargetY = 0, crossEndTime = 0, nextCrossCheck = Date.now() + 4000;
+
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        lastMouseMoveTime = Date.now();
+        if (isFlyingAway || isOffScreen) {
+            isFlyingAway = false; isOffScreen = false;
+            const edge = Math.floor(Math.random()*4);
+            if (edge===0){beeX=-50;beeY=Math.random()*window.innerHeight}
+            else if(edge===1){beeX=window.innerWidth+50;beeY=Math.random()*window.innerHeight}
+            else if(edge===2){beeX=Math.random()*window.innerWidth;beeY=-50}
+            else{beeX=Math.random()*window.innerWidth;beeY=window.innerHeight+50}
+        }
+    }, {passive:true});
+
+    function spawnTrail(x, y, type) {
+        if (type === 'sparkle') {
+            const el = document.createElement('div');
+            el.className = 'sparkle';
+            const size = 3 + Math.random() * 5;
+            el.style.cssText = `left:${x + (Math.random()-0.5)*20}px;top:${y + (Math.random()-0.5)*20}px;width:${size}px;height:${size}px;background:#fbbf24;border-radius:50%;`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 600);
+        } else if (type === 'pollen') {
+            const el = document.createElement('div');
+            el.className = 'pollen';
+            const size = 3 + Math.random() * 4;
+            el.style.cssText = `left:${x + (Math.random()-0.5)*16}px;top:${y}px;width:${size}px;height:${size}px;background:${Math.random()>0.5?'#fbbf24':'#f59e0b'};border-radius:50%;`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+    }
+
+    function animate(now) {
+        const t = now * 0.001;
+        if (!isFlyingAway && !isOffScreen && Date.now() - lastMouseMoveTime > 6000) {
+            isFlyingAway = true;
+            const fa = Math.random()*Math.PI*2;
+            const dist = Math.max(window.innerWidth,window.innerHeight)+100;
+            flyAwayTargetX = beeX+Math.cos(fa)*dist; flyAwayTargetY = beeY+Math.sin(fa)*dist;
+        }
+        if (isFlyingAway && (beeX<-60||beeX>window.innerWidth+60||beeY<-60||beeY>window.innerHeight+60)) {
+            isOffScreen = true; isFlyingAway = false;
+        }
+        let targetX, targetY, ease;
+        if (isOffScreen) { requestAnimationFrame(animate); return; }
+        else if (isFlyingAway) { targetX=flyAwayTargetX; targetY=flyAwayTargetY; ease=0.008; }
+        else if (!isCrossing && now > nextCrossCheck && Math.random() < 0.25) {
+            isCrossing=true; crossTargetX=mouseX*2-beeX+(Math.random()-0.5)*100;
+            crossTargetY=mouseY*2-beeY+(Math.random()-0.5)*100;
+            crossEndTime=now+600+Math.random()*500; nextCrossCheck=now+4000+Math.random()*6000;
+            targetX=crossTargetX; targetY=crossTargetY; ease=0.055;
+        } else if (isCrossing) {
+            targetX=crossTargetX; targetY=crossTargetY; ease=0.055;
+            if (now>crossEndTime) isCrossing=false;
+        } else {
+            const baseDist=75, distVar=25, dist=baseDist+Math.sin(t*0.2)*distVar;
+            const swayX=Math.sin(t*0.6+s1)*0.7+Math.sin(t*0.25+s2)*0.5;
+            const swayY=Math.sin(t*0.45+s2)*0.6+Math.cos(t*0.15+s3)*0.4;
+            targetX=mouseX+swayX*dist; targetY=mouseY+swayY*dist; ease=0.035;
+        }
+        beeX+=(targetX-beeX)*ease; beeY+=(targetY-beeY)*ease;
+        const dx=beeX-prevBeeX, dy=beeY-prevBeeY;
+        const distToMouse=Math.sqrt((beeX-mouseX)**2+(beeY-mouseY)**2);
+        let targetAngle=angle;
+        if (isFlyingAway||isCrossing||distToMouse>120) { if(dx*dx+dy*dy>0.5) targetAngle=Math.atan2(dy,dx)*57.29+90; }
+        else { targetAngle=Math.atan2(mouseY-beeY,mouseX-beeX)*57.29+90; }
+        prevBeeX=beeX; prevBeeY=beeY;
+        let angleDiff=targetAngle-angle; while(angleDiff>180)angleDiff-=360; while(angleDiff<-180)angleDiff+=360;
+        angle+=angleDiff*0.08;
+        const wobbleX=Math.sin(t*11)*1.5, wobbleY=Math.cos(t*13)*1.5;
+        if (beeEl) beeEl.style.transform=`translate3d(${beeX+wobbleX}px,${beeY+wobbleY}px,0) rotate(${angle}deg)`;
+
+        // Trail
+        if (trailType && now - lastTrailTime > 60) {
+            spawnTrail(beeX, beeY, trailType);
+            lastTrailTime = now;
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    function renderBee(index) {
+        const design = beeDesigns[index];
+        if (beeEl) beeEl.remove();
+        beeEl = document.createElement('div');
+        beeEl.className = 'bee';
+        beeEl.style.width = design.size.w + 'px';
+        beeEl.style.height = design.size.h + 'px';
+        beeEl.style.marginLeft = (-design.size.w/2) + 'px';
+        beeEl.style.marginTop = (-design.size.h/2) + 'px';
+        beeEl.innerHTML = design.svg;
+        document.body.appendChild(beeEl);
+        trailType = design.trail;
+
+        document.getElementById('bee-label').textContent = `${index+1} — ${design.name}`;
+        document.getElementById('bee-counter').textContent = `${index+1} / ${beeDesigns.length} · ${design.desc}`;
+        document.getElementById('btn-prev').disabled = index === 0;
+        document.getElementById('btn-next').disabled = index === beeDesigns.length - 1;
+
+        // Update preview grid
+        document.querySelectorAll('.preview-card').forEach((card, i) => {
+            card.classList.toggle('active', i === index);
+        });
+    }
+
+    function buildPreviewGrid() {
+        const grid = document.getElementById('preview-grid');
+        beeDesigns.forEach((design, i) => {
+            const card = document.createElement('div');
+            card.className = 'preview-card' + (i === 0 ? ' active' : '');
+            card.innerHTML = `<div style="width:${design.size.w * 1.8}px;height:${design.size.h * 1.8}px">${design.svg}</div>`;
+            card.onclick = () => { current = i; renderBee(i); };
+            const label = document.createElement('p');
+            label.className = 'text-xs text-slate-500 text-center mt-2 font-medium';
+            label.textContent = design.name;
+            const wrap = document.createElement('div');
+            wrap.className = 'flex flex-col items-center';
+            wrap.appendChild(card);
+            wrap.appendChild(label);
+            grid.appendChild(wrap);
+        });
+    }
+
+    function prevBee() { if (current > 0) { current--; renderBee(current); } }
+    function nextBee() { if (current < beeDesigns.length - 1) { current++; renderBee(current); } }
+    document.addEventListener('keydown', e => { if (e.key==='ArrowLeft') prevBee(); if (e.key==='ArrowRight') nextBee(); });
+
+    buildPreviewGrid();
+    renderBee(0);
+    requestAnimationFrame(animate);
+    </script>
+</body>
+</html>

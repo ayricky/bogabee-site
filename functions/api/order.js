@@ -81,24 +81,43 @@ export async function onRequestPost({ request, env }) {
     orderData.submittedAt = new Date().toISOString();
     orderData.ip = request.headers.get("CF-Connecting-IP");
 
+    // Google Apps Script returns a 302 redirect. We must handle it manually
+    // because fetch changes POST→GET on redirect, so doPost() never fires.
     const scriptRes = await fetch(env.GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData),
-      redirect: "follow",
+      redirect: "manual",
     });
 
-    // Google Apps Script may return HTML on redirect; check for success
-    const scriptText = await scriptRes.text();
-    let scriptResult;
-    try {
-      scriptResult = JSON.parse(scriptText);
-    } catch {
-      // If response isn't JSON, check status
-      if (!scriptRes.ok) {
-        throw new Error("Google Apps Script returned an error");
+    // If we get a redirect (302/301), follow it manually with POST
+    if (scriptRes.status === 302 || scriptRes.status === 301) {
+      const redirectUrl = scriptRes.headers.get("Location");
+      if (redirectUrl) {
+        const followRes = await fetch(redirectUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData),
+          redirect: "follow",
+        });
+        const followText = await followRes.text();
+        try {
+          const result = JSON.parse(followText);
+          if (result.error) throw new Error(result.error);
+        } catch (parseErr) {
+          // Non-JSON response is OK if status is 200
+          if (!followRes.ok) throw new Error("Google Apps Script error after redirect");
+        }
       }
-      scriptResult = { success: true };
+    } else {
+      // No redirect — parse response directly
+      const scriptText = await scriptRes.text();
+      try {
+        const result = JSON.parse(scriptText);
+        if (result.error) throw new Error(result.error);
+      } catch (parseErr) {
+        if (!scriptRes.ok) throw new Error("Google Apps Script returned an error");
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });

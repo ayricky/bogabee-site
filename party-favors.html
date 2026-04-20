@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MT39Z35D');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Favors Order | Bogabee Apiaries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'DM Serif Display', serif; }
+        .bg-honey { background-color: #fff9eb; }
+        .bg-grain { position: relative; }
+        .bg-grain::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.03; pointer-events: none; background-image: url("https://www.transparenttextures.com/patterns/stardust.png"); z-index: 50; }
+
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #d97706; box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1); }
+
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .product-option { transition: all 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        .product-option:active { transform: scale(0.98); }
+        .product-option.selected { border-color: #d97706; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); box-shadow: 0 0 0 2px #d97706; }
+        .product-option.selected .check-mark { display: flex; }
+
+        .progress-dot { transition: all 0.3s ease; }
+        .progress-dot.completed { background-color: #d97706; }
+        .progress-dot.current { background-color: #d97706; box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2); }
+        .progress-line.completed { background-color: #d97706; }
+
+        .qty-btn { transition: all 0.15s ease; }
+        .qty-btn:hover { background-color: #f59e0b; color: white; }
+        .qty-btn:active { transform: scale(0.9); }
+
+        .addon-card { transition: all 0.25s ease; -webkit-tap-highlight-color: transparent; }
+        .addon-card:active { transform: scale(0.97); }
+        .addon-card.checked { border-color: #d97706; box-shadow: 0 0 0 2px #d97706; }
+        .addon-card.checked .addon-badge { display: flex; }
+        .addon-card.checked .addon-img-wrap { opacity: 1; }
+        .addon-img-wrap { transition: opacity 0.2s ease; opacity: 0.85; }
+
+        .assembly-card { transition: all 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        .assembly-card:active { transform: scale(0.97); }
+        .assembly-card.selected { border-color: #d97706; background-color: #fffbeb; box-shadow: 0 0 0 2px #d97706; }
+
+        .color-swatch { transition: all 0.2s ease; }
+        .color-swatch:hover { transform: scale(1.1); }
+        .color-swatch.active { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #d97706; transform: scale(1.1); }
+
+        .img-placeholder { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); background-size: 200% 200%; animation: placeholderShimmer 3s ease infinite; }
+        @keyframes placeholderShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* File upload styling */
+        .upload-zone { transition: all 0.3s ease; }
+        .upload-zone:hover { border-color: #d97706; background-color: #fffbeb; }
+        .upload-zone.has-file { border-color: #16a34a; background-color: #f0fdf4; }
+
+        /* Custom color picker */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 9999px; }
+
+        /* Navigation */
+        .nav-fixed { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15); }
+        /* Mobile floating hamburger button */
+        .mobile-fab { transition: transform 0.2s ease; }
+        .mobile-fab:active { transform: scale(0.9); }
+        /* Mobile overlay menu */
+        .mobile-overlay { visibility: hidden; opacity: 0; transition: visibility 0.3s, opacity 0.3s ease; }
+        .mobile-overlay.open { visibility: visible; opacity: 1; }
+        .mobile-panel { transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-overlay.open .mobile-panel { transform: translateY(0); }
+        .hamburger-line { transition: all 0.3s ease; }
+        .hamburger.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active .hamburger-line:nth-child(2) { opacity: 0; }
+        .hamburger.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        /* nav-link underline handled by border-b utility classes */
+
+        /* Validation error states */
+        .field-error { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important; }
+        .error-msg { color: #ef4444; font-size: 0.75rem; margin-top: 0.375rem; display: none; }
+        .error-msg.show { display: block; animation: fadeIn 0.3s ease; }
+    </style>
+    <link rel="stylesheet" href="assets/bee.css">
+</head>
+<body class="bg-honey text-slate-900 bg-grain min-h-screen flex flex-col">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT39Z35D"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <!-- ========== DESKTOP NAVIGATION ========== -->
+    <nav id="main-nav" class="bg-honey sticky top-0 left-0 right-0 z-[100] px-8 shadow-md border-b border-slate-100 hidden md:block">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="py-4 group">
+                <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-10 h-10 transition-transform group-hover:scale-110">
+            </a>
+            <div class="flex items-center gap-0">
+                <a href="index.html" class="nav-link text-slate-400 text-sm font-medium px-5 py-4 border-b-[3px] border-transparent hover:text-slate-700 hover:border-slate-200 transition-all">Home</a>
+                <a href="about.html" class="nav-link text-slate-400 text-sm font-medium px-5 py-4 border-b-[3px] border-transparent hover:text-slate-700 hover:border-slate-200 transition-all">About Us</a>
+                <a href="party-favors.html" class="nav-link active text-slate-900 text-sm font-semibold px-5 py-4 border-b-[3px] border-amber-500">Party Favors</a>
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="text-slate-300 px-4 py-4 hover:text-amber-500 transition">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+            </div>
+            <!-- No Order Favors CTA since we're already on this page -->
+            <div class="w-[120px]"></div>
+        </div>
+    </nav>
+
+    <!-- ========== MOBILE FLOATING HAMBURGER ========== -->
+    <button id="hamburger-btn" class="hamburger mobile-fab fixed top-4 right-4 z-[110] md:hidden w-12 h-12 bg-slate-900/85 backdrop-blur-md rounded-full shadow-2xl border border-white/10 flex flex-col items-center justify-center gap-1.5" onclick="toggleMenu()">
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+    </button>
+
+    <!-- ========== MOBILE MENU OVERLAY ========== -->
+    <div id="mobile-menu" class="mobile-overlay fixed inset-0 z-[105] md:hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"></div>
+        <div class="mobile-panel relative bg-slate-900 pt-6 pb-8 px-6 shadow-2xl">
+            <div class="flex items-center gap-2.5 mb-8">
+                <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-8 h-8">
+            </div>
+            <div class="space-y-1">
+                <a href="index.html" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Home</a>
+                <a href="about.html" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">About Us</a>
+                <a href="party-favors.html" class="block text-white text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Party Favors</a>
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Instagram</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-1 flex flex-col">
+        <section class="bg-slate-900 pb-20 pt-8 px-4 text-center">
+            <span class="text-amber-500 font-bold uppercase tracking-[0.25em] text-xs mb-3 block">Party Favors</span>
+            <h1 class="text-4xl md:text-6xl text-white italic mb-4">Build Your Order.</h1>
+            <p class="text-slate-300 max-w-md mx-auto font-light">Four simple steps to the sweetest party favors in New Jersey.</p>
+        </section>
+
+        <div class="max-w-3xl mx-auto w-full px-4 -mt-10 pb-20 relative z-10">
+            <div id="order-wizard" class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+
+                <!-- Progress Bar -->
+                <div class="px-6 md:px-12 pt-6 md:pt-8 pb-4">
+                    <div class="flex items-center justify-between max-w-xs md:max-w-sm mx-auto">
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(1)">
+                            <div id="dot-1" class="progress-dot current w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">1</div>
+                            <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Favor</span>
+                        </div>
+                        <div id="line-1" class="progress-line flex-1 h-0.5 bg-slate-200 mx-1 transition-all duration-300 -mt-4"></div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(2)">
+                            <div id="dot-2" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">2</div>
+                            <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Extras</span>
+                        </div>
+                        <div id="line-2" class="progress-line flex-1 h-0.5 bg-slate-200 mx-1 transition-all duration-300 -mt-4"></div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(3)">
+                            <div id="dot-3" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">3</div>
+                            <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Event</span>
+                        </div>
+                        <div id="line-3" class="progress-line flex-1 h-0.5 bg-slate-200 mx-1 transition-all duration-300 -mt-4"></div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(4)">
+                            <div id="dot-4" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">4</div>
+                            <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Review</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================== -->
+                <!-- STEP 1: Pick Jar & Quantity    -->
+                <!-- ============================== -->
+                <div id="step-1" class="step active p-6 md:p-12">
+                    <h2 class="text-2xl md:text-3xl italic mb-2">Pick Your Jar</h2>
+                    <p class="text-slate-400 text-sm mb-6">Raw, unfiltered NJ wildflower honey</p>
+
+                    <div class="grid grid-cols-3 gap-3 md:gap-4">
+                        <!-- Mini Jar -->
+                        <label class="product-option border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative text-center">
+                            <input type="radio" name="product" value="mini" class="sr-only" onchange="selectProduct(this)">
+                            <div class="check-mark hidden absolute top-2 right-2 w-6 h-6 md:w-7 md:h-7 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="aspect-[4/5] overflow-hidden">
+                                <img src="assets/product_stocking_stuffer.jpg" alt="Mini Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                            </div>
+                            <div class="p-3 md:p-4">
+                                <h3 class="font-bold text-sm md:text-base">Mini Jar</h3>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5">2oz hex jar</p>
+                                <p class="font-serif italic text-lg md:text-2xl text-amber-600 mt-1">$3</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs">per jar</p>
+                            </div>
+                        </label>
+
+                        <!-- Small Jar (Popular) -->
+                        <label class="product-option border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative text-center">
+                            <input type="radio" name="product" value="small" class="sr-only" onchange="selectProduct(this)">
+                            <span class="absolute top-2 left-2 bg-amber-500 text-white text-[8px] md:text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 md:px-2 rounded-full z-10">Popular</span>
+                            <div class="check-mark hidden absolute top-2 right-2 w-6 h-6 md:w-7 md:h-7 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="aspect-[4/5] overflow-hidden">
+                                <img src="assets/product8oz.jpg" alt="Small Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                            </div>
+                            <div class="p-3 md:p-4">
+                                <h3 class="font-bold text-sm md:text-base">Small Jar</h3>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5">4oz classic jar</p>
+                                <p class="font-serif italic text-lg md:text-2xl text-amber-600 mt-1">$5</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs">per jar</p>
+                            </div>
+                        </label>
+
+                        <!-- Classic Jar -->
+                        <label class="product-option border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative text-center">
+                            <input type="radio" name="product" value="classic" class="sr-only" onchange="selectProduct(this)">
+                            <div class="check-mark hidden absolute top-2 right-2 w-6 h-6 md:w-7 md:h-7 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="aspect-[4/5] overflow-hidden">
+                                <img src="assets/product16oz.jpg" alt="Classic Jar" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                            </div>
+                            <div class="p-3 md:p-4">
+                                <h3 class="font-bold text-sm md:text-base">Classic Jar</h3>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5">8oz premium gift size</p>
+                                <p class="font-serif italic text-lg md:text-2xl text-amber-600 mt-1">$8</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs">per jar</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="mt-6 bg-slate-50 rounded-2xl p-5">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-3 text-center">How Many Jars?</label>
+                        <div class="flex items-center justify-center gap-5">
+                            <button type="button" onclick="changeQty(-5)" class="qty-btn w-11 h-11 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 text-lg font-bold bg-white">-</button>
+                            <input type="number" id="qty" name="quantity" value="25" min="10" class="w-20 text-center text-2xl md:text-3xl font-serif italic text-slate-900 border-0 bg-transparent focus:ring-0">
+                            <button type="button" onclick="changeQty(5)" class="qty-btn w-11 h-11 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 text-lg font-bold bg-white">+</button>
+                        </div>
+                        <p class="text-center text-slate-400 text-xs mt-2">Minimum 10 jars</p>
+                    </div>
+
+                    <p id="error-product" class="error-msg text-center">Please select a jar size</p>
+
+                    <div class="mt-6 flex justify-end">
+                        <button type="button" onclick="nextStep(2)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">
+                            Next: Customize &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ============================== -->
+                <!-- STEP 2: Add-Ons & Assembly     -->
+                <!-- ============================== -->
+                <div id="step-2" class="step p-6 md:p-12">
+                    <h2 class="text-2xl md:text-3xl italic mb-2">Customize Your Favors</h2>
+                    <p class="text-slate-400 text-sm mb-6">Tap to add extras — prices are per jar</p>
+
+                    <!-- Add-On Cards Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+                        <!-- Honey Dipper -->
+                        <label class="addon-card border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative">
+                            <input type="checkbox" name="addon_dipper" value="1.50" class="sr-only" onchange="toggleAddon(this)">
+                            <div class="addon-badge hidden absolute top-2 right-2 w-6 h-6 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="addon-img-wrap aspect-square overflow-hidden">
+                                <img src="assets/addons/dipper.jpg" alt="Honey Dipper" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🪵</span></div>
+                            </div>
+                            <div class="p-3 text-center">
+                                <p class="font-bold text-xs md:text-sm">Honey Dipper</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5 leading-tight">Wooden dipper tied to jar</p>
+                                <p class="font-serif italic text-base text-amber-600 mt-1">+$1.50</p>
+                            </div>
+                        </label>
+
+                        <!-- Charm -->
+                        <label class="addon-card border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative">
+                            <input type="checkbox" name="addon_charm" value="1.00" class="sr-only" onchange="toggleAddon(this)">
+                            <div class="addon-badge hidden absolute top-2 right-2 w-6 h-6 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="addon-img-wrap aspect-square overflow-hidden">
+                                <img src="assets/addons/charm.jpg" alt="Charm" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">✨</span></div>
+                            </div>
+                            <div class="p-3 text-center">
+                                <p class="font-bold text-xs md:text-sm">Charm</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5 leading-tight">Decorative charm on jar</p>
+                                <p class="font-serif italic text-base text-amber-600 mt-1">+$1.00</p>
+                            </div>
+                        </label>
+
+                        <!-- Ribbon -->
+                        <label class="addon-card border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative">
+                            <input type="checkbox" name="addon_ribbon" value="0.75" class="sr-only" onchange="toggleAddon(this)">
+                            <div class="addon-badge hidden absolute top-2 right-2 w-6 h-6 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="addon-img-wrap aspect-square overflow-hidden">
+                                <img src="assets/addons/ribbon.jpg" alt="Ribbon" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🎀</span></div>
+                            </div>
+                            <div class="p-3 text-center">
+                                <p class="font-bold text-xs md:text-sm">Ribbon</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5 leading-tight">Satin ribbon on lid</p>
+                                <p class="font-serif italic text-base text-amber-600 mt-1">+$0.75</p>
+                            </div>
+                        </label>
+
+                        <!-- Twine -->
+                        <label class="addon-card border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative">
+                            <input type="checkbox" name="addon_twine" value="0.50" class="sr-only" onchange="toggleAddon(this)">
+                            <div class="addon-badge hidden absolute top-2 right-2 w-6 h-6 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="addon-img-wrap aspect-square overflow-hidden">
+                                <img src="assets/addons/twine.jpg" alt="Twine" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🧵</span></div>
+                            </div>
+                            <div class="p-3 text-center">
+                                <p class="font-bold text-xs md:text-sm">Twine</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5 leading-tight">Rustic jute wrap</p>
+                                <p class="font-serif italic text-base text-amber-600 mt-1">+$0.50</p>
+                            </div>
+                        </label>
+
+                        <!-- Custom Label -->
+                        <label class="addon-card border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer block relative col-span-2 md:col-span-1">
+                            <input type="checkbox" name="addon_label" value="1.00" class="sr-only" onchange="toggleAddon(this); toggleLabelField()">
+                            <div class="addon-badge hidden absolute top-2 right-2 w-6 h-6 bg-amber-500 rounded-full items-center justify-center z-10">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="addon-img-wrap aspect-[2/1] md:aspect-square overflow-hidden">
+                                <img src="assets/addons/label.jpg" alt="Custom Label" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="img-placeholder w-full h-full items-center justify-center hidden"><span class="text-4xl">🏷</span></div>
+                            </div>
+                            <div class="p-3 text-center">
+                                <p class="font-bold text-xs md:text-sm">Custom Label</p>
+                                <p class="text-slate-400 text-[10px] md:text-xs mt-0.5 leading-tight">Personalized for your event</p>
+                                <p class="font-serif italic text-base text-amber-600 mt-1">+$1.00</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Custom Label Details (shown when label is checked) -->
+                    <div id="label-details" class="hidden space-y-4 bg-slate-50 rounded-2xl p-4 md:p-6 mb-8">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">What should the label say?</label>
+                            <input type="text" name="label_text" placeholder='e.g. "Meant to Bee — Sarah & Mike"' class="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-sm transition bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Upload a label design <span class="text-slate-300 font-normal normal-case">(optional)</span></label>
+                            <div id="label-upload-zone" class="upload-zone border-2 border-dashed border-slate-300 rounded-xl p-5 text-center bg-white cursor-pointer" onclick="document.getElementById('label-file-input').click()">
+                                <svg class="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <p id="label-file-name" class="text-slate-400 text-xs mb-1">Tap to upload image or PDF</p>
+                                <p class="text-slate-300 text-[10px]">PNG, JPG, or PDF up to 10MB</p>
+                                <input type="file" id="label-file-input" name="label_file" accept="image/*,.pdf" class="hidden" onchange="handleFileUpload(this, 'label-file-name', 'label-upload-zone')">
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div>
+                                    <p class="text-amber-800 text-sm font-medium">Approval Required</p>
+                                    <p class="text-amber-700 text-xs mt-1">All custom labels must be approved before printing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assembly -->
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Assembly</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="assembly-card selected border-2 border-slate-200 rounded-2xl p-4 md:p-6 cursor-pointer block text-center">
+                            <input type="radio" name="assembly" value="assembled" class="sr-only" checked onchange="selectAssembly(this)">
+                            <div class="w-12 h-12 bg-amber-50 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-xl">🎁</span></div>
+                            <p class="font-bold text-xs md:text-sm uppercase tracking-wider">Assembled</p>
+                            <p class="text-slate-400 text-[10px] md:text-xs mt-1 mb-2 leading-tight">We build every favor for you</p>
+                            <span class="inline-block bg-amber-100 text-amber-700 text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-full">Recommended</span>
+                        </label>
+                        <label class="assembly-card border-2 border-slate-200 rounded-2xl p-4 md:p-6 cursor-pointer block text-center">
+                            <input type="radio" name="assembly" value="diy" class="sr-only" onchange="selectAssembly(this)">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-xl">📦</span></div>
+                            <p class="font-bold text-xs md:text-sm uppercase tracking-wider">DIY Kit</p>
+                            <p class="text-slate-400 text-[10px] md:text-xs mt-1 mb-2 leading-tight">Supplies sent, you assemble</p>
+                            <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-full">Save $1/jar</span>
+                        </label>
+                    </div>
+
+                    <div class="mt-6 flex justify-between">
+                        <button type="button" onclick="goToStep(1)" class="text-slate-400 hover:text-slate-600 font-medium transition text-sm">&larr; Back</button>
+                        <button type="button" onclick="goToStep(3)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">Next: Event &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- ============================== -->
+                <!-- STEP 3: Event Details          -->
+                <!-- ============================== -->
+                <div id="step-3" class="step p-6 md:p-12">
+                    <h2 class="text-2xl md:text-3xl italic mb-2">Your Event</h2>
+                    <p class="text-slate-400 text-sm mb-6">So we can make your favors just right</p>
+                    <div class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Event Type <span class="text-amber-500">*</span></label>
+                                <select name="event_type" id="event-type" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition bg-white" onchange="clearError('event-type','error-event-type')">
+                                    <option value="">Select...</option><option>Wedding</option><option>Baby Shower</option><option>Bridal Shower</option><option>Birthday Party</option><option>Corporate Event</option><option>Holiday Party</option><option>Other</option>
+                                </select>
+                                <p id="error-event-type" class="error-msg">Please select an event type</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Event Date <span class="text-amber-500">*</span></label>
+                                <input type="date" name="event_date" id="event-date" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" onchange="clearError('event-date','error-event-date')">
+                                <p id="error-event-date" class="error-msg">Please select an event date</p>
+                            </div>
+                        </div>
+
+                        <!-- Color Theme with Custom Option -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Color Theme <span class="text-slate-300 font-normal normal-case">(optional)</span></label>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button type="button" onclick="selectColor(this, 'gold', '#f59e0b')" class="color-swatch w-10 h-10 rounded-full bg-amber-400 border-2 border-white shadow-sm" title="Gold"></button>
+                                <button type="button" onclick="selectColor(this, 'blush', '#fbcfe8')" class="color-swatch w-10 h-10 rounded-full bg-pink-200 border-2 border-white shadow-sm" title="Blush"></button>
+                                <button type="button" onclick="selectColor(this, 'sage', '#86efac')" class="color-swatch w-10 h-10 rounded-full bg-emerald-300 border-2 border-white shadow-sm" title="Sage"></button>
+                                <button type="button" onclick="selectColor(this, 'navy', '#1e3a5f')" class="color-swatch w-10 h-10 rounded-full bg-blue-900 border-2 border-white shadow-sm" title="Navy"></button>
+                                <button type="button" onclick="selectColor(this, 'white', '#ffffff')" class="color-swatch w-10 h-10 rounded-full bg-white border-2 border-slate-200 shadow-sm" title="White"></button>
+                                <button type="button" onclick="selectColor(this, 'lavender', '#c4b5fd')" class="color-swatch w-10 h-10 rounded-full bg-violet-300 border-2 border-white shadow-sm" title="Lavender"></button>
+                                <button type="button" onclick="selectColor(this, 'burgundy', '#881337')" class="color-swatch w-10 h-10 rounded-full bg-rose-900 border-2 border-white shadow-sm" title="Burgundy"></button>
+
+                                <!-- Custom Color -->
+                                <div class="relative flex items-center gap-2">
+                                    <div class="w-10 h-10 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden cursor-pointer" onclick="document.getElementById('custom-color-picker').click()" title="Custom Color" id="custom-color-preview">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                    </div>
+                                    <input type="color" id="custom-color-picker" value="#d97706" class="w-0 h-0 opacity-0 absolute" onchange="applyCustomColor(this.value)">
+                                </div>
+                            </div>
+                            <input type="hidden" id="selected-color" name="color_theme" value="">
+                            <p id="color-label" class="text-slate-400 text-xs mt-2 hidden">Selected: <span id="color-name" class="font-medium text-slate-600"></span></p>
+                        </div>
+
+                        <!-- Logo Upload (Optional) -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Logo / Monogram <span class="text-slate-300 font-normal normal-case">(optional)</span></label>
+                            <div id="logo-upload-zone" class="upload-zone border-2 border-dashed border-slate-300 rounded-xl p-5 text-center bg-white cursor-pointer" onclick="document.getElementById('logo-file-input').click()">
+                                <svg class="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p id="logo-file-name" class="text-slate-500 text-sm font-medium mb-1">Upload your logo or monogram</p>
+                                <p class="text-slate-300 text-[10px]">PNG, JPG, SVG, or PDF</p>
+                                <input type="file" id="logo-file-input" name="logo_file" accept="image/*,.pdf,.svg" class="hidden" onchange="handleFileUpload(this, 'logo-file-name', 'logo-upload-zone')">
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mt-3">
+                                <div class="flex items-start gap-2.5">
+                                    <svg class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <p class="text-blue-700 text-xs leading-relaxed">If you provide a logo, we'll reach out to confirm it can be incorporated into the label design. Not all logos can be reproduced at small sizes.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Special Requests <span class="text-slate-300 font-normal normal-case">(optional)</span></label>
+                            <textarea name="notes" rows="3" placeholder="Anything else we should know..." class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition resize-none"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between">
+                        <button type="button" onclick="goToStep(2)" class="text-slate-400 hover:text-slate-600 font-medium transition text-sm">&larr; Back</button>
+                        <button type="button" onclick="nextStep(4)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">Next: Review &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- ============================== -->
+                <!-- STEP 4: Contact & Review       -->
+                <!-- ============================== -->
+                <div id="step-4" class="step p-6 md:p-12">
+                    <h2 class="text-2xl md:text-3xl italic mb-2">Almost There!</h2>
+                    <p class="text-slate-400 text-sm mb-6">Your info + order review</p>
+                    <div class="space-y-5 mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Full Name <span class="text-amber-500">*</span></label>
+                                <input type="text" name="name" id="field-name" placeholder="Your name" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" oninput="clearError('field-name','error-name')">
+                                <p id="error-name" class="error-msg">Please enter your name</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Phone <span class="text-amber-500">*</span></label>
+                                <input type="tel" name="phone" id="field-phone" placeholder="(555) 123-4567" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" oninput="clearError('field-phone','error-phone')">
+                                <p id="error-phone" class="error-msg">Please enter a valid phone number</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Email <span class="text-amber-500">*</span></label>
+                            <input type="email" name="email" id="field-email" placeholder="you@email.com" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" oninput="clearError('field-email','error-email')">
+                            <p id="error-email" class="error-msg">Please enter a valid email</p>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-6">
+                        <h3 class="font-bold uppercase tracking-widest text-xs text-amber-700 mb-3">Order Summary</h3>
+                        <div id="wizard-summary" class="text-slate-600 text-sm space-y-1.5"></div>
+                        <div id="diy-savings" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3 mt-3">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-emerald-700 text-sm font-medium">You're saving <span id="savings-amount" class="font-bold">$0</span> with DIY assembly!</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-amber-200 mt-3 pt-3">
+                            <div class="flex justify-between items-center text-sm mb-1">
+                                <span class="text-slate-500">Per jar</span>
+                                <span id="wizard-perjar" class="font-medium text-slate-900">$0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-slate-900">Estimated Total</span>
+                                <span id="wizard-total" class="font-serif italic text-2xl md:text-3xl text-amber-600">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Honeypot (hidden from humans, bots fill it) -->
+                    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+                    <!-- Cloudflare Turnstile widget -->
+                    <div class="flex justify-center mt-4">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAC_3cAC07qgfyRrM" data-theme="light" data-size="compact"></div>
+                    </div>
+
+                    <!-- Submit error message -->
+                    <div id="submit-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 mt-3 text-center">
+                        <p class="text-red-600 text-sm" id="submit-error-msg">Something went wrong. Please try again.</p>
+                    </div>
+
+                    <div class="mt-6 flex justify-between items-center">
+                        <button type="button" onclick="goToStep(3)" class="text-slate-400 hover:text-slate-600 font-medium transition text-sm">&larr; Back</button>
+                        <button type="submit" id="submit-btn" onclick="submitOrder(event)" class="bg-slate-900 text-white px-10 py-4 rounded-full font-bold text-base md:text-lg hover:bg-amber-600 transition-all shadow-xl active:scale-[0.97]">Submit Request</button>
+                    </div>
+                    <p class="text-center text-slate-400 text-xs mt-5">No payment required — we'll send a quote within 24 hours.</p>
+                </div>
+
+                <!-- ============================== -->
+                <!-- SUCCESS SCREEN                 -->
+                <!-- ============================== -->
+                <div id="step-success" class="step p-6 md:p-12 text-center">
+                    <div class="w-20 h-20 bg-emerald-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl italic mb-3">Request Sent!</h2>
+                    <p class="text-slate-400 text-sm max-w-sm mx-auto mb-8">Thank you for your order! We'll get back to you soon.</p>
+                    <a href="index.html" class="inline-block bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm">Back to Bogabee</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-white py-12 px-6 text-center">
+        <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-20 mx-auto mb-4 opacity-40 grayscale">
+        <p class="text-slate-500 text-sm">Bogabee Apiaries | Manalapan Township, NJ</p>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        // Base prices INCLUDE assembly ($1 baked in)
+        const basePrices = { mini: 4, small: 6, classic: 9 };
+        const displayPrices = { mini: 3, small: 5, classic: 8 }; // What user sees on cards (jar only)
+        const productNames = { mini: 'Mini Jar (2oz)', small: 'Small Jar (4oz)', classic: 'Classic Jar (8oz)' };
+        const addonInfo = {
+            addon_dipper: { name: 'Honey Dipper', price: 1.50 },
+            addon_charm:  { name: 'Charm', price: 1.00 },
+            addon_ribbon: { name: 'Ribbon', price: 0.75 },
+            addon_twine:  { name: 'Twine', price: 0.50 },
+            addon_label:  { name: 'Custom Label', price: 1.00 }
+        };
+        let selectedColorName = '';
+
+        function goToStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.getElementById(`step-${step}`).classList.add('active');
+            for (let i = 1; i <= totalSteps; i++) {
+                const d = document.getElementById(`dot-${i}`);
+                d.classList.remove('current', 'completed');
+                if (i < step) d.classList.add('completed');
+                if (i === step) d.classList.add('current');
+            }
+            for (let i = 1; i < totalSteps; i++) {
+                document.getElementById(`line-${i}`).classList.toggle('completed', i < step);
+            }
+            currentStep = step;
+            if (step === totalSteps) updateWizardSummary();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Validation helpers
+        function showError(fieldId, errorId) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            if (field) field.classList.add('field-error');
+            if (error) error.classList.add('show');
+        }
+        function clearError(fieldId, errorId) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            if (field) field.classList.remove('field-error');
+            if (error) error.classList.remove('show');
+        }
+
+        function validateStep(step) {
+            let valid = true;
+            if (step === 1 || (step > 1 && !document.querySelector('[name="product"]:checked'))) {
+                // Validate product selection
+                const product = document.querySelector('[name="product"]:checked');
+                if (!product) {
+                    document.getElementById('error-product')?.classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-product')?.classList.remove('show');
+                }
+            }
+            if (step === 3) {
+                const eventType = document.getElementById('event-type');
+                const eventDate = document.getElementById('event-date');
+                if (!eventType.value) { showError('event-type', 'error-event-type'); valid = false; }
+                if (!eventDate.value) { showError('event-date', 'error-event-date'); valid = false; }
+            }
+            if (step === 4) {
+                const name = document.getElementById('field-name');
+                const email = document.getElementById('field-email');
+                const phone = document.getElementById('field-phone');
+                if (!name.value.trim()) { showError('field-name', 'error-name'); valid = false; }
+                if (!email.value.trim() || !email.value.includes('@')) { showError('field-email', 'error-email'); valid = false; }
+                const phoneDigits = phone.value.replace(/\D/g, '');
+                if (!phoneDigits || phoneDigits.length < 10) { showError('field-phone', 'error-phone'); valid = false; }
+            }
+            return valid;
+        }
+
+        function nextStep(target) {
+            if (validateStep(currentStep)) {
+                goToStep(target);
+            }
+        }
+
+        function selectProduct(radio) {
+            document.querySelectorAll('.product-option').forEach(c => c.classList.remove('selected'));
+            radio.closest('.product-option').classList.add('selected');
+            document.getElementById('error-product')?.classList.remove('show');
+        }
+
+        function changeQty(delta) {
+            const i = document.getElementById('qty');
+            let v = parseInt(i.value) + delta;
+            if (v < 10) v = 10;
+            i.value = v;
+        }
+
+        function toggleAddon(cb) {
+            cb.closest('.addon-card').classList.toggle('checked', cb.checked);
+        }
+
+        function toggleLabelField() {
+            document.getElementById('label-details').classList.toggle('hidden', !document.querySelector('[name="addon_label"]').checked);
+        }
+
+        function selectAssembly(radio) {
+            document.querySelectorAll('.assembly-card').forEach(c => c.classList.remove('selected'));
+            radio.closest('.assembly-card').classList.add('selected');
+        }
+
+        // Color selection
+        function selectColor(btn, name, hex) {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            btn.classList.add('active');
+            selectedColorName = name.charAt(0).toUpperCase() + name.slice(1);
+            document.getElementById('selected-color').value = hex;
+            document.getElementById('color-label').classList.remove('hidden');
+            document.getElementById('color-name').textContent = selectedColorName;
+            // Reset custom color preview
+            const preview = document.getElementById('custom-color-preview');
+            preview.style.backgroundColor = '';
+            preview.innerHTML = '<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>';
+        }
+
+        function applyCustomColor(hex) {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            const preview = document.getElementById('custom-color-preview');
+            preview.style.backgroundColor = hex;
+            preview.innerHTML = '';
+            preview.classList.add('active');
+            preview.style.borderStyle = 'solid';
+            preview.style.borderColor = '#d97706';
+            selectedColorName = 'Custom (' + hex + ')';
+            document.getElementById('selected-color').value = hex;
+            document.getElementById('color-label').classList.remove('hidden');
+            document.getElementById('color-name').textContent = selectedColorName;
+        }
+
+        // File upload handler
+        function handleFileUpload(input, nameId, zoneId) {
+            const zone = document.getElementById(zoneId);
+            const nameEl = document.getElementById(nameId);
+            if (input.files.length > 0) {
+                nameEl.textContent = input.files[0].name;
+                nameEl.classList.add('text-slate-700', 'font-medium');
+                nameEl.classList.remove('text-slate-400', 'text-slate-500');
+                zone.classList.add('has-file');
+            } else {
+                nameEl.classList.remove('text-slate-700', 'font-medium');
+                zone.classList.remove('has-file');
+            }
+        }
+
+        function updateWizardSummary() {
+            const product = document.querySelector('[name="product"]:checked');
+            const qty = parseInt(document.getElementById('qty').value) || 0;
+            const assembly = document.querySelector('[name="assembly"]:checked');
+            const eventType = document.querySelector('[name="event_type"]').value;
+            const eventDate = document.querySelector('[name="event_date"]').value;
+            const labelText = document.querySelector('[name="label_text"]')?.value;
+            const colorVal = document.getElementById('selected-color').value;
+            const logoFile = document.getElementById('logo-file-input')?.files[0];
+            const s = document.getElementById('wizard-summary');
+
+            // Base price includes assembly
+            let perJar = product ? basePrices[product.value] : 0;
+            let diySavings = 0;
+            let html = '';
+
+            if (product) html += `<div class="flex justify-between"><span>Product</span><span class="font-medium text-slate-900">${productNames[product.value]}</span></div>`;
+            html += `<div class="flex justify-between"><span>Quantity</span><span class="font-medium text-slate-900">${qty} jars</span></div>`;
+
+            const addons = [];
+            document.querySelectorAll('[name^="addon_"]:checked').forEach(cb => {
+                const info = addonInfo[cb.name];
+                perJar += info.price;
+                addons.push(info.name);
+            });
+            if (addons.length) html += `<div class="flex justify-between"><span>Add-Ons</span><span class="font-medium text-slate-900 text-right text-xs">${addons.join(', ')}</span></div>`;
+
+            if (assembly) {
+                if (assembly.value === 'diy') {
+                    perJar -= 1; // Remove the baked-in assembly cost
+                    diySavings = qty * 1;
+                    html += `<div class="flex justify-between"><span>Assembly</span><span class="font-medium text-emerald-600">DIY Kit (save $${qty})</span></div>`;
+                } else {
+                    html += `<div class="flex justify-between"><span>Assembly</span><span class="font-medium text-slate-900">Assembled (included)</span></div>`;
+                }
+            }
+
+            if (eventType) html += `<div class="flex justify-between"><span>Event</span><span class="font-medium text-slate-900">${eventType}</span></div>`;
+            if (eventDate) html += `<div class="flex justify-between"><span>Date</span><span class="font-medium text-slate-900">${eventDate}</span></div>`;
+            if (selectedColorName) {
+                const colorHex = document.getElementById('selected-color').value;
+                html += `<div class="flex justify-between items-center"><span>Color</span><span class="font-medium text-slate-900 flex items-center gap-2"><span class="w-4 h-4 rounded-full inline-block border border-slate-200" style="background:${colorHex}"></span>${selectedColorName}</span></div>`;
+            }
+            if (labelText) html += `<div class="flex justify-between"><span>Label</span><span class="font-medium text-slate-900 text-right max-w-[180px] text-xs">"${labelText}"</span></div>`;
+            if (logoFile) html += `<div class="flex justify-between"><span>Logo</span><span class="font-medium text-slate-900 text-xs">${logoFile.name}</span></div>`;
+
+            if (document.querySelector('[name="addon_label"]')?.checked) {
+                html += `<div class="text-right"><span class="text-amber-600 text-xs italic">* Label subject to approval</span></div>`;
+            }
+            if (logoFile) {
+                html += `<div class="text-right"><span class="text-blue-500 text-xs italic">* Logo placement to be confirmed</span></div>`;
+            }
+
+            s.innerHTML = html;
+            document.getElementById('wizard-perjar').textContent = `$${perJar.toFixed(2)}`;
+            document.getElementById('wizard-total').textContent = `~$${(perJar * qty).toFixed(0)}`;
+
+            // Show/hide DIY savings callout
+            const savingsEl = document.getElementById('diy-savings');
+            if (diySavings > 0) {
+                document.getElementById('savings-amount').textContent = `$${diySavings}`;
+                savingsEl.classList.remove('hidden');
+            } else {
+                savingsEl.classList.add('hidden');
+            }
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            // Validate all steps
+            if (!document.querySelector('[name="product"]:checked')) { goToStep(1); document.getElementById('error-product')?.classList.add('show'); return; }
+            if (!validateStep(3)) { goToStep(3); return; }
+            if (!validateStep(4)) { return; }
+
+            // Get Turnstile token
+            const turnstileToken = typeof turnstile !== 'undefined' ? turnstile.getResponse() : '';
+            if (!turnstileToken) {
+                showSubmitError('Please complete the security check above.');
+                return;
+            }
+
+            // Collect all form data dynamically
+            // 1. Grab every named input/select/textarea in the wizard
+            const orderData = {};
+            document.querySelectorAll('#order-wizard [name]').forEach(el => {
+                const name = el.name;
+                if (name === '_honey') { orderData._honey = el.value; return; }
+                if (el.type === 'radio') {
+                    if (el.checked) orderData[name] = el.value;
+                    return;
+                }
+                if (el.type === 'checkbox') {
+                    if (el.checked) {
+                        // Collect checked add-ons as a comma-separated list
+                        const label = addonInfo[name]?.name || name;
+                        orderData.addons = orderData.addons ? orderData.addons + ', ' + label : label;
+                    }
+                    return;
+                }
+                if (el.type === 'file') return; // skip file inputs
+                if (el.value) orderData[name] = el.value.trim();
+            });
+
+            // 2. Add computed / display values
+            const product = document.querySelector('[name="product"]:checked');
+            const qty = parseInt(document.getElementById('qty').value) || 0;
+            const assembly = document.querySelector('[name="assembly"]:checked');
+            if (product) orderData.product_display = productNames[product.value] || product.value;
+            orderData.lid_color = selectedColorName || 'Not selected';
+
+            const addonTotal = (orderData.addons || '').split(', ').filter(Boolean).reduce((sum, name) => {
+                const info = Object.values(addonInfo).find(a => a.name === name);
+                return sum + (info ? info.price : 0);
+            }, 0);
+            const perJar = product ? basePrices[product.value] + addonTotal - (assembly?.value === 'diy' ? 1 : 0) : 0;
+            orderData.price_per_jar = perJar.toFixed(2);
+            orderData.estimated_total = (perJar * qty).toFixed(2);
+
+            // 3. Attach Turnstile token
+            orderData.turnstileToken = turnstileToken;
+
+            // Disable submit button and show loading state
+            const btn = document.getElementById('submit-btn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+            hideSubmitError();
+
+            try {
+                const res = await fetch('/api/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const result = await res.json();
+
+                if (!res.ok || result.error) {
+                    throw new Error(result.debug || result.error || 'Something went wrong');
+                }
+
+                // Success — show success screen
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                document.getElementById('step-success').classList.add('active');
+                for (let i = 1; i <= totalSteps; i++) {
+                    document.getElementById(`dot-${i}`).classList.add('completed');
+                    document.getElementById(`dot-${i}`).classList.remove('current');
+                }
+                for (let i = 1; i < totalSteps; i++) {
+                    document.getElementById(`line-${i}`).classList.add('completed');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) {
+                showSubmitError(err.message || 'Something went wrong. Please try again or DM us on Instagram.');
+                btn.disabled = false;
+                btn.textContent = originalText;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                // Reset Turnstile so user can retry
+                if (typeof turnstile !== 'undefined') turnstile.reset();
+            }
+        }
+
+        function showSubmitError(msg) {
+            const el = document.getElementById('submit-error');
+            document.getElementById('submit-error-msg').textContent = msg;
+            el.classList.remove('hidden');
+        }
+        function hideSubmitError() {
+            document.getElementById('submit-error').classList.add('hidden');
+        }
+
+        // Mobile hamburger menu
+        function toggleMenu() {
+            const btn = document.getElementById('hamburger-btn');
+            const menu = document.getElementById('mobile-menu');
+            btn.classList.toggle('active');
+            menu.classList.toggle('open');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('hamburger-btn').classList.remove('active');
+                document.getElementById('mobile-menu').classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        });
+    </script>
+    <script src="assets/bee.js"></script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MT39Z35D');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Bogabee Apiaries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'DM Serif Display', serif; }
+        .bg-honey { background-color: #fff9eb; }
+        .bg-grain { position: relative; }
+        .bg-grain::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.03; pointer-events: none; background-image: url("https://www.transparenttextures.com/patterns/stardust.png"); z-index: 50; }
+
+        .fluid-xs { font-size: clamp(0.5rem, 2.5vw, 0.75rem); }
+        .fluid-sm { font-size: clamp(0.625rem, 3vw, 0.875rem); }
+        .fluid-base { font-size: clamp(0.75rem, 4vw, 1rem); }
+        .fluid-lg { font-size: clamp(0.875rem, 4.5vw, 1.125rem); }
+        .fluid-xl { font-size: clamp(1rem, 5.5vw, 1.375rem); }
+        .fluid-2xl { font-size: clamp(1.5rem, 9vw, 2.5rem); }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Navigation */
+        .nav-fixed { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15); }
+        .hamburger-line { transition: all 0.3s ease; }
+        .hamburger.active .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active .hamburger-line:nth-child(2) { opacity: 0; }
+        .hamburger.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        /* nav-link underline handled by border-b utility classes */
+
+        /* Mobile floating hamburger button */
+        .mobile-fab { transition: transform 0.2s ease; }
+        .mobile-fab:active { transform: scale(0.9); }
+        /* Mobile overlay menu */
+        .mobile-overlay { visibility: hidden; opacity: 0; transition: visibility 0.3s, opacity 0.3s ease; }
+        .mobile-overlay.open { visibility: visible; opacity: 1; }
+        .mobile-panel { transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-overlay.open .mobile-panel { transform: translateY(0); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .float-animation { animation: float 6s ease-in-out infinite; }
+    </style>
+    <link rel="stylesheet" href="assets/bee.css">
+</head>
+<body class="bg-honey text-slate-900 bg-grain">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT39Z35D"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <!-- ========== DESKTOP NAVIGATION ========== -->
+    <nav id="main-nav" class="bg-honey sticky top-0 left-0 right-0 z-[100] px-8 shadow-md border-b border-slate-100 hidden md:block">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="py-4 group">
+                <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-10 h-10 transition-transform group-hover:scale-110">
+            </a>
+            <div class="flex items-center gap-0">
+                <a href="index.html" class="nav-link text-slate-400 text-sm font-medium px-5 py-4 border-b-[3px] border-transparent hover:text-slate-700 hover:border-slate-200 transition-all">Home</a>
+                <a href="about.html" class="nav-link active text-slate-900 text-sm font-semibold px-5 py-4 border-b-[3px] border-amber-500">About Us</a>
+                <a href="party-favors.html" class="nav-link text-slate-400 text-sm font-medium px-5 py-4 border-b-[3px] border-transparent hover:text-slate-700 hover:border-slate-200 transition-all">Party Favors</a>
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="text-slate-300 px-4 py-4 hover:text-amber-500 transition">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+            </div>
+            <a href="party-favors.html" class="bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-5 py-2 rounded-full transition-all shadow-md active:scale-95">Order Favors</a>
+        </div>
+    </nav>
+
+    <!-- ========== MOBILE FLOATING HAMBURGER ========== -->
+    <button id="hamburger-btn" class="hamburger mobile-fab fixed top-4 right-4 z-[110] md:hidden w-12 h-12 bg-slate-900/85 backdrop-blur-md rounded-full shadow-2xl border border-white/10 flex flex-col items-center justify-center gap-1.5" onclick="toggleMenu()">
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-white rounded-full"></span>
+    </button>
+
+    <!-- ========== MOBILE MENU OVERLAY ========== -->
+    <div id="mobile-menu" class="mobile-overlay fixed inset-0 z-[105] md:hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"></div>
+        <div class="mobile-panel relative bg-slate-900 pt-6 pb-8 px-6 shadow-2xl">
+            <div class="flex items-center gap-2.5 mb-8">
+                <img src="assets/logo.png" alt="Bogabee Apiaries" class="w-8 h-8">
+            </div>
+            <div class="space-y-1">
+                <a href="index.html" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Home</a>
+                <a href="about.html" class="block text-white text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">About Us</a>
+                <a href="party-favors.html" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Party Favors</a>
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="block text-slate-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition">Instagram</a>
+            </div>
+            <div class="mt-6">
+                <a href="party-favors.html" class="block bg-amber-500 hover:bg-amber-600 text-white text-center font-bold py-3.5 rounded-full transition-all shadow-lg">Order Party Favors</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== HERO ========== -->
+    <header class="relative h-[350px] md:h-[550px] flex items-center justify-center overflow-hidden bg-slate-900">
+        <div class="absolute inset-0">
+            <img src="assets/sunflower.jpg" class="w-full h-full object-cover opacity-40" alt="Bogabee Honey">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/20 to-slate-900"></div>
+
+        <div class="relative z-10 text-center px-6 flex flex-col items-center pt-12">
+            <span class="text-amber-500 font-bold uppercase tracking-[0.3em] text-xs mb-4 block">Our Story</span>
+            <h1 class="fluid-2xl md:text-7xl text-white italic mb-4 leading-tight">About Bogabee.</h1>
+            <p class="fluid-sm md:text-xl text-slate-200 max-w-lg mx-auto font-light leading-relaxed opacity-90">
+                A small-batch apiary rooted in Manalapan Township, New Jersey.
+            </p>
+        </div>
+    </header>
+
+    <!-- ========== OUR STORY ========== -->
+    <section class="py-16 md:py-28 px-4 md:px-10 bg-white">
+        <div class="max-w-5xl mx-auto reveal">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+                <!-- Photo -->
+                <div class="relative">
+                    <div class="rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl">
+                        <img src="assets/danny.jpg" class="w-full aspect-[4/5] object-cover object-[20%_center]" alt="Bogabee Beekeeper">
+                    </div>
+                    <div class="absolute -bottom-4 -right-4 md:-bottom-6 md:-right-6 bg-amber-500 text-white rounded-2xl px-5 py-3 md:px-6 md:py-4 shadow-xl">
+                        <p class="font-serif italic text-lg md:text-xl">Est. 2022</p>
+                    </div>
+                </div>
+
+                <!-- Text -->
+                <div>
+                    <span class="text-amber-600 font-bold uppercase tracking-[0.25em] text-xs mb-3 block">The Beginning</span>
+                    <h2 class="text-3xl md:text-5xl italic mb-6 leading-tight">It Started With a Single Hive.</h2>
+                    <div class="space-y-4 text-slate-600 leading-relaxed">
+                        <p>
+                            What began as a backyard fascination with honeybees quickly turned into a passion. Bogabee Apiaries was born from a deep respect for these incredible pollinators and the desire to share the purest honey possible with our community.
+                        </p>
+                        <p>
+                            Based in Manalapan Township, NJ, we manage our hives with care and intention. Every jar of Bogabee honey is raw, unfiltered, and completely natural — the way honey was meant to be enjoyed.
+                        </p>
+                        <p>
+                            We believe in keeping things small, keeping things local, and keeping things honest. No additives, no shortcuts, no compromise.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== VALUES ========== -->
+    <section class="py-16 md:py-28 px-4 md:px-10 bg-honey">
+        <div class="max-w-5xl mx-auto reveal">
+            <div class="text-center mb-12 md:mb-20">
+                <span class="text-amber-600 font-bold uppercase tracking-[0.25em] text-xs">What We Stand For</span>
+                <h2 class="fluid-2xl md:text-6xl text-slate-900 mt-3 italic">Our Values.</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+                <!-- Value 1 -->
+                <div class="bg-white rounded-[2rem] p-8 md:p-10 text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3 uppercase tracking-wider text-sm">100% Raw & Pure</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Never heated, never filtered, never blended. Our honey goes straight from the hive to the jar, preserving all the natural enzymes, pollen, and flavor.
+                    </p>
+                </div>
+
+                <!-- Value 2 -->
+                <div class="bg-white rounded-[2rem] p-8 md:p-10 text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3 uppercase tracking-wider text-sm">Locally Rooted</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Our bees forage on New Jersey wildflowers, giving each harvest a unique, seasonal character. Every jar is a taste of the Garden State.
+                    </p>
+                </div>
+
+                <!-- Value 3 -->
+                <div class="bg-white rounded-[2rem] p-8 md:p-10 text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3 uppercase tracking-wider text-sm">Made With Heart</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Every jar is hand-poured, every label placed with care. This isn't a factory operation — it's a labor of love from our family to yours.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== THE BEES ========== -->
+    <section class="py-16 md:py-28 px-4 md:px-10 bg-white">
+        <div class="max-w-5xl mx-auto reveal">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+                <!-- Text (left on desktop) -->
+                <div class="order-2 md:order-1">
+                    <span class="text-amber-600 font-bold uppercase tracking-[0.25em] text-xs mb-3 block">The Apiary</span>
+                    <h2 class="text-3xl md:text-5xl italic mb-6 leading-tight">Happy Bees, Better Honey.</h2>
+                    <div class="space-y-4 text-slate-600 leading-relaxed">
+                        <p>
+                            We practice sustainable beekeeping that puts the health of our colonies first. Our bees are never treated with harsh chemicals, and we always leave them enough honey to thrive through the winter.
+                        </p>
+                        <p>
+                            The result? Honey that's not only delicious but produced ethically. When you buy from Bogabee, you're supporting bees, supporting local agriculture, and supporting a small family business.
+                        </p>
+                    </div>
+
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <span class="bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full">Chemical-Free</span>
+                        <span class="bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full">Sustainable</span>
+                        <span class="bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full">Small-Batch</span>
+                    </div>
+                </div>
+
+                <!-- Photos (right on desktop) -->
+                <div class="order-1 md:order-2 grid grid-cols-2 gap-3 md:gap-4">
+                    <div class="rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-xl mt-8">
+                        <img src="assets/hello_honey_bee.jpg" class="w-full aspect-[3/4] object-cover" alt="Honey Bee Close-up">
+                    </div>
+                    <div class="rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-xl">
+                        <img src="assets/honey_overflow.jpg" class="w-full aspect-[3/4] object-cover" alt="Raw Honey">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA BANNER ========== -->
+    <section class="py-16 md:py-24 px-4 md:px-10 bg-slate-900 text-center reveal">
+        <div class="max-w-3xl mx-auto">
+            <span class="text-amber-500 font-bold uppercase tracking-[0.25em] text-xs mb-4 block">From Our Hives to Your Table</span>
+            <h2 class="text-3xl md:text-5xl text-white italic mb-6 leading-tight">Ready to Try the Gold Standard?</h2>
+            <p class="text-slate-300 text-sm md:text-base max-w-md mx-auto mb-8 font-light leading-relaxed">
+                Whether you're stocking your pantry or sweetening your next event, we've got you covered.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="index.html#order" class="group bg-white text-slate-900 px-8 py-3.5 md:px-10 md:py-4 rounded-full font-bold text-sm md:text-base inline-flex items-center justify-center gap-2 hover:bg-amber-400 hover:text-white transition-all shadow-xl">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    DM to Order
+                </a>
+                <a href="party-favors.html" class="group bg-amber-500 text-white px-8 py-3.5 md:px-10 md:py-4 rounded-full font-bold text-sm md:text-base inline-flex items-center justify-center gap-2 hover:bg-amber-600 transition-all shadow-xl">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                    Order Party Favors
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-slate-900 text-white py-20 px-6 border-t border-white/5">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 mb-12">
+                <div class="text-center md:text-left">
+                    <a href="index.html" class="inline-block transition transform hover:scale-110">
+                        <img src="assets/logo.png" alt="Bogabee Apiaries Logo" class="w-20 mx-auto md:mx-0 mb-4 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition duration-500">
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed">Small-batch, raw, unfiltered honey from Manalapan Township, New Jersey.</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Explore</h4>
+                    <div class="flex flex-col gap-2">
+                        <a href="index.html" class="text-slate-300 hover:text-amber-400 transition text-sm">Home</a>
+                        <a href="about.html" class="text-slate-300 hover:text-amber-400 transition text-sm">About Us</a>
+                        <a href="party-favors.html" class="text-slate-300 hover:text-amber-400 transition text-sm">Party Favors</a>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Connect</h4>
+                    <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" class="inline-flex items-center gap-2 text-slate-300 hover:text-amber-400 transition group text-sm">
+                        <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        @bogabee_apiaries
+                    </a>
+                    <p class="text-slate-500 text-sm mt-3">Manalapan Township, NJ</p>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/5 text-center">
+                <p class="text-slate-500 text-sm">&copy; 2025 Bogabee Apiaries. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile floating hamburger menu
+        function toggleMenu() {
+            document.getElementById('hamburger-btn').classList.toggle('active');
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('hamburger-btn').classList.remove('active');
+                document.getElementById('mobile-menu').classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+    <script src="assets/bee.js"></script>
+</body>
+</html>

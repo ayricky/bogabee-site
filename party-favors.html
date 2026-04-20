@@ -157,7 +157,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </section>
 
         <div class="max-w-3xl mx-auto w-full px-4 -mt-10 pb-20 relative z-10">
-            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div id="order-wizard" class="bg-white rounded-3xl shadow-2xl overflow-hidden">
 
                 <!-- Progress Bar -->
                 <div class="px-6 md:px-12 pt-6 md:pt-8 pb-4">
@@ -802,40 +802,45 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 return;
             }
 
-            // Collect all form data
+            // Collect all form data dynamically
+            // 1. Grab every named input/select/textarea in the wizard
+            const orderData = {};
+            document.querySelectorAll('#order-wizard [name]').forEach(el => {
+                const name = el.name;
+                if (name === '_honey') { orderData._honey = el.value; return; }
+                if (el.type === 'radio') {
+                    if (el.checked) orderData[name] = el.value;
+                    return;
+                }
+                if (el.type === 'checkbox') {
+                    if (el.checked) {
+                        // Collect checked add-ons as a comma-separated list
+                        const label = addonInfo[name]?.name || name;
+                        orderData.addons = orderData.addons ? orderData.addons + ', ' + label : label;
+                    }
+                    return;
+                }
+                if (el.type === 'file') return; // skip file inputs
+                if (el.value) orderData[name] = el.value.trim();
+            });
+
+            // 2. Add computed / display values
             const product = document.querySelector('[name="product"]:checked');
             const qty = parseInt(document.getElementById('qty').value) || 0;
             const assembly = document.querySelector('[name="assembly"]:checked');
-            const addons = [];
-            document.querySelectorAll('[name^="addon_"]:checked').forEach(cb => {
-                addons.push(addonInfo[cb.name]?.name || cb.name);
-            });
+            if (product) orderData.product_display = productNames[product.value] || product.value;
+            orderData.lid_color = selectedColorName || 'Not selected';
 
-            const perJar = product ? basePrices[product.value] + addons.reduce((sum, name) => {
+            const addonTotal = (orderData.addons || '').split(', ').filter(Boolean).reduce((sum, name) => {
                 const info = Object.values(addonInfo).find(a => a.name === name);
                 return sum + (info ? info.price : 0);
-            }, 0) - (assembly?.value === 'diy' ? 1 : 0) : 0;
+            }, 0);
+            const perJar = product ? basePrices[product.value] + addonTotal - (assembly?.value === 'diy' ? 1 : 0) : 0;
+            orderData.price_per_jar = perJar.toFixed(2);
+            orderData.estimated_total = (perJar * qty).toFixed(2);
 
-            const orderData = {
-                product: product ? productNames[product.value] : '',
-                product_size: product ? product.value : '',
-                quantity: qty,
-                assembly: assembly ? assembly.value : 'assembled',
-                addons: addons.join(', '),
-                lid_color: selectedColorName || 'Not selected',
-                lid_hex: document.getElementById('selected-color')?.value || '',
-                custom_label_text: document.querySelector('[name="label_text"]')?.value || '',
-                event_type: document.getElementById('event-type')?.value || '',
-                event_date: document.getElementById('event-date')?.value || '',
-                notes: document.querySelector('[name="notes"]')?.value || '',
-                name: document.getElementById('field-name')?.value?.trim() || '',
-                email: document.getElementById('field-email')?.value?.trim() || '',
-                phone: document.querySelector('[name="phone"]')?.value?.trim() || '',
-                price_per_jar: perJar.toFixed(2),
-                estimated_total: (perJar * qty).toFixed(2),
-                _honey: document.querySelector('[name="_honey"]')?.value || '',
-                turnstileToken: turnstileToken
-            };
+            // 3. Attach Turnstile token
+            orderData.turnstileToken = turnstileToken;
 
             // Disable submit button and show loading state
             const btn = document.getElementById('submit-btn');

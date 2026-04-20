@@ -103,9 +103,12 @@ export async function onRequestPost({ request, env }) {
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });
   } catch (error) {
-    console.error("Order submission error:", error);
+    console.error("Order submission error:", error.message, error.stack);
     return new Response(
-      JSON.stringify({ error: "Something went wrong. Please try again or DM us on Instagram." }),
+      JSON.stringify({
+        error: "Something went wrong. Please try again or DM us on Instagram.",
+        debug: error.message
+      }),
       { status: 500, headers }
     );
   }

@@ -497,8 +497,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <p id="error-name" class="error-msg">Please enter your name</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Phone</label>
-                                <input type="tel" name="phone" placeholder="(555) 123-4567" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition">
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Phone <span class="text-amber-500">*</span></label>
+                                <input type="tel" name="phone" id="field-phone" placeholder="(555) 123-4567" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" oninput="clearError('field-phone','error-phone')">
+                                <p id="error-phone" class="error-msg">Please enter a valid phone number</p>
                             </div>
                         </div>
                         <div>
@@ -638,8 +639,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (step === 4) {
                 const name = document.getElementById('field-name');
                 const email = document.getElementById('field-email');
+                const phone = document.getElementById('field-phone');
                 if (!name.value.trim()) { showError('field-name', 'error-name'); valid = false; }
                 if (!email.value.trim() || !email.value.includes('@')) { showError('field-email', 'error-email'); valid = false; }
+                const phoneDigits = phone.value.replace(/\D/g, '');
+                if (!phoneDigits || phoneDigits.length < 10) { showError('field-phone', 'error-phone'); valid = false; }
             }
             return valid;
         }

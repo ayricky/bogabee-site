@@ -42,7 +42,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // ── 2. Server-side validation ───────────────────────────────
-    const required = ["product", "quantity", "name", "email", "event_type", "event_date"];
+    const required = ["product", "quantity", "name", "email", "phone", "event_type", "event_date"];
     const missing = required.filter((f) => !data[f]);
     if (missing.length) {
       return new Response(
@@ -81,26 +81,31 @@ export async function onRequestPost({ request, env }) {
     orderData.submittedAt = new Date().toISOString();
     orderData.ip = request.headers.get("CF-Connecting-IP");
 
-    // Google Apps Script processes doPost() on the initial request,
-    // then 302-redirects to deliver the response. Let fetch follow
-    // the redirect normally (POST→GET is fine here since doPost already ran).
+    // Google Apps Script: POST runs doPost(), then returns a 302 redirect
+    // to a response URL. We catch the redirect manually, then GET the
+    // response URL to retrieve the result (avoids 401 auth issues).
     const scriptRes = await fetch(env.GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData),
-      redirect: "follow",
+      redirect: "manual",
     });
 
-    const scriptText = await scriptRes.text();
-    let scriptResult;
-    try {
-      scriptResult = JSON.parse(scriptText);
-      if (scriptResult.error) throw new Error(scriptResult.error);
-    } catch (parseErr) {
-      // Google sometimes returns HTML after redirect — that's OK if doPost ran
-      if (!scriptRes.ok && scriptRes.status !== 200) {
-        throw new Error("Google Apps Script returned status " + scriptRes.status);
+    // Follow the redirect with GET to get the response
+    if ([301, 302, 303, 307].includes(scriptRes.status)) {
+      const redirectUrl = scriptRes.headers.get("Location");
+      if (redirectUrl) {
+        const resultRes = await fetch(redirectUrl, { redirect: "follow" });
+        const resultText = await resultRes.text();
+        try {
+          const result = JSON.parse(resultText);
+          if (result.error) throw new Error(result.error);
+        } catch {
+          // HTML response is fine — doPost already ran successfully
+        }
       }
+    } else if (!scriptRes.ok) {
+      throw new Error("Google Apps Script returned status " + scriptRes.status);
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });

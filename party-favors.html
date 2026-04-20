@@ -12,6 +12,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Party Favors Order | Bogabee Apiaries</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -90,6 +91,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .nav-link { position: relative; }
         .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background-color: #f59e0b; transition: width 0.3s ease; }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        /* Validation error states */
+        .field-error { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important; }
+        .error-msg { color: #ef4444; font-size: 0.75rem; margin-top: 0.375rem; display: none; }
+        .error-msg.show { display: block; animation: fadeIn 0.3s ease; }
     </style>
 </head>
 <body class="bg-honey text-slate-900 bg-grain min-h-screen flex flex-col">
@@ -156,23 +162,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- Progress Bar -->
                 <div class="px-6 md:px-12 pt-6 md:pt-8 pb-4">
                     <div class="flex items-center justify-between max-w-xs md:max-w-sm mx-auto">
-                        <div class="flex flex-col items-center gap-1.5">
-                            <div id="dot-1" class="progress-dot current w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold">1</div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(1)">
+                            <div id="dot-1" class="progress-dot current w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">1</div>
                             <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Favor</span>
                         </div>
                         <div id="line-1" class="progress-line flex-1 h-0.5 bg-slate-200 mx-1 transition-all duration-300 -mt-4"></div>
-                        <div class="flex flex-col items-center gap-1.5">
-                            <div id="dot-2" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold">2</div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(2)">
+                            <div id="dot-2" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">2</div>
                             <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Extras</span>
                         </div>
                         <div id="line-2" class="progress-line flex-1 h-0.5 bg-slate-200 mx-1 transition-all duration-300 -mt-4"></div>
-                        <div class="flex flex-col items-center gap-1.5">
-                            <div id="dot-3" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold">3</div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(3)">
+                            <div id="dot-3" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">3</div>
                             <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Event</span>
                         </div>
                         <div id="line-3" class="progress-line flex-1 h-0.5 bg-slate-200 mx-1 transition-all duration-300 -mt-4"></div>
-                        <div class="flex flex-col items-center gap-1.5">
-                            <div id="dot-4" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold">4</div>
+                        <div class="flex flex-col items-center gap-1.5 cursor-pointer" onclick="goToStep(4)">
+                            <div id="dot-4" class="progress-dot w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center text-white text-[10px] md:text-xs font-bold hover:scale-110 transition-transform">4</div>
                             <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-400">Review</span>
                         </div>
                     </div>
@@ -250,8 +256,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <p class="text-center text-slate-400 text-xs mt-2">Minimum 10 jars</p>
                     </div>
 
+                    <p id="error-product" class="error-msg text-center">Please select a jar size</p>
+
                     <div class="mt-6 flex justify-end">
-                        <button type="button" onclick="goToStep(2)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">
+                        <button type="button" onclick="nextStep(2)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">
                             Next: Customize &rarr;
                         </button>
                     </div>
@@ -372,7 +380,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <div>
                                     <p class="text-amber-800 text-sm font-medium">Approval Required</p>
-                                    <p class="text-amber-700 text-xs mt-1">All custom labels must be approved before printing. We'll send a proof within 48 hours for your review.</p>
+                                    <p class="text-amber-700 text-xs mt-1">All custom labels must be approved before printing.</p>
                                 </div>
                             </div>
                         </div>
@@ -381,19 +389,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <!-- Assembly -->
                     <h3 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Assembly</h3>
                     <div class="grid grid-cols-2 gap-3">
+                        <label class="assembly-card selected border-2 border-slate-200 rounded-2xl p-4 md:p-6 cursor-pointer block text-center">
+                            <input type="radio" name="assembly" value="assembled" class="sr-only" checked onchange="selectAssembly(this)">
+                            <div class="w-12 h-12 bg-amber-50 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-xl">🎁</span></div>
+                            <p class="font-bold text-xs md:text-sm uppercase tracking-wider">Assembled</p>
+                            <p class="text-slate-400 text-[10px] md:text-xs mt-1 mb-2 leading-tight">We build every favor for you</p>
+                            <span class="inline-block bg-amber-100 text-amber-700 text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-full">Recommended</span>
+                        </label>
                         <label class="assembly-card border-2 border-slate-200 rounded-2xl p-4 md:p-6 cursor-pointer block text-center">
                             <input type="radio" name="assembly" value="diy" class="sr-only" onchange="selectAssembly(this)">
                             <div class="w-12 h-12 bg-emerald-50 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-xl">📦</span></div>
                             <p class="font-bold text-xs md:text-sm uppercase tracking-wider">DIY Kit</p>
                             <p class="text-slate-400 text-[10px] md:text-xs mt-1 mb-2 leading-tight">Supplies sent, you assemble</p>
                             <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-full">Save $1/jar</span>
-                        </label>
-                        <label class="assembly-card border-2 border-slate-200 rounded-2xl p-4 md:p-6 cursor-pointer block text-center">
-                            <input type="radio" name="assembly" value="assembled" class="sr-only" onchange="selectAssembly(this)">
-                            <div class="w-12 h-12 bg-amber-50 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-xl">🎁</span></div>
-                            <p class="font-bold text-xs md:text-sm uppercase tracking-wider">Assembled</p>
-                            <p class="text-slate-400 text-[10px] md:text-xs mt-1 mb-2 leading-tight">We build every favor for you</p>
-                            <span class="inline-block bg-amber-100 text-amber-700 text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-full">+$1/jar</span>
                         </label>
                     </div>
 
@@ -412,14 +420,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Event Type</label>
-                                <select name="event_type" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition bg-white">
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Event Type <span class="text-amber-500">*</span></label>
+                                <select name="event_type" id="event-type" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition bg-white" onchange="clearError('event-type','error-event-type')">
                                     <option value="">Select...</option><option>Wedding</option><option>Baby Shower</option><option>Bridal Shower</option><option>Birthday Party</option><option>Corporate Event</option><option>Holiday Party</option><option>Other</option>
                                 </select>
+                                <p id="error-event-type" class="error-msg">Please select an event type</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Event Date</label>
-                                <input type="date" name="event_date" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition">
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Event Date <span class="text-amber-500">*</span></label>
+                                <input type="date" name="event_date" id="event-date" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" onchange="clearError('event-date','error-event-date')">
+                                <p id="error-event-date" class="error-msg">Please select an event date</p>
                             </div>
                         </div>
 
@@ -471,7 +481,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                     <div class="mt-6 flex justify-between">
                         <button type="button" onclick="goToStep(2)" class="text-slate-400 hover:text-slate-600 font-medium transition text-sm">&larr; Back</button>
-                        <button type="button" onclick="goToStep(4)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">Next: Review &rarr;</button>
+                        <button type="button" onclick="nextStep(4)" class="bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold hover:bg-amber-600 transition-all shadow-lg text-sm md:text-base active:scale-[0.97]">Next: Review &rarr;</button>
                     </div>
                 </div>
 
@@ -483,16 +493,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <p class="text-slate-400 text-sm mb-6">Your info + order review</p>
                     <div class="space-y-5 mb-8">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Full Name</label><input type="text" name="name" placeholder="Your name" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition"></div>
-                            <div><label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Phone</label><input type="tel" name="phone" placeholder="(555) 123-4567" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition"></div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Full Name <span class="text-amber-500">*</span></label>
+                                <input type="text" name="name" id="field-name" placeholder="Your name" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" oninput="clearError('field-name','error-name')">
+                                <p id="error-name" class="error-msg">Please enter your name</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Phone</label>
+                                <input type="tel" name="phone" placeholder="(555) 123-4567" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition">
+                            </div>
                         </div>
-                        <div><label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Email</label><input type="email" name="email" placeholder="you@email.com" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition"></div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Email <span class="text-amber-500">*</span></label>
+                            <input type="email" name="email" id="field-email" placeholder="you@email.com" class="w-full border-2 border-slate-200 rounded-xl px-4 py-3.5 text-sm transition" oninput="clearError('field-email','error-email')">
+                            <p id="error-email" class="error-msg">Please enter a valid email</p>
+                        </div>
                     </div>
 
                     <!-- Order Summary -->
                     <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-6">
                         <h3 class="font-bold uppercase tracking-widest text-xs text-amber-700 mb-3">Order Summary</h3>
                         <div id="wizard-summary" class="text-slate-600 text-sm space-y-1.5"></div>
+                        <div id="diy-savings" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3 mt-3">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-emerald-700 text-sm font-medium">You're saving <span id="savings-amount" class="font-bold">$0</span> with DIY assembly!</span>
+                            </div>
+                        </div>
                         <div class="border-t border-amber-200 mt-3 pt-3">
                             <div class="flex justify-between items-center text-sm mb-1">
                                 <span class="text-slate-500">Per jar</span>
@@ -505,9 +532,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     </div>
 
+                    <!-- Honeypot (hidden from humans, bots fill it) -->
+                    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+                    <!-- Cloudflare Turnstile widget -->
+                    <div class="flex justify-center mt-4">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAC_3cAC07qgfyRrM" data-theme="light" data-size="compact"></div>
+                    </div>
+
+                    <!-- Submit error message -->
+                    <div id="submit-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 mt-3 text-center">
+                        <p class="text-red-600 text-sm" id="submit-error-msg">Something went wrong. Please try again.</p>
+                    </div>
+
                     <div class="mt-6 flex justify-between items-center">
                         <button type="button" onclick="goToStep(3)" class="text-slate-400 hover:text-slate-600 font-medium transition text-sm">&larr; Back</button>
-                        <button type="submit" onclick="submitOrder(event)" class="bg-slate-900 text-white px-10 py-4 rounded-full font-bold text-base md:text-lg hover:bg-amber-600 transition-all shadow-xl active:scale-[0.97]">Submit Request</button>
+                        <button type="submit" id="submit-btn" onclick="submitOrder(event)" class="bg-slate-900 text-white px-10 py-4 rounded-full font-bold text-base md:text-lg hover:bg-amber-600 transition-all shadow-xl active:scale-[0.97]">Submit Request</button>
                     </div>
                     <p class="text-center text-slate-400 text-xs mt-5">No payment required — we'll send a quote within 24 hours.</p>
                 </div>
@@ -535,7 +575,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script>
         let currentStep = 1;
         const totalSteps = 4;
-        const basePrices = { mini: 3, small: 5, classic: 8 };
+        // Base prices INCLUDE assembly ($1 baked in)
+        const basePrices = { mini: 4, small: 6, classic: 9 };
+        const displayPrices = { mini: 3, small: 5, classic: 8 }; // What user sees on cards (jar only)
         const productNames = { mini: 'Mini Jar (2oz)', small: 'Small Jar (4oz)', classic: 'Classic Jar (8oz)' };
         const addonInfo = {
             addon_dipper: { name: 'Honey Dipper', price: 1.50 },
@@ -563,9 +605,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Validation helpers
+        function showError(fieldId, errorId) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            if (field) field.classList.add('field-error');
+            if (error) error.classList.add('show');
+        }
+        function clearError(fieldId, errorId) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            if (field) field.classList.remove('field-error');
+            if (error) error.classList.remove('show');
+        }
+
+        function validateStep(step) {
+            let valid = true;
+            if (step === 1 || (step > 1 && !document.querySelector('[name="product"]:checked'))) {
+                // Validate product selection
+                const product = document.querySelector('[name="product"]:checked');
+                if (!product) {
+                    document.getElementById('error-product')?.classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-product')?.classList.remove('show');
+                }
+            }
+            if (step === 3) {
+                const eventType = document.getElementById('event-type');
+                const eventDate = document.getElementById('event-date');
+                if (!eventType.value) { showError('event-type', 'error-event-type'); valid = false; }
+                if (!eventDate.value) { showError('event-date', 'error-event-date'); valid = false; }
+            }
+            if (step === 4) {
+                const name = document.getElementById('field-name');
+                const email = document.getElementById('field-email');
+                if (!name.value.trim()) { showError('field-name', 'error-name'); valid = false; }
+                if (!email.value.trim() || !email.value.includes('@')) { showError('field-email', 'error-email'); valid = false; }
+            }
+            return valid;
+        }
+
+        function nextStep(target) {
+            if (validateStep(currentStep)) {
+                goToStep(target);
+            }
+        }
+
         function selectProduct(radio) {
             document.querySelectorAll('.product-option').forEach(c => c.classList.remove('selected'));
             radio.closest('.product-option').classList.add('selected');
+            document.getElementById('error-product')?.classList.remove('show');
         }
 
         function changeQty(delta) {
@@ -642,7 +732,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const logoFile = document.getElementById('logo-file-input')?.files[0];
             const s = document.getElementById('wizard-summary');
 
+            // Base price includes assembly
             let perJar = product ? basePrices[product.value] : 0;
+            let diySavings = 0;
             let html = '';
 
             if (product) html += `<div class="flex justify-between"><span>Product</span><span class="font-medium text-slate-900">${productNames[product.value]}</span></div>`;
@@ -658,11 +750,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             if (assembly) {
                 if (assembly.value === 'diy') {
-                    perJar -= 1;
-                    html += `<div class="flex justify-between"><span>Assembly</span><span class="font-medium text-emerald-600">DIY (-$1.00)</span></div>`;
+                    perJar -= 1; // Remove the baked-in assembly cost
+                    diySavings = qty * 1;
+                    html += `<div class="flex justify-between"><span>Assembly</span><span class="font-medium text-emerald-600">DIY Kit (save $${qty})</span></div>`;
                 } else {
-                    perJar += 1;
-                    html += `<div class="flex justify-between"><span>Assembly</span><span class="font-medium text-slate-900">Assembled (+$1.00)</span></div>`;
+                    html += `<div class="flex justify-between"><span>Assembly</span><span class="font-medium text-slate-900">Assembled (included)</span></div>`;
                 }
             }
 
@@ -685,28 +777,114 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             s.innerHTML = html;
             document.getElementById('wizard-perjar').textContent = `$${perJar.toFixed(2)}`;
             document.getElementById('wizard-total').textContent = `~$${(perJar * qty).toFixed(0)}`;
+
+            // Show/hide DIY savings callout
+            const savingsEl = document.getElementById('diy-savings');
+            if (diySavings > 0) {
+                document.getElementById('savings-amount').textContent = `$${diySavings}`;
+                savingsEl.classList.remove('hidden');
+            } else {
+                savingsEl.classList.add('hidden');
+            }
         }
 
-        function submitOrder(e) {
+        async function submitOrder(e) {
             e.preventDefault();
-            const name = document.querySelector('[name="name"]').value.trim();
-            const email = document.querySelector('[name="email"]').value.trim();
+            // Validate all steps
+            if (!document.querySelector('[name="product"]:checked')) { goToStep(1); document.getElementById('error-product')?.classList.add('show'); return; }
+            if (!validateStep(3)) { goToStep(3); return; }
+            if (!validateStep(4)) { return; }
+
+            // Get Turnstile token
+            const turnstileToken = typeof turnstile !== 'undefined' ? turnstile.getResponse() : '';
+            if (!turnstileToken) {
+                showSubmitError('Please complete the security check above.');
+                return;
+            }
+
+            // Collect all form data
             const product = document.querySelector('[name="product"]:checked');
+            const qty = parseInt(document.getElementById('qty').value) || 0;
+            const assembly = document.querySelector('[name="assembly"]:checked');
+            const addons = [];
+            document.querySelectorAll('[name^="addon_"]:checked').forEach(cb => {
+                addons.push(addonInfo[cb.name]?.name || cb.name);
+            });
 
-            if (!product) { alert('Please select a jar size in Step 1.'); goToStep(1); return; }
-            if (!name || !email) { alert('Please fill in your name and email.'); return; }
+            const perJar = product ? basePrices[product.value] + addons.reduce((sum, name) => {
+                const info = Object.values(addonInfo).find(a => a.name === name);
+                return sum + (info ? info.price : 0);
+            }, 0) - (assembly?.value === 'diy' ? 1 : 0) : 0;
 
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            document.getElementById('step-success').classList.add('active');
+            const orderData = {
+                product: product ? productNames[product.value] : '',
+                product_size: product ? product.value : '',
+                quantity: qty,
+                assembly: assembly ? assembly.value : 'assembled',
+                addons: addons.join(', '),
+                lid_color: selectedColorName || 'Not selected',
+                lid_hex: document.getElementById('selected-color')?.value || '',
+                custom_label_text: document.querySelector('[name="label_text"]')?.value || '',
+                event_type: document.getElementById('event-type')?.value || '',
+                event_date: document.getElementById('event-date')?.value || '',
+                notes: document.querySelector('[name="notes"]')?.value || '',
+                name: document.getElementById('field-name')?.value?.trim() || '',
+                email: document.getElementById('field-email')?.value?.trim() || '',
+                phone: document.querySelector('[name="phone"]')?.value?.trim() || '',
+                price_per_jar: perJar.toFixed(2),
+                estimated_total: (perJar * qty).toFixed(2),
+                _honey: document.querySelector('[name="_honey"]')?.value || '',
+                turnstileToken: turnstileToken
+            };
 
-            for (let i = 1; i <= totalSteps; i++) {
-                document.getElementById(`dot-${i}`).classList.add('completed');
-                document.getElementById(`dot-${i}`).classList.remove('current');
+            // Disable submit button and show loading state
+            const btn = document.getElementById('submit-btn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+            hideSubmitError();
+
+            try {
+                const res = await fetch('/api/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const result = await res.json();
+
+                if (!res.ok || result.error) {
+                    throw new Error(result.error || 'Something went wrong');
+                }
+
+                // Success — show success screen
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                document.getElementById('step-success').classList.add('active');
+                for (let i = 1; i <= totalSteps; i++) {
+                    document.getElementById(`dot-${i}`).classList.add('completed');
+                    document.getElementById(`dot-${i}`).classList.remove('current');
+                }
+                for (let i = 1; i < totalSteps; i++) {
+                    document.getElementById(`line-${i}`).classList.add('completed');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) {
+                showSubmitError(err.message || 'Something went wrong. Please try again or DM us on Instagram.');
+                btn.disabled = false;
+                btn.textContent = originalText;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                // Reset Turnstile so user can retry
+                if (typeof turnstile !== 'undefined') turnstile.reset();
             }
-            for (let i = 1; i < totalSteps; i++) {
-                document.getElementById(`line-${i}`).classList.add('completed');
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showSubmitError(msg) {
+            const el = document.getElementById('submit-error');
+            document.getElementById('submit-error-msg').textContent = msg;
+            el.classList.remove('hidden');
+        }
+        function hideSubmitError() {
+            document.getElementById('submit-error').classList.add('hidden');
         }
 
         // Mobile hamburger menu

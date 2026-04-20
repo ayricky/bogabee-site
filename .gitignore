@@ -1,0 +1,10 @@
+# Google Apps Script (contains Sheet ID and config — deploy separately)
+google-apps-script.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/

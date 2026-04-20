@@ -171,4 +171,4 @@ The file `functions/api/order.js` automatically deploys as a serverless function
 
 - Website: [bogabeeapiaries.com](https://bogabeeapiaries.com)
 - Instagram: [@bogabee_apiaries](https://www.instagram.com/bogabee_apiaries/)
-- Google Apps Script (order handler): [Open in editor](https://script.google.com/macros/s/AKfycbykFQA_RDX7TibVlOkZuA2l7l1VgtO04NICAu3aO5FMUZ-nr8tafhe8CA32_N9tUO2L/exec) — must be logged into the bogabeeapiaries@gmail.com Google account to edit
+- Google Apps Script (order handler): [Open in editor](https://script.google.com/macros/s/AKfycbzyJ-CdpA4tw2w4DQF_ZfaFSFAxgBShajcnNK_IXKfnpGcsEv-U7AxN6HenAxsm9R-F/exec) — must be logged into the bogabeeapiaries@gmail.com Google account to edit

@@ -6,11 +6,12 @@ Cloudflare Pages.
 - `/` — existing public website.
 - `/event/?event=Your%20Event` — guest check-in; add `&kiosk=1` for a shared tablet.
 - `/event-qr/` — printable QR sign and SVG download.
-- `/internal/` — event directory, HubSpot check-in totals, and Google Analytics reports.
+- `/internal/` — event directory, HubSpot check-in totals, Cloudflare traffic, and Google Analytics reports.
 
 The HubSpot form and contact property are created and API-tested. The internal
-page is ready to preview; production Access login and Google Analytics access
-still need configuration. These additions have not been deployed to the public site.
+page is ready to preview; production Access login, a dedicated Cloudflare
+analytics token, and Google Analytics access still need configuration. These
+additions have not been deployed to the public site.
 
 ## Development
 

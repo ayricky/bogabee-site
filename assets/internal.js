@@ -88,16 +88,45 @@
     if (traffic.state !== 'ready') return;
     for (const row of traffic.daily) { const tr = document.createElement('tr'); for (const value of [dateLabel(row.day), number.format(row.count)]) { const cell = document.createElement('td'); cell.textContent = value; tr.append(cell); } $('daily-table').append(tr); }
     if (!traffic.pageviews) return;
+    drawChart(container, traffic.daily, 'page views');
+  }
+  function drawChart(container, daily, metric) {
     const ns = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', '0 0 600 190'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Daily page views. Exact totals are in the table below.');
-    const maximum = Math.max(...traffic.daily.map(row => row.count), 1); const width = 600 / traffic.daily.length;
-    traffic.daily.forEach((row, index) => { const bar = document.createElementNS(ns, 'rect'); const height = row.count / maximum * 160; bar.setAttribute('x', String(index * width + 1)); bar.setAttribute('y', String(165 - height)); bar.setAttribute('width', String(Math.max(1, width - 3))); bar.setAttribute('height', String(height)); bar.setAttribute('rx', '2'); const title = document.createElementNS(ns, 'title'); title.textContent = `${dateLabel(row.day)}: ${row.count} page views`; bar.append(title); svg.append(bar); });
-    for (const [day, x, anchor] of [[traffic.daily[0].day, 0, 'start'], [traffic.daily.at(-1).day, 600, 'end']]) { const label = document.createElementNS(ns, 'text'); label.setAttribute('x', x); label.setAttribute('y', '188'); label.setAttribute('text-anchor', anchor); label.textContent = dateLabel(day); svg.append(label); }
+    const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', '0 0 600 190'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', `Daily ${metric}. Exact totals are in the table below.`);
+    const maximum = Math.max(...daily.map(row => row.count), 1); const width = 600 / daily.length;
+    daily.forEach((row, index) => { const bar = document.createElementNS(ns, 'rect'); const height = row.count / maximum * 160; bar.setAttribute('x', String(index * width + 1)); bar.setAttribute('y', String(165 - height)); bar.setAttribute('width', String(Math.max(1, width - 3))); bar.setAttribute('height', String(height)); bar.setAttribute('rx', '2'); const title = document.createElementNS(ns, 'title'); title.textContent = `${dateLabel(row.day)}: ${row.count} ${metric}`; bar.append(title); svg.append(bar); });
+    for (const [day, x, anchor] of [[daily[0].day, 0, 'start'], [daily.at(-1).day, 600, 'end']]) { const label = document.createElementNS(ns, 'text'); label.setAttribute('x', x); label.setAttribute('y', '188'); label.setAttribute('text-anchor', anchor); label.textContent = dateLabel(day); svg.append(label); }
     container.append(svg);
+  }
+  function renderCloudflare(report) {
+    const ready = report.state === 'ready';
+    const message = ready ? 'Daily totals in UTC for the entire Bogabee zone. Includes bots, assets, and proxied subdomains. Recent totals may still update.'
+      : report.state === 'limited' ? `This period exceeds Cloudflare's ${report.maxDays}-day history limit. Choose a shorter period.`
+      : report.state === 'unconfigured' ? 'Connect Cloudflare to see requests, bandwidth, and cache usage.'
+      : report.state === 'loading' ? 'Loading Cloudflare traffic...'
+      : 'Cloudflare traffic could not be loaded. Check the connection and try again.';
+    text('cloudflare-message', message); text('cloudflare-status', message);
+    text('cloudflare-chip', ready ? 'Connected' : report.state === 'unconfigured' ? 'Not connected' : report.state === 'limited' ? 'Period too long' : report.state === 'loading' ? 'Loading' : 'Unavailable');
+    $('cloudflare-metrics').hidden = !ready; $('cloudflare-chart').hidden = !ready; $('cloudflare-daily-details').hidden = !ready;
+    $('cloudflare-chart').replaceChildren(); $('cloudflare-daily-table').replaceChildren();
+    for (const id of ['cf-requests', 'cf-bytes', 'cf-cache']) text(id, '—');
+    if (!ready) return;
+    const unit = Math.min(4, Math.floor(Math.log10(Math.max(1, report.bytes)) / 3));
+    text('cf-requests', number.format(report.requests));
+    text('cf-bytes', `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(report.bytes / 1000 ** unit)} ${['B', 'KB', 'MB', 'GB', 'TB'][unit]}`);
+    text('cf-cache', report.cacheRate === null ? '—' : new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(report.cacheRate));
+    for (const row of report.daily) {
+      const tr = document.createElement('tr');
+      for (const value of [dateLabel(row.day), number.format(row.count)]) { const cell = document.createElement('td'); cell.textContent = value; tr.append(cell); }
+      $('cloudflare-daily-table').append(tr);
+    }
+    if (report.requests) drawChart($('cloudflare-chart'), report.daily, 'requests');
+    else text('cloudflare-chart', 'No requests in this period.');
   }
   function renderOverview(result) {
     overview = result;
     const { traffic, checkins, range } = result;
+    renderCloudflare(result.cloudflare);
     text('period-description', `${dateLabel(range.start)} – ${dateLabel(range.end)} · Check-ins: New York time${traffic.state === 'ready' ? ` · Traffic: ${traffic.timeZone}` : ''}`);
     text('identity', result.identity?.email || 'Private workspace');
     $('preview-banner').hidden = !result.preview;
@@ -120,6 +149,7 @@
   async function loadOverview() {
     const version = ++refreshVersion;
     overview = null;
+    renderCloudflare({ state: 'loading' });
     for (const id of ['pageviews', 'sessions', 'checkins']) text(id, '—');
     text('period-description', 'Loading the selected period...');
     text('activity-chart', 'Loading...'); $('daily-details').hidden = true; $('traffic-breakdown').hidden = true;
@@ -128,6 +158,7 @@
     catch (error) {
       if (version !== refreshVersion) return;
       text('access-message', error.message); $('access-message').hidden = false;
+      renderCloudflare({ state: 'unavailable' });
       text('period-description', 'This period could not be loaded.'); text('activity-chart', 'Activity is temporarily unavailable.');
       for (const id of ['pageviews-note', 'sessions-note', 'checkins-note']) text(id, 'Not available');
       text('traffic-message', 'Refresh the page or try another period.');

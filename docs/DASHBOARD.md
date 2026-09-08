@@ -2,7 +2,8 @@
 
 `/internal/` contains Overview, Events, and Connections. It reports website page
 views, sessions, popular pages, and traffic sources from the existing Google
-Analytics property. Recorded check-ins come from HubSpot form submission history.
+Analytics property. Cloudflare provides separate network request, bandwidth, and
+cache totals. Recorded check-ins come from HubSpot form submission history.
 The event directory lives in Cloudflare D1 and generates guest, tablet, and QR links.
 
 ## Current status
@@ -120,3 +121,41 @@ Access configuration.
 References: [GA Data API setup](https://developers.google.com/analytics/devguides/reporting/data/v1/quickstart),
 [Cloudflare Access JWT verification](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/),
 [HubSpot submission history](https://developers.hubspot.com/docs/api-reference/legacy/marketing/forms/v1/get-form-integrations-v1-submissions-forms-form_guid).
+
+## Cloudflare traffic
+
+The dashboard also reads Cloudflare's zone analytics independently of Google
+Analytics. `CF_ZONE_ID` identifies the Bogabee zone in `wrangler.jsonc`.
+Create a dedicated API token with **Zone / Analytics / Read**, restricted to
+`bogabeeapiaries.com`, and save it as the Pages **production** secret
+`CF_ANALYTICS_TOKEN`. Keep it out of preview environments and source control.
+
+The existing Wrangler OAuth session successfully verified the actual connector
+against Bogabee's live 7-, 30-, and 90-day history. It is a developer login, expires, and has
+broader permissions, so it is not copied into the deployed application. This
+session cannot create API tokens. The dedicated production token remains a
+setup requirement until added by the account owner.
+
+The report shows requests, response bandwidth, cache request percentage, and a
+daily request chart. These are zone-wide network totals, including bots, static
+assets, staff routes, and other proxied subdomains. They are not Google Analytics
+sessions or unique visitors. Unlike the GA report, the daily zone dataset cannot
+filter to specific paths or hostnames. Daily buckets use UTC on the same displayed
+calendar date range; check-ins use New York time and GA uses its property timezone.
+Recent totals can still change during processing.
+
+The connector queries the `httpRequests1dGroups` dataset and checks its advertised
+retention and query-duration limits before requesting data. Unsupported periods,
+permission errors, malformed responses, and GraphQL errors inside HTTP 200
+responses never become zero counts. A valid empty report is zero requests, with
+no cache percentage when there are no requests. No visitor IP addresses are
+queried or returned. The daily table provides the exact values behind the chart.
+
+This report uses the existing protected overview API. Cloudflare Access setup
+remains required for live private data, and the isolated tailnet preview remains
+credential-free. Tests cover scope, totals, cache percentage, unavailable and
+limited reports, and clearing stale charts when a session expires.
+
+References: [Zone analytics API mapping](https://developers.cloudflare.com/analytics/graphql-api/migration-guides/zone-analytics/),
+[dataset availability and limits](https://developers.cloudflare.com/analytics/graphql-api/features/discovery/settings/),
+[analytics token setup](https://developers.cloudflare.com/analytics/graphql-api/getting-started/authentication/api-token-auth/).

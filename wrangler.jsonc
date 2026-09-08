@@ -10,6 +10,7 @@
     "migrations_dir": "migrations"
   }],
   "vars": {
+    "CF_ZONE_ID": "d7406db4094bfa118d56848672dd556f",
     "DASHBOARD_EMAILS": "bogabeeapiaries@gmail.com,ayrsoftwaredev@gmail.com",
     "HUBSPOT_PORTAL_ID": "247317631",
     "HUBSPOT_EVENT_FORM_ID": "9e27e9ee-d86c-409e-bc6c-86bb17ef1a82",

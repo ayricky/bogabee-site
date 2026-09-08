@@ -21,7 +21,7 @@ const server = createServer(async (req, res) => {
       if (unauthorized) { res.writeHead(401, { 'content-type': 'application/json' }); res.end(JSON.stringify({ error: 'Sign in again.', code: 'unauthorized' })); return; }
       const range = rangeFor(Number(url.searchParams.get('days') || 30));
       const traffic = missingSources ? { state: 'unconfigured' } : { state: 'ready', pageviews: 12, sessions: 7, timeZone: 'America/New_York', limited: false, daily: Array.from({ length: range.days }, (_, index) => ({ day: shiftDay(range.start, index), count: index === range.days - 1 ? 12 : 0 })), sources: [{ label: 'Instagram', count: 7 }], pages: [{ label: '/', count: 12 }] };
-      res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ range, traffic, checkins: missingSources ? { state: 'unconfigured' } : { state: 'ready', total: 0, counts: {}, unassigned: 0 }, identity: { email: 'test@example.com' }, hubspotUrl: missingSources ? null : 'https://app.hubspot.com/contacts/123' })); return;
+      res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ range, traffic, checkins: missingSources ? { state: 'unconfigured' } : { state: 'ready', total: 0, counts: {}, unassigned: 0 }, cloudflare: missingSources ? { state: 'unconfigured' } : { state: 'ready', requests: 250, bytes: 1500000, cachedRequests: 50, cacheRate: .2, timeZone: 'UTC', daily: Array.from({ length: range.days }, (_, index) => ({ day: shiftDay(range.start, index), count: index === range.days - 1 ? 250 : 0 })) }, identity: { email: 'test@example.com' }, hubspotUrl: missingSources ? null : 'https://app.hubspot.com/contacts/123' })); return;
     }
     if (url.pathname === '/api/internal/events') {
       if (unauthorized) { res.writeHead(401, { 'content-type': 'application/json' }); res.end(JSON.stringify({ error: 'Sign in again.', code: 'unauthorized' })); return; }
@@ -45,6 +45,10 @@ try {
   await page.goto(`${origin}/internal/`);
   await page.waitForFunction(() => document.getElementById('pageviews').textContent === '12');
   assert.equal(await page.locator('#sessions').textContent(), '7');
+  assert.equal(await page.locator('#cf-requests').textContent(), '250');
+  assert.equal(await page.locator('#cf-bytes').textContent(), '1.5 MB');
+  assert.equal(await page.locator('#cf-cache').textContent(), '20%');
+  assert.equal(await page.locator('#cloudflare-chart rect').count(), 30);
   assert.equal(await page.locator('#activity-chart rect').count(), 30);
   await page.screenshot({ path: 'test-results/dashboard-fixture-desktop.png', fullPage: true });
   await page.getByRole('link', { name: 'Events', exact: true }).click();
@@ -65,6 +69,9 @@ try {
   assert.equal(await page.locator('#activity-chart').textContent(), 'Activity is temporarily unavailable.');
   assert.equal(await page.locator('#access-chip').textContent(), 'Sign-in needed');
   assert.equal(await page.locator('#metrics-chip').textContent(), 'Unknown');
+  assert.equal(await page.locator('#cloudflare-metrics').isVisible(), false);
+  assert.equal(await page.locator('#cloudflare-chart rect').count(), 0);
+  assert.equal(await page.locator('#cloudflare-chip').textContent(), 'Unavailable');
   unauthorized = false; await page.reload();
   await page.getByRole('link', { name: 'Events', exact: true }).click();
   await page.waitForFunction(() => !document.getElementById('event-fields').disabled);
@@ -77,6 +84,7 @@ try {
   await page.waitForFunction(() => document.getElementById('pageviews-note').textContent === 'Traffic not connected');
   assert.equal(await page.locator('#pageviews').textContent(), '—'); assert.equal(await page.locator('#checkins').textContent(), '—');
   await page.getByRole('link', { name: 'Connections', exact: true }).click(); assert.equal(await page.locator('#hubspot-link').isVisible(), false);
+  assert.equal(await page.locator('#cloudflare-chip').textContent(), 'Not connected');
   assert.deepEqual(errors, []);
   console.log('Dashboard browser checks passed: navigation, data states, chart, events, duplicate names, QR links, mobile sign-out, expired session.');
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); db.close(); }

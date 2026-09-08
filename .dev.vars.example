@@ -13,3 +13,7 @@ DASHBOARD_EMAILS=""
 GA_PROPERTY_ID=""
 # Single-line Google service-account JSON. Keep it out of source control.
 GA_SERVICE_ACCOUNT_JSON=""
+
+# Cloudflare zone traffic, using a dedicated Zone Analytics Read token.
+CF_ZONE_ID=""
+CF_ANALYTICS_TOKEN=""

@@ -1,0 +1,19 @@
+# Use only a Bogabee TEST account locally. Never copy production secrets here.
+HUBSPOT_TOKEN=""
+HUBSPOT_PORTAL_ID=""
+HUBSPOT_EVENT_FORM_ID=""
+EVENT_ALLOWED_ORIGIN="http://localhost:8766"
+
+# Private dashboard: production requires a Cloudflare Access application.
+ACCESS_TEAM_DOMAIN=""
+ACCESS_AUD=""
+DASHBOARD_EMAILS=""
+
+# Existing GA4 property (numeric ID, separate from its G- measurement tag).
+GA_PROPERTY_ID=""
+# Single-line Google service-account JSON. Keep it out of source control.
+GA_SERVICE_ACCOUNT_JSON=""
+
+# Cloudflare zone traffic, using a dedicated Zone Analytics Read token.
+CF_ZONE_ID=""
+CF_ANALYTICS_TOKEN=""

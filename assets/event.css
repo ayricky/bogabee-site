@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--honey); color: var(--ink); font-family: 'Inter', sans-serif; line-height: 1.5; }
 h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; line-height: 1.12; }
-h1 { font-size: clamp(3rem, 5vw, 4.7rem); margin: 12px 0 20px; }
+h1 { font-size: clamp(2.5rem, 4vw, 3.5rem); margin: 12px 0 20px; }
 h2 { font-size: clamp(2rem, 4vw, 3rem); margin: 12px 0 20px; overflow-wrap: anywhere; }
 h3 { font-size: 2.6rem; margin-bottom: 16px; }
 a { color: inherit; text-underline-offset: 4px; }
@@ -42,6 +42,7 @@ button:disabled { cursor: wait; opacity: .55; }
 .confirmation-mark { background: var(--honey); color: var(--amber); border-radius: 50%; width: 64px; height: 64px; display: grid; place-items: center; font-size: 2rem; }
 #next-guest { margin-top: 32px; }
 .qr-page { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+.qr-page > header h1 { font: 600 2rem/1.2 'Inter', sans-serif; }
 .qr-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; align-items: start; }
 .qr-controls button { margin: 12px 0; }
 .qr-poster { text-align: center; background: white; border: 1px solid var(--line); padding: 30px 22px; }

@@ -12,8 +12,9 @@
     const tab = ['overview', 'events', 'connections'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'overview';
     document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.id !== tab; });
     document.querySelectorAll('[data-tab]').forEach(link => { if (link.dataset.tab === tab) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); });
-    const headings = { overview: ['Your apiary, at a glance.', 'A place for your events and website activity.'], events: ['Bring people together.', 'Get each event ready, then keep track of the sign-ins.'], connections: ['Everything in its place.', 'See what is connected and what still needs attention.'] };
+    const headings = { overview: ['Overview', 'Event check-ins and website traffic.'], events: ['Events', 'Guest links, QR codes, and attendance.'], connections: ['Connections', 'Manage data sources and staff sign-in.'] };
     text('page-title', headings[tab][0]); text('page-description', headings[tab][1]);
+    $('create-event-shortcut').hidden = tab === 'events';
   }
   window.addEventListener('hashchange', navigate); navigate();
 
@@ -45,7 +46,7 @@
   function renderEvents() {
     const list = $('event-list'); list.replaceChildren();
     text('event-count', String(events.length));
-    if (!events.length) { const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = 'No events yet. Create your first event to get started.'; list.append(empty); }
+    if (!events.length) { const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = 'No events saved. Use the form to add one.'; list.append(empty); }
     for (const event of events) {
       const row = document.createElement('article'); row.className = 'event-row';
       const title = document.createElement('h3'); title.textContent = event.name;
@@ -60,8 +61,14 @@
     }
     const today = overview?.range.end || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
     const next = [...events].filter(event => event.startsOn >= today).sort((a, b) => a.startsOn.localeCompare(b.startsOn))[0];
-    text('next-name', next?.name || 'Your next event');
-    text('next-date', next ? dateLabel(next.startsOn) : 'Create an event to get its sign-in links ready.');
+    text('next-name', next?.name || 'No upcoming events');
+    text('next-date', next ? dateLabel(next.startsOn) : 'Add an event to prepare its sign-in page and QR code.');
+    $('next-calendar').hidden = !next;
+    if (next) {
+      const date = new Date(`${next.startsOn}T12:00:00Z`);
+      text('next-month', new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'America/New_York' }).format(date));
+      text('next-day', new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'America/New_York' }).format(date));
+    }
     $('next-links').replaceChildren(); if (next) $('next-links').append(links(next));
   }
   function ranking(id, rows, state) {
@@ -74,8 +81,10 @@
   }
   function chart(traffic) {
     const container = $('activity-chart'); container.replaceChildren(); $('daily-table').replaceChildren();
+    container.hidden = traffic.state !== 'ready';
+    $('traffic-breakdown').hidden = traffic.state !== 'ready';
     $('daily-details').hidden = traffic.state !== 'ready';
-    if (traffic.state !== 'ready' || !traffic.pageviews) { container.textContent = traffic.state === 'ready' ? 'Page views will appear here as people visit.' : 'Waiting for traffic collection'; }
+    if (traffic.state !== 'ready' || !traffic.pageviews) { container.textContent = traffic.state === 'ready' ? 'No page views in this period.' : traffic.state === 'unavailable' ? 'Traffic report unavailable. Try again later.' : 'Google Analytics is not connected.'; }
     if (traffic.state !== 'ready') return;
     for (const row of traffic.daily) { const tr = document.createElement('tr'); for (const value of [dateLabel(row.day), number.format(row.count)]) { const cell = document.createElement('td'); cell.textContent = value; tr.append(cell); } $('daily-table').append(tr); }
     if (!traffic.pageviews) return;
@@ -113,7 +122,7 @@
     overview = null;
     for (const id of ['pageviews', 'sessions', 'checkins']) text(id, '—');
     text('period-description', 'Loading the selected period...');
-    text('activity-chart', 'Loading...'); $('daily-details').hidden = true;
+    text('activity-chart', 'Loading...'); $('daily-details').hidden = true; $('traffic-breakdown').hidden = true;
     ranking('sources', [], 'loading'); ranking('pages', [], 'loading'); renderEvents();
     try { const result = await request(`/api/internal/overview?days=${$('period').value}`); if (version === refreshVersion) { $('access-message').hidden = true; renderOverview(result); } }
     catch (error) {
@@ -131,8 +140,9 @@
       const result = await request('/api/internal/events'); events = result.events;
       eventStorageReady = result.state === 'ready';
       $('event-fields').disabled = !eventStorageReady || accessExpired;
-      text('event-storage-note', result.state === 'ready' ? 'Each event gets reusable sign-in and QR links.' : 'Event storage is not available yet.'); renderEvents();
-    } catch (error) { text('event-storage-note', error.message); }
+      $('event-storage-note').hidden = result.state === 'ready';
+      text('event-storage-note', 'Event storage is not available yet.'); renderEvents();
+    } catch (error) { $('event-storage-note').hidden = false; text('event-storage-note', error.message); }
   }
   $('period').addEventListener('change', loadOverview);
   $('event-form').addEventListener('submit', async event => {

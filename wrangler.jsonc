@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bogabee-site",
+  "pages_build_output_dir": "dist",
+  "compatibility_date": "2026-09-07",
+  "d1_databases": [{
+    "binding": "BOGABEE_DB",
+    "database_name": "bogabee-dashboard",
+    "database_id": "e407d66c-52f3-428f-b8c4-9350ca940258",
+    "migrations_dir": "migrations"
+  }],
+  "vars": {
+    "DASHBOARD_EMAILS": "bogabeeapiaries@gmail.com,ayrsoftwaredev@gmail.com",
+    "HUBSPOT_PORTAL_ID": "247317631",
+    "HUBSPOT_EVENT_FORM_ID": "9e27e9ee-d86c-409e-bc6c-86bb17ef1a82",
+    "EVENT_ALLOWED_ORIGIN": "https://bogabeeapiaries.com"
+  },
+  "env": {
+    "preview": {
+      "vars": { "DASHBOARD_EMAILS": "" },
+      "d1_databases": []
+    }
+  }
+}

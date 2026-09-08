@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer">
+  <title>The hive | Bogabee Apiaries</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/internal.css"><script src="/assets/internal.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/internal/"><img src="/assets/logo.png" alt="Bogabee Apiaries" width="70" height="70"><span>The hive<small>Bogabee workspace</small></span></a>
+    <nav aria-label="Workspace"><a href="#overview" data-tab="overview" aria-current="page">Overview</a><a href="#events" data-tab="events">Events</a><a href="#connections" data-tab="connections">Connections</a></nav>
+    <div class="sidebar-footer"><a href="/" target="_blank" rel="noopener">Open website <span aria-hidden="true">↗</span></a><p id="identity">Private workspace</p><a href="/cdn-cgi/access/logout" id="logout" hidden>Sign out</a></div>
+  </aside>
+  <main>
+    <div id="preview-banner" class="banner" hidden>Preview workspace. Events saved here are for testing. Live accounts and traffic are not connected.</div>
+    <div id="access-message" class="banner" role="status" hidden></div>
+    <header class="page-header"><div><p class="eyebrow">Bogabee Apiaries</p><h1 id="page-title">Your apiary, at a glance.</h1><p id="page-description">A place for your events and website activity.</p></div><a class="button" href="#events">Create an event <span aria-hidden="true">+</span></a></header>
+    <section id="overview" class="tab-panel" aria-label="Overview">
+      <div class="section-heading"><h2>Website &amp; event activity</h2><label class="period-label" for="period">Period <select id="period"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></label></div>
+      <p id="period-description" class="muted small"></p>
+      <div class="metrics">
+        <article class="metric"><p>Page views</p><strong id="pageviews">—</strong><span id="pageviews-note">Waiting for connection</span></article>
+        <article class="metric"><p>Sessions</p><strong id="sessions">—</strong><span id="sessions-note">Waiting for Google Analytics</span></article>
+        <article class="metric"><p>Recorded check-ins</p><strong id="checkins">—</strong><span id="checkins-note">Waiting for HubSpot</span></article>
+      </div>
+      <div class="overview-grid">
+        <section class="panel chart-panel"><div class="section-heading"><h2>Website activity</h2><span class="chip">Page views</span></div><p id="traffic-message" class="muted">Connect traffic collection to see how the site is being used.</p><div id="activity-chart" class="chart"></div><details id="daily-details" hidden><summary>View daily totals</summary><div class="table-scroll"><table><thead><tr><th scope="col">Date</th><th scope="col">Page views</th></tr></thead><tbody id="daily-table"></tbody></table></div></details></section>
+        <section class="panel next-event"><p class="eyebrow">Coming up</p><h2 id="next-name">Your next event</h2><p id="next-date" class="muted">Create an event to get its sign-in links ready.</p><div id="next-links" class="event-actions"></div><a class="text-link" href="#events">Manage events →</a></section>
+      </div>
+      <div class="two-columns"><section class="panel"><h2>Where people come from</h2><p class="muted small">Sessions by source, including direct visits.</p><ul id="sources" class="rankings"><li class="empty">No traffic data connected yet.</li></ul></section><section class="panel"><h2>Pages people open</h2><p class="muted small">Public pages only. Your workspace is excluded.</p><ul id="pages" class="rankings"><li class="empty">No traffic data connected yet.</li></ul></section></div>
+    </section>
+    <section id="events" class="tab-panel" aria-label="Events" hidden>
+      <div class="events-layout"><section class="panel"><h2>Get the next event ready.</h2><p class="muted">Create a sign-in page, then print a QR code for your table.</p><form id="event-form"><fieldset id="event-fields" disabled><label for="event-name">Name for the sign-in page</label><input id="event-name" name="name" required maxlength="120" placeholder="Fall market · September 19"><p class="help">Use a different name for each event. Include the date for recurring markets.</p><label for="event-date">Event date</label><input id="event-date" name="startsOn" type="date" required><p id="event-error" class="form-error" role="alert" hidden></p><button class="button" type="submit" id="save-event">Create event</button></fieldset></form><p id="event-storage-note" class="muted small">Event storage is not connected yet.</p></section><section class="panel"><div class="section-heading"><h2>Your events</h2><span id="event-count" class="chip">—</span></div><p class="muted small" id="event-counts-note">Check-ins use the period selected in Overview.</p><div id="event-list" class="event-list"><p class="empty">Your events will appear here.</p></div></section></div>
+    </section>
+    <section id="connections" class="tab-panel" aria-label="Connections" hidden>
+      <div class="connection-list">
+        <article class="panel connection"><div><h2>HubSpot</h2><p>Guest details and event form submissions.</p><p id="hubspot-status" class="muted">Not connected yet.</p></div><a id="hubspot-link" class="button secondary" hidden target="_blank" rel="noopener">Open HubSpot ↗</a></article>
+        <article class="panel connection"><div><h2>Google Analytics</h2><p>Page views, sessions, sources, and popular pages.</p><p id="metrics-status" class="muted">Access to the existing Analytics property is needed.</p></div><span id="metrics-chip" class="chip">Not connected</span></article>
+        <article class="panel connection"><div><h2>Workspace access</h2><p>Only invited email addresses can open live dashboard data.</p><p id="access-status" class="muted">Private access needs to be connected before launch.</p></div><span id="access-chip" class="chip">Setup needed</span></article>
+        <article class="panel connection"><div><h2>Earlier website traffic</h2><p>A Google Analytics tag is already installed on the website.</p><p class="muted">Once the existing property is connected, its available history can appear here. Google Analytics may take time to process recent visits.</p></div></article>
+      </div>
+    </section>
+    <footer class="workspace-footer">Bogabee Apiaries <span>Manalapan Township, New Jersey</span></footer>
+  </main>
+</body>
+</html>

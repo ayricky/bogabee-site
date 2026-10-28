@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal | Bogabee Apiaries</title>
+    <meta name="description" content="Notes from the Bogabee Apiaries hives in Manalapan Township, NJ.">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Journal | Bogabee Apiaries">
+    <meta property="og:description" content="Notes from the Bogabee Apiaries hives in Manalapan Township, NJ.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="../cart.css">
+    <link rel="stylesheet" href="../content.css">
+    <style>
+        .draft-bar { position: sticky; top: 76px; z-index: 20; padding: 10px 16px; background: var(--gold); color: var(--brown); text-align: center; font-weight: 500; font-size: 15px; }
+        .post { padding: clamp(128px, 14vw, 170px) 0 clamp(64px, 9vw, 100px); }
+        .post-head { width: min(820px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+        .post-head time { font: 500 12px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--amber-text); }
+        .post-head h1 { font-size: clamp(42px, 6vw, 80px); margin: 16px 0 0; }
+        .post-head .lede { margin: 18px 0 0; font-size: clamp(18px, 1.8vw, 21px); color: var(--muted); }
+        .post-hero { width: min(1080px, 100% - 2 * var(--gutter)); margin: clamp(32px, 5vw, 56px) auto 0; border-radius: var(--radius); overflow: hidden; box-shadow: 0 30px 60px -36px rgb(36 24 14 / .5); }
+        .post-hero img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+        .post-body { width: min(720px, 100% - 2 * var(--gutter)); margin: clamp(36px, 5vw, 64px) auto 0; }
+        .post-nav { width: min(820px, 100% - 2 * var(--gutter)); margin: clamp(56px, 8vw, 96px) auto 0; padding-top: 28px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .post-nav a { display: grid; gap: 6px; padding: 16px 18px; border-radius: 16px; background: var(--paper); box-shadow: 0 1px 0 var(--line); text-decoration: none; transition: translate .4s var(--ease); }
+        .post-nav a:hover { translate: 0 -2px; }
+        .post-nav small { font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--amber-text); }
+        .post-nav b { font: italic 400 22px/1.2 var(--display); }
+        .post-nav .next { text-align: right; grid-column: 2; }
+        .back { display: inline-block; margin-top: 28px; color: var(--amber-text); }
+        .missing { width: min(720px, 100% - 2 * var(--gutter)); margin-inline: auto; padding: clamp(140px, 16vw, 200px) 0 140px; }
+        .missing h1 { font-size: clamp(40px, 5vw, 64px); }
+        .missing p { color: var(--muted); font-size: 18px; }
+        @media (max-width: 560px) { .post-nav { grid-template-columns: 1fr; } .post-nav .next { grid-column: auto; } }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../refined/" aria-label="Bogabee Apiaries, home"><img src="../assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Site">
+                <a href="../apiary/">The Apiary</a>
+                <a href="../journal/" aria-current="page">Journal</a>
+                <a href="../refined/#order">Jars</a>
+                <button class="btn cart-btn" type="button" data-cart-open aria-label="Cart, 0 items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg>Cart<span class="cart-count" data-cart-count hidden>0</span></button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div id="post"></div>
+        <section data-signup="journal-post"></section>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap">
+            <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener"><img class="logo" src="../assets/img/logo-192.webp" width="104" height="104" alt="Bogabee Apiaries on Instagram"></a>
+            <h2 class="display">Support Local Bees.</h2>
+            <div class="row">
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".9" fill="currentColor" stroke="none"/></svg>@bogabee_apiaries</a>
+                <a href="../favors/">Party favors</a>
+                <a href="../porch/">Porch pickup</a>
+                <span>Manalapan Township, NJ</span>
+            </div>
+            <small>© 2023–<span data-year>2026</span> Bogabee Apiaries</small>
+        </div>
+    </footer>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="../cart.js"></script>
+    <script src="../content.js"></script>
+    <script src="../crm.js"></script>
+    <script src="../nav.js"></script>
+    <script>
+        (function () {
+            const B = window.Bogabee, { esc, date, postUrl, live, picture, upgrade, siteName } = B.content;
+            const meta = (sel, attr, value) => { const m = document.head.querySelector(sel); if (m) m.setAttribute(attr, value); };
+            function robots(noindex) {
+                let m = document.head.querySelector('meta[name="robots"]');
+                if (noindex && !m) { m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex'; document.head.appendChild(m); }
+                if (!noindex && m) m.remove();
+            }
+            const q = new URLSearchParams(location.search);
+            const slug = q.get('slug'), preview = q.get('preview') === '1';
+            const main = document.getElementById('post');
+            // Search engines skip private draft previews. Production sends these as headers too.
+            robots(preview);
+
+            function render() {
+                const p = slug && B.posts.get(slug);
+                if (!p || (p.status !== 'published' && !preview)) {
+                    document.title = 'Post not found | Bogabee Apiaries';
+                    robots(true);
+                    main.innerHTML = `<div class="missing">
+                        <span class="eyebrow">Journal</span>
+                        <h1 class="display">That post isn't here.</h1>
+                        <p>It may have been unpublished or renamed.</p>
+                        <a class="btn" href="./">See all posts</a>
+                    </div>`;
+                    return;
+                }
+                // Reached by an old address of a renamed post: show the current one.
+                if (p.slug !== slug) history.replaceState(null, '', postUrl(p, './') + (preview ? '&preview=1' : ''));
+                document.title = `${p.title || 'Untitled'} | Bogabee Apiaries`;
+                meta('meta[property="og:title"]', 'content', document.title);
+                if (p.excerpt) { meta('meta[name="description"]', 'content', p.excerpt); meta('meta[property="og:description"]', 'content', p.excerpt); }
+                if (p.cover && siteName(p.cover)) meta('meta[property="og:image"]', 'content', new URL(`../assets/img/${siteName(p.cover).replace(/\.jpg$/, '')}.webp`, location.href).pathname);
+                // Article details for search engines (production renders this on the server).
+                let ld = document.getElementById('ld');
+                if (!ld) { ld = document.createElement('script'); ld.type = 'application/ld+json'; ld.id = 'ld'; document.head.appendChild(ld); }
+                ld.textContent = JSON.stringify({
+                    '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title || 'Untitled',
+                    description: p.excerpt || undefined, datePublished: p.date ? new Date(p.date).toISOString() : undefined,
+                    dateModified: p.updated ? new Date(p.updated).toISOString() : undefined,
+                    image: p.cover ? B.image(p.cover) : undefined, author: { '@type': 'Organization', name: 'Bogabee Apiaries' },
+                    publisher: { '@type': 'Organization', name: 'Bogabee Apiaries' },
+                });
+                // Older and newer neighbours among published posts (newest first).
+                const list = B.posts.published(), i = list.findIndex(x => x.id === p.id);
+                const newer = i > 0 ? list[i - 1] : null, older = i >= 0 && i < list.length - 1 ? list[i + 1] : null;
+                main.innerHTML = `
+                    ${p.status !== 'published' ? '<div class="draft-bar" role="status">Draft preview, not published</div>' : ''}
+                    <article class="post">
+                        <header class="post-head">
+                            <time ${p.date ? `datetime="${new Date(p.date).toISOString().slice(0, 10)}"` : ''}>${date(p.date)}</time>
+                            <h1 class="display">${esc(p.title || 'Untitled')}</h1>
+                            ${p.excerpt ? `<p class="lede">${esc(p.excerpt)}</p>` : ''}
+                        </header>
+                        ${p.cover ? `<figure class="post-hero">${picture(p.cover, { sizes: '(max-width: 1120px) 100vw, 1080px', eager: true, alt: p.coverAlt || undefined })}</figure>` : ''}
+                        <div class="post-body prose">${B.render(p.body)}</div>
+                        <nav class="post-nav" aria-label="More posts">
+                            ${older ? `<a class="prev" href="${postUrl(older, './')}"><small>Older</small><b>${esc(older.title)}</b></a>` : ''}
+                            ${newer ? `<a class="next" href="${postUrl(newer, './')}"><small>Newer</small><b>${esc(newer.title)}</b></a>` : ''}
+                        </nav>
+                        <div class="post-head"><a class="back" href="./">All posts</a></div>
+                    </article>`;
+                // The cover already shows this photo; don't repeat it in the body.
+                const body = main.querySelector('.post-body');
+                if (p.cover) body.querySelectorAll('img').forEach(img => {
+                    if (siteName(img.getAttribute('src')) && siteName(img.getAttribute('src')) === siteName(p.cover)) (img.closest('figure') || img).remove();
+                });
+                upgrade(body);
+            }
+            live([B.KEYS.posts], render);
+        })();
+    </script>
+    <script src="../assets/bee2.js"></script>
+    <script>document.querySelectorAll('[data-year]').forEach(s => s.textContent = new Date().getFullYear());</script>
+</body>
+</html>

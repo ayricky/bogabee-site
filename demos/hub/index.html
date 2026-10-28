@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Orders | Bogabee Hub</title>
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="hub.css">
+    <style>
+        .table td small { display: block; color: var(--muted); font-size: 12px; }
+        .table tbody tr { cursor: pointer; }
+        .table tbody tr:hover { background: rgb(244 211 74 / 0.08); }
+        .hs-link { font-size: 12px; color: var(--muted); text-decoration: none; }
+        .hs-link:hover { text-decoration: underline; }
+        .hs-link.hs-synced::before { content: "✓ "; color: #3f7d2c; }
+        .hs-link.hs-failed { color: #7a2617; }
+        .code-cell { font-variant-numeric: tabular-nums; letter-spacing: 0.06em; white-space: nowrap; }
+        .code-cell.used { color: var(--muted); text-decoration: line-through; }
+        .act { min-height: 36px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--gold); color: var(--brown); font: 500 13px/1 var(--sans); cursor: pointer; white-space: nowrap; }
+        .act:hover { background: #f8dc63; }
+        .act.quiet { background: transparent; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); }
+        .row-actions { display: flex; gap: 6px; justify-content: end; }
+        @keyframes arrive { from { background: rgb(244 211 74 / 0.45); } }
+        tr.is-new td, li.is-new .ocard { animation: arrive 2.4s ease-out; }
+        .table { min-width: 860px; }
+        .table td:first-child { white-space: nowrap; }
+
+        /* Phones: one card per order instead of the wide table. */
+        .ocards { display: none; list-style: none; margin: 0; padding: 12px; gap: 10px; }
+        .ocard { display: grid; gap: 8px; padding: 14px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+        .ocard .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+        .ocard .top b { font-weight: 600; }
+        .ocard .top span { font-size: 13px; color: var(--muted); }
+        .ocard .who { font-weight: 500; overflow-wrap: anywhere; }
+        .ocard .meta { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+        .ocard .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .ocard .code-cell { font: italic 400 26px/1 var(--display); }
+        .ocard .btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+        .ocard .act { min-height: 44px; font-size: 14px; }
+        @media (max-width: 720px) {
+            .table-scroll { display: none; }
+            .ocards { display: grid; }
+        }
+
+        .cab-line { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+        .cab-line:last-child { border-bottom: 0; }
+        .cab-line img { width: 44px; height: 54px; object-fit: cover; border-radius: 8px; }
+        .cab-line b { display: block; font-weight: 500; }
+        .cab-line span { font-size: 13px; color: var(--muted); }
+        .opens { list-style: none; margin: 0; padding: 0; }
+        .opens li { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+        .opens li:last-child { border-bottom: 0; }
+        .opens span { color: var(--muted); white-space: nowrap; }
+        .side-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 20px; align-items: start; margin-top: 20px; }
+
+        /* Order detail drawer */
+        .drawer { margin: 0 0 0 auto; width: min(460px, 100%); height: 100svh; max-height: 100svh; border-radius: 0; }
+        .drawer form { min-height: 100%; align-content: start; }
+        .drawer .d-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+        .drawer .d-head small { display: block; margin-top: 4px; font: 400 14px/1.3 var(--sans); color: var(--muted); }
+        .drawer dl { margin: 0; display: grid; }
+        .drawer dl div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+        .drawer dt { color: var(--muted); }
+        .drawer dd { margin: 0; overflow-wrap: anywhere; }
+        .drawer dd a { color: var(--ink); }
+        .drawer .big-code { font: italic 400 34px/1 var(--display); letter-spacing: .04em; }
+        .drawer .warn { padding: 10px 12px; border-radius: 10px; background: #f7e1dc; color: #7a2617; font-size: 14px; }
+        .drawer .acts { justify-content: stretch; }
+        .drawer .acts .btn { flex: 1; justify-content: center; }
+        @media (max-width: 860px) { .drawer { margin: auto 0 0; width: 100%; height: auto; max-height: 90svh; border-radius: 20px 20px 0 0; } }
+    </style>
+</head>
+<body class="hub">
+    <aside class="hub-side" data-screen="orders"></aside>
+
+    <main class="hub-main">
+        <header class="hub-head">
+            <div><h1>Orders</h1></div>
+            <div class="hub-actions">
+                <a class="btn btn-quiet" href="../porch/" target="_blank" rel="noopener">Open the cabinet page</a>
+            </div>
+        </header>
+
+        <div class="stats" id="stats"></div>
+
+        <section class="panel" aria-labelledby="orders-title">
+            <div class="panel-head">
+                <h2 id="orders-title">Orders</h2>
+                <div class="chips" role="group" aria-label="Show">
+                    <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+                    <button class="chip" type="button" data-filter="open" aria-pressed="false">To do</button>
+                    <button class="chip" type="button" data-filter="porch" aria-pressed="false">Porch pickup</button>
+                    <button class="chip" type="button" data-filter="local" aria-pressed="false">Local delivery</button>
+                    <button class="chip" type="button" data-filter="ship" aria-pressed="false">Shipping</button>
+                </div>
+            </div>
+            <div class="table-scroll" tabindex="0" role="region" aria-label="Orders table">
+                <table class="table">
+                    <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Delivery</th><th class="num">Total</th><th>Status</th><th>Code</th><th><span class="sr-only">Actions</span></th></tr></thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+            <ul class="ocards" id="cards" aria-label="Orders"></ul>
+        </section>
+
+        <div class="side-panels">
+            <section class="panel" aria-labelledby="cab-title">
+                <div class="panel-head"><h2 id="cab-title">Porch cabinet</h2><span class="tag" id="cab-total"></span></div>
+                <div class="panel-body" id="cabinet"></div>
+            </section>
+            <section class="panel" aria-labelledby="opens-title">
+                <div class="panel-head"><h2 id="opens-title">Cabinet opens</h2></div>
+                <div class="panel-body"><ul class="opens" id="opens"></ul></div>
+            </section>
+        </div>
+    </main>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="seed.js"></script>
+    <script src="../crm.js"></script>
+    <script src="hub.js"></script>
+    <script>
+        (function () {
+            const B = Bogabee, S = B.shop, esc = Hub.esc;
+            const $ = id => document.getElementById(id);
+            const thumb = img => `../assets/img/${img.replace(/\.\w+$/, '')}-240.webp`;
+
+            let filter = 'all';
+            let known = new Set(B.orders.all().map(o => o.id));
+            let openId = null;
+
+            const deliveryTag = o => o.source === 'cabinet' ? 'Porch walk-up' : B.FULFILLMENT[o.fulfillment].label;
+            const ACTION = { porch: 'Mark picked up', local: 'Mark delivered', ship: 'Mark shipped' };
+            const DONE = { porch: 'Marked picked up', local: 'Marked delivered', ship: 'Marked shipped' };
+            const NEXT = { porch: 'picked-up', local: 'delivered', ship: 'shipped' };
+            // A porch code works for 24 hours from the chosen time. After that the customer needs a new one.
+            const expired = o => o.fulfillment === 'porch' && S.isOpen(o) && o.pickup && Date.now() > S.pickupWindow(o).to;
+            const statusText = o => expired(o) ? 'Code expired' : S.statusLabel(o);
+            const statusTag = o => `<span class="tag ${expired(o) ? 'red' : S.isOpen(o) ? 'gold' : 'green'}">${statusText(o)}</span>`;
+            const codeText = o => o.pickup ? `<span class="code-cell ${o.pickup.usedAt ? 'used' : ''}">${S.splitCode(o.pickup.code)}</span>` : '';
+            const addressText = a => a ? [a.street, [a.city, [a.state, a.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')].filter(Boolean).join(', ') : '';
+
+            function stats(all) {
+                const week = all.filter(o => o.createdAt > Date.now() - 7 * S.DAY);
+                const waiting = all.filter(o => o.fulfillment === 'porch' && S.isOpen(o));
+                const late = waiting.filter(expired);
+                // The next pickup is the earliest pickup time still ahead (or running now).
+                const next = waiting.filter(o => !expired(o)).sort((a, b) => S.pickupWindow(a).from - S.pickupWindow(b).from)[0];
+                const toSend = all.filter(o => o.fulfillment !== 'porch' && S.isOpen(o));
+                const left = B.PRODUCTS.reduce((n, p) => n + S.available(p.id), 0);
+                const nextText = next ? `Next: ${esc(next.customer.name)}, ${Hub.when(S.pickupWindow(next).from, { relative: false })}` : waiting.length ? '' : 'All picked up';
+                $('stats').innerHTML = [
+                    ['Sales this week', B.money(week.reduce((s, o) => s + o.total, 0)), `${week.length} order${week.length === 1 ? '' : 's'}`],
+                    ['Porch pickups waiting', waiting.length, [nextText, late.length ? `${late.length} with an expired code` : ''].filter(Boolean).join(' · ')],
+                    ['Deliveries and shipping', toSend.length, toSend.length ? toSend.map(o => o.id).join(', ') : 'Nothing waiting'],
+                    ['Jars left this harvest', left, `${S.cabinet.total()} of them in the cabinet`],
+                ].map(([label, value, small]) => `<div class="stat"><span>${label}</span><b>${value}</b><small>${small}</small></div>`).join('');
+            }
+
+            // Where this order stands in HubSpot, linking to the deals list.
+            const HS = { synced: 'In HubSpot', queued: 'HubSpot: queued', paused: 'HubSpot: paused', failed: 'HubSpot: failed' };
+            function hubspot(o) {
+                const st = B.crm.status('order:' + o.id);
+                if (!st) return '';
+                return `<a class="hs-link hs-${st.status}" href="${B.crm.link('deals')}" target="_blank" rel="noopener">${HS[st.status]}</a>`;
+            }
+            const actionBtn = (o, cls = '') => expired(o)
+                ? `<button class="act ${cls}" type="button" data-newcode="${o.id}">Send a new code</button>`
+                : S.isOpen(o) ? `<button class="act ${cls}" type="button" data-act="${o.id}">${ACTION[o.fulfillment]}</button>` : '';
+
+            function list(all) {
+                B.crm.reconcile();
+                const shown = all.filter(o => filter === 'all' || (filter === 'open' ? S.isOpen(o) : o.fulfillment === filter));
+                if (!shown.length) {
+                    $('rows').innerHTML = `<tr><td colspan="8" class="empty">No orders here.</td></tr>`;
+                    $('cards').innerHTML = `<li class="empty">No orders here.</li>`;
+                    return;
+                }
+                $('rows').innerHTML = shown.map(o => {
+                    const where = o.address ? `<small>${esc(o.address.city)}</small>` : o.pickup && S.isOpen(o) ? `<small>From ${Hub.when(S.pickupWindow(o).from, { relative: false })}</small>` : '';
+                    return `<tr class="${known.has(o.id) ? '' : 'is-new'}" data-open="${o.id}">
+                        <td><b>${o.id}</b><small>${Hub.when(o.createdAt)}</small></td>
+                        <td>${esc(o.customer.name)}${o.customer.email ? `<small>${esc(o.customer.email)}</small>` : ''}</td>
+                        <td>${S.itemsText(o)}</td>
+                        <td><span class="tag dim">${deliveryTag(o)}</span>${where}</td>
+                        <td class="num">${B.money(o.total)}</td>
+                        <td>${statusTag(o)}<small>${hubspot(o)}</small></td>
+                        <td>${codeText(o) || '<span style="color:var(--muted)">—</span>'}</td>
+                        <td><div class="row-actions">${actionBtn(o)}<button class="act quiet" type="button" data-open="${o.id}">Details<span class="sr-only"> for ${o.id}</span></button></div></td>
+                    </tr>`;
+                }).join('');
+                $('cards').innerHTML = shown.map(o => `
+                    <li class="${known.has(o.id) ? '' : 'is-new'}"><div class="ocard">
+                        <div class="top"><b>${o.id}</b><span>${Hub.when(o.createdAt)}</span></div>
+                        <div class="who">${esc(o.customer.name)}</div>
+                        <div class="meta">${S.itemsText(o)} · ${B.money(o.total)}</div>
+                        <div class="tags">${statusTag(o)}<span class="tag dim">${deliveryTag(o)}</span>${hubspot(o)}</div>
+                        ${o.pickup && S.isOpen(o) ? `<div>${codeText(o)}</div>` : o.address && S.isOpen(o) ? `<div class="meta">${esc(addressText(o.address))}</div>` : ''}
+                        <div class="btns">${actionBtn(o) || '<span></span>'}<button class="act quiet" type="button" data-open="${o.id}">Details<span class="sr-only"> for ${o.id}</span></button></div>
+                    </div></li>`).join('');
+                known = new Set(all.map(o => o.id));
+            }
+
+            function cabinet(all) {
+                const cab = S.cabinet.stock();
+                $('cab-total').textContent = `${S.cabinet.total()} jars`;
+                $('cabinet').innerHTML = B.PRODUCTS.map(p => {
+                    // Loose jars come out of the unsold harvest, so the cabinet can't hold more than is left.
+                    const max = S.available(p.id);
+                    const n = cab[p.id] || 0;
+                    return `<div class="cab-line">
+                        <img src="${thumb(p.img)}" alt="">
+                        <div><b>${p.name}</b><span>${p.size} · ${max} left in the harvest</span></div>
+                        <div class="stepper" role="group" aria-label="${p.name} in the cabinet">
+                            <button type="button" data-cab="${p.id}" data-step="-1" aria-label="One fewer ${p.name}" ${n ? '' : 'disabled'}>−</button>
+                            <output>${n}</output>
+                            <button type="button" data-cab="${p.id}" data-step="1" aria-label="One more ${p.name}" ${n >= max ? 'disabled' : ''}>+</button>
+                        </div>
+                    </div>`;
+                }).join('');
+                const opens = all.flatMap(o => (o.pickup ? o.pickup.opened : []).map(at => ({ at, o }))).sort((a, b) => b.at - a.at).slice(0, 6);
+                $('opens').innerHTML = opens.length
+                    ? opens.map(({ at, o }) => `<li><div><b style="font-weight:500">${o.id}</b> · ${esc(o.customer.name)}</div><span>${Hub.when(at)}</span></li>`).join('')
+                    : '<li class="empty" style="justify-content:center">No opens yet.</li>';
+            }
+
+            // ---------- Detail drawer ----------
+            function detail(id) {
+                const o = B.orders.get(id);
+                if (!o) return;
+                openId = id;
+                const w = o.pickup ? S.pickupWindow(o) : null;
+                const addr = addressText(o.address);
+                const phone = o.customer.phone ? `<a href="tel:${esc(o.customer.phone.replace(/[^\d+]/g, ''))}">${esc(o.customer.phone)}</a>` : '—';
+                const email = o.customer.email ? `<a href="mailto:${esc(o.customer.email)}">${esc(o.customer.email)}</a>` : '—';
+                const items = o.items.map(i => `${i.qty}× ${esc(B.product(i.id).name)} · ${B.money(i.price * i.qty)}`).join('<br>');
+                const d = Hub.dialog(`
+                    <div class="d-head"><h2>${o.id}<small>${Hub.when(o.createdAt)} · ${deliveryTag(o)}</small></h2>${statusTag(o)}</div>
+                    ${expired(o) ? `<p class="warn">This code expired ${Hub.when(w.to, { relative: false })}. Send a new one so ${esc(o.customer.name)} can open the cabinet.</p>` : ''}
+                    <dl>
+                        <div><dt>Customer</dt><dd>${esc(o.customer.name)}</dd></div>
+                        <div><dt>Phone</dt><dd>${phone}</dd></div>
+                        <div><dt>Email</dt><dd>${email}</dd></div>
+                        ${addr ? `<div><dt>Address</dt><dd>${esc(addr)}<br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" rel="noopener">Open in Maps</a></dd></div>` : ''}
+                        ${o.pickup ? `<div><dt>Cabinet code</dt><dd><span class="big-code">${S.splitCode(o.pickup.code)}</span>${o.pickup.usedAt ? `<br>Used ${Hub.when(o.pickup.usedAt, { relative: false })}` : ''}</dd></div>
+                            <div><dt>Pickup</dt><dd>${Hub.when(w.from, { relative: false })} to ${Hub.when(w.to, { relative: false })}</dd></div>` : ''}
+                        <div><dt>Items</dt><dd>${items}${o.fee ? `<br>${B.FULFILLMENT[o.fulfillment].label} · ${B.money(o.fee)}` : ''}</dd></div>
+                        <div><dt>Total</dt><dd><b>${B.money(o.total)}</b> · ${esc(o.method || 'Paid')}</dd></div>
+                        <div><dt>HubSpot</dt><dd>${hubspot(o) || '—'}</dd></div>
+                    </dl>
+                    <div class="acts">
+                        <button class="btn btn-quiet" value="no">Close</button>
+                        ${expired(o) ? `<button class="btn" value="newcode">Send a new code</button>` : S.isOpen(o) ? `<button class="btn" value="act">${ACTION[o.fulfillment]}</button>` : ''}
+                    </div>`, v => {
+                        openId = null;
+                        if (v === 'act') setStatus(id);
+                        if (v === 'newcode') newCode(id);
+                    }, 'drawer');
+                d.addEventListener('click', e => { if (e.target === d) d.close(); });
+                d.showModal();
+                d.querySelector('[value="no"]').focus();
+            }
+
+            // Status changes apply at once, with an Undo in the toast for a mis-tap.
+            function setStatus(id) {
+                const o = B.orders.get(id);
+                const before = { status: o.status, pickup: o.pickup };
+                if (o.fulfillment === 'porch') S.markPickedUp(o.id);
+                else B.orders.update(o.id, { status: NEXT[o.fulfillment] });
+                Hub.toast(`${o.id} · ${DONE[o.fulfillment]}`, { undo: () => { B.orders.update(id, before); Hub.toast(`${o.id} is open again`); } });
+            }
+            function newCode(id) {
+                const o = B.orders.get(id);
+                const code = String(Math.floor(100000 + Math.random() * 900000));
+                const now = new Date();
+                B.orders.update(id, { pickup: { ...o.pickup, code, day: Hub.isoDay(now), hour: now.getHours(), usedAt: null } });
+                Hub.toast(`New code ${S.splitCode(code)} sent to ${o.customer.name}`);
+            }
+
+            function render() {
+                const all = B.orders.all();
+                stats(all);
+                list(all);
+                cabinet(all);
+            }
+
+            document.querySelector('.chips').addEventListener('click', e => {
+                const chip = e.target.closest('[data-filter]');
+                if (!chip) return;
+                filter = chip.dataset.filter;
+                document.querySelectorAll('[data-filter]').forEach(c => c.setAttribute('aria-pressed', c === chip));
+                render();
+            });
+            document.querySelector('main').addEventListener('click', e => {
+                const act = e.target.closest('[data-act]');
+                if (act) { setStatus(act.dataset.act); return; }
+                const nc = e.target.closest('[data-newcode]');
+                if (nc) { newCode(nc.dataset.newcode); return; }
+                if (e.target.closest('a, .stepper, .chips')) return;
+                const open = e.target.closest('[data-open]');
+                if (open) detail(open.dataset.open);
+            });
+            $('cabinet').addEventListener('click', e => {
+                const b = e.target.closest('[data-cab]');
+                if (!b) return;
+                const id = b.dataset.cab, step = Number(b.dataset.step);
+                const n = (S.cabinet.stock()[id] || 0) + step;
+                if (n < 0 || n > S.available(id)) return;
+                S.cabinet.set(id, n);
+                const again = $('cabinet').querySelector(`[data-cab="${id}"][data-step="${step}"]`);
+                (again && !again.disabled ? again : $('cabinet').querySelector(`[data-cab="${id}"]:not(:disabled)`))?.focus();
+            });
+
+            window.addEventListener('bogabee:change', render);
+            render();
+            const start = new URLSearchParams(location.search).get('order');
+            if (start) detail(start);
+        })();
+    </script>
+</body>
+</html>

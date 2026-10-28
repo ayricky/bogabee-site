@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Journal | Bogabee Hub</title>
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="editor.css">
+    <style>
+        .j-layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 16px; align-items: start; }
+        .list { position: sticky; top: 24px; }
+        .list .panel-head { flex-wrap: wrap; }
+        .list h2:focus { outline: none; }
+        .search { padding: 12px 16px 4px; }
+        .search input { width: 100%; padding: 10px 12px; border: 0; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font: 400 14px/1 var(--sans); color: var(--ink); }
+        .search input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--honey); }
+        .posts { list-style: none; margin: 0; padding: 8px; display: grid; gap: 2px; max-height: calc(100svh - 260px); overflow-y: auto; }
+        .posts button {
+            display: grid;
+            grid-template-columns: 54px minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            padding: 8px;
+            border: 0;
+            border-radius: 12px;
+            background: none;
+            text-align: left;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+        }
+        .posts button:hover { background: rgb(244 211 74 / 0.12); }
+        .posts button[aria-current="true"] { background: rgb(244 211 74 / 0.28); }
+        .posts .pt { width: 54px; aspect-ratio: 1; border-radius: 10px; background: rgb(86 54 33 / 0.08) center / cover no-repeat; }
+        .posts b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .posts small { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
+        .posts small .tag { margin-right: 6px; }
+
+        .editor .panel-body { display: grid; gap: 18px; padding: 20px; }
+        .title-in { display: block; width: 100%; resize: none; overflow: hidden; padding: 4px 0; border: 0; border-bottom: 1px solid var(--line); background: none; font: italic 400 clamp(28px, 3vw, 40px)/1.15 var(--display); color: var(--ink); }
+        .title-in:focus { outline: none; border-color: var(--honey); }
+        .title-in::placeholder { color: rgb(111 98 83 / 0.6); }
+        .addr { display: flex; align-items: center; gap: 0; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+        .addr:focus-within { box-shadow: inset 0 0 0 2px var(--honey); }
+        .addr span { padding: 11px 0 11px 13px; font-size: 14px; color: var(--muted); white-space: nowrap; }
+        .addr input { flex: 1; min-width: 0; padding: 11px 13px 11px 0; border: 0; border-radius: 0; background: none; box-shadow: none; font: 400 14px/1.4 var(--sans); color: var(--ink); }
+        .addr input:focus { box-shadow: none; }
+        .addr input:focus { outline: none; }
+        .addr input[readonly] { color: var(--muted); }
+        .addr-btn { flex: none; margin: 4px; padding: 8px 12px; border: 0; border-radius: 8px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); font: 500 13px/1 var(--sans); color: var(--ink); cursor: pointer; }
+        .foot-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+        .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+        .savebar .btn { padding: 10px 16px; font-size: 14px; }
+        .savebar a.btn { text-decoration: none; }
+        .empty-editor { padding: 60px 20px; text-align: center; color: var(--muted); }
+        @media (max-width: 1080px) {
+            .j-layout { grid-template-columns: 1fr; }
+            .list { position: static; }
+            .posts { max-height: 320px; }
+        }
+        @media (max-width: 640px) { .two { grid-template-columns: 1fr; } .addr span { display: none; } .addr input { padding-left: 13px; } }
+    </style>
+</head>
+<body class="hub">
+    <aside class="hub-side" data-screen="journal"></aside>
+
+    <main class="hub-main">
+        <header class="hub-head">
+            <div><h1>Journal</h1></div>
+            <div class="hub-actions"><a class="btn btn-quiet" href="../journal/" target="_blank" rel="noopener">View the journal</a><button class="btn" type="button" id="new-post">New post</button></div>
+        </header>
+
+        <div class="j-layout">
+            <section class="panel list" aria-labelledby="list-title">
+                <div class="panel-head">
+                    <h2 id="list-title" tabindex="-1">Posts</h2>
+                    <div class="chips" role="group" aria-label="Show">
+                        <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+                        <button class="chip" type="button" data-filter="published" aria-pressed="false">Published</button>
+                        <button class="chip" type="button" data-filter="draft" aria-pressed="false">Drafts</button>
+                    </div>
+                </div>
+                <div class="search"><input type="search" id="search" placeholder="Find a post" aria-label="Find a post"></div>
+                <ul class="posts" id="posts"></ul>
+            </section>
+
+            <section class="panel editor" aria-label="Post editor">
+                <p class="empty-editor" id="empty-editor" hidden>Choose a post from the list, or start a new one.</p>
+                <div class="savebar" id="savebar">
+                    <span class="state" id="state" aria-live="polite"></span>
+                    <span class="tag gold" id="starter" hidden>Starter copy</span>
+                    <button class="btn btn-quiet" type="button" id="preview">Preview</button>
+                    <a class="btn btn-quiet" id="view" target="_blank" rel="noopener">View</a>
+                    <button class="btn btn-quiet" type="button" id="discard">Discard changes</button>
+                    <button class="btn btn-quiet" type="button" id="save-draft">Save draft</button>
+                    <button class="btn" type="button" id="publish">Publish</button>
+                </div>
+                <div class="panel-body" id="form">
+                    <textarea class="title-in" id="title" rows="1" placeholder="Post title" maxlength="140" aria-label="Title"></textarea>
+                    <div class="field">
+                        <label for="slug">Address</label>
+                        <div class="addr"><span>bogabeeapiaries.com/journal/</span><input id="slug" type="text" maxlength="60" autocomplete="off" spellcheck="false" aria-describedby="slug-note"><button type="button" class="addr-btn" id="slug-change" hidden>Change</button></div>
+                        <small id="slug-note"></small>
+                    </div>
+                    <div class="two">
+                        <div class="field"><span>Cover photo</span><div id="cover"></div></div>
+                        <label class="field"><span>Summary</span><textarea id="excerpt" maxlength="220" rows="3" placeholder="One or two sentences for the journal list."></textarea></label>
+                    </div>
+                    <label class="field"><span>Cover photo description (for screen readers, optional)</span><input type="text" id="cover-alt" maxlength="160" placeholder="What the photo shows"></label>
+                    <div class="field"><span id="body-label">Post</span><div id="body"></div></div>
+                    <div class="foot-acts"><button class="btn btn-quiet btn-small" type="button" id="unpublish">Unpublish</button><button class="btn btn-quiet btn-small" type="button" id="delete">Delete post</button></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="seed.js"></script>
+    <script src="../crm.js"></script>
+    <script src="hub.js"></script>
+    <script src="editor.js"></script>
+    <script>
+        const B = window.Bogabee, E = window.BogabeeEditor;
+        const $ = id => document.getElementById(id);
+        const fmt = ts => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: new Date(ts).getFullYear() === new Date().getFullYear() ? undefined : 'numeric' });
+        const blank = () => ({ id: null, title: '', slug: '', excerpt: '', cover: '', body: '', status: 'draft', date: null });
+        const FIELDS = ['title', 'slug', 'excerpt', 'cover', 'coverAlt', 'body'];
+        // The three posts written for the demo, until Danny edits them.
+        const starter = p => !!p && /^seed-/.test(p.id || '') && !p.updated;
+
+        // Edits to a live post wait here, out of the public journal, until Update publishes them.
+        // (Production keeps them as a pending revision row in D1.)
+        const revisions = {
+            all() { try { return JSON.parse(localStorage.getItem(Hub.REVISIONS)) || {}; } catch { return {}; } },
+            get(id) { return id ? revisions.all()[id] || null : null; },
+            set(id, r) { const all = revisions.all(); if (r) all[id] = r; else delete all[id]; localStorage.setItem(Hub.REVISIONS, JSON.stringify(all)); window.dispatchEvent(new CustomEvent('bogabee:change', { detail: { key: Hub.REVISIONS } })); },
+        };
+
+        let filter = 'all', query = '';
+        let draft = null;        // the post being edited, with unsaved changes (null: nothing open)
+        let saved = null;        // the stored post
+        let base = null;         // what "unsaved" is measured against: the stored post, or its pending revision
+        let slugTouched = false, slugUnlocked = false;
+
+        const cover = E.imageField($('cover'), { label: 'Photo', optional: true, context: 'for the cover', onChange: v => { draft.cover = v; changed(); } });
+        const body = E.create($('body'), { label: 'Post', placeholder: 'Write the post…', onChange: v => { draft.body = v; changed(); } });
+
+        const live = () => !!(saved && saved.status === 'published');
+        const isDirty = () => !!draft && FIELDS.some(k => (draft[k] || '') !== ((base || blank())[k] || ''));
+
+        function statusText() {
+            if (!saved || !saved.id) return 'New post, not saved';
+            const rev = revisions.get(saved.id);
+            if (live()) return rev ? `Published ${fmt(saved.date)} · changes saved as a draft` : `Published ${fmt(saved.date)}`;
+            return `Draft · saved ${Hub.when(saved.updated)}`;
+        }
+
+        function renderState() {
+            const none = !draft;
+            $('empty-editor').hidden = !none;
+            $('savebar').hidden = none;
+            $('form').hidden = none;
+            if (none) { phoneBar(false); return; }
+            const dirty = isDirty();
+            const rev = saved && saved.id && revisions.get(saved.id);
+            const st = $('state');
+            st.textContent = dirty ? 'Unsaved changes' : statusText();
+            st.className = 'state' + (dirty ? ' dirty' : live() && !rev ? '' : ' draft');
+            $('publish').textContent = live() ? 'Update' : 'Publish';
+            $('publish').disabled = live() && !dirty && !rev;
+            $('save-draft').textContent = live() ? 'Save changes as draft' : 'Save draft';
+            $('save-draft').disabled = !dirty && !!(saved && saved.id);
+            $('discard').hidden = !(live() && rev);
+            $('unpublish').hidden = !live();
+            $('view').hidden = !live();
+            if (live()) $('view').href = `../journal/post.html?slug=${encodeURIComponent(saved.slug)}`;
+            $('delete').hidden = !(saved && saved.id);
+            $('starter').hidden = !starter(saved);
+            phoneBar(dirty);
+            // A live post's address is locked: changing it is deliberate, and old links keep working.
+            const locked = live() && !slugUnlocked;
+            $('slug').readOnly = locked;
+            $('slug-change').hidden = !locked;
+            $('slug-note').textContent = live() && slugUnlocked ? 'Links to the old address will keep working.' : '';
+        }
+
+        const phoneBar = E.dirtyBar(['save-draft', 'publish']);
+        function changed() { renderState(); renderList(); }
+
+        function load(post) {
+            saved = post ? { ...post } : null;
+            const rev = post && post.status === 'published' ? revisions.get(post.id) : null;
+            base = post ? { ...post, ...(rev || {}) } : blank();
+            draft = { ...base };
+            slugTouched = !!(post && post.id);
+            slugUnlocked = false;
+            $('title').value = draft.title;
+            fitTitle();
+            $('slug').value = draft.slug;
+            $('excerpt').value = draft.excerpt || '';
+            $('cover-alt').value = draft.coverAlt || '';
+            cover.value = draft.cover;
+            body.value = draft.body;
+            renderState();
+            renderList();
+        }
+        function showEmpty() {
+            saved = null; draft = null; base = null;
+            renderState();
+            renderList();
+        }
+
+        function renderList() {
+            const all = B.posts.all();
+            const q = query.toLowerCase();
+            const shown = all.filter(p => (filter === 'all' || (filter === 'draft' ? p.status !== 'published' || revisions.get(p.id) : p.status === 'published'))
+                && (!q || (p.title + ' ' + (p.excerpt || '')).toLowerCase().includes(q)));
+            const current = saved && saved.id;
+            const rows = shown.map(p => {
+                const title = p.id === current && draft && draft.title ? draft.title : p.title || 'Untitled';
+                const pending = p.status === 'published' && revisions.get(p.id) ? ' · edits waiting' : '';
+                const sub = p.status === 'published' ? `<span class="tag green">Published</span>${fmt(p.date)}${pending}` : `<span class="tag dim">Draft</span>${fmt(p.updated || p.created || Date.now())}`;
+                const img = p.cover ? (B.PHOTOS.includes(p.cover) ? `../assets/img/${p.cover.replace(/\.\w+$/, '')}-240.webp` : B.image(p.cover)) : '';
+                return `<li><button type="button" data-id="${p.id}" aria-current="${p.id === current}">
+                    <span class="pt" style="${img ? `background-image:url('${E.esc(img)}')` : ''}"></span>
+                    <span><b>${E.esc(title)}</b><small>${sub}${starter(p) ? ' · <span class="tag gold">Starter copy</span>' : ''}</small></span></button></li>`;
+            });
+            if (draft && !draft.id && !saved) rows.unshift(`<li><button type="button" aria-current="true"><span class="pt"></span><span><b>${E.esc(draft.title || 'New post')}</b><small><span class="tag gold">Not saved</span></small></span></button></li>`);
+            $('posts').innerHTML = rows.join('') || '<li class="empty">No posts here yet.</li>';
+        }
+
+        async function leaveOk() {
+            if (!isDirty()) return true;
+            return Hub.confirm({ title: 'Discard your changes?', body: 'This post has edits that are not saved.', ok: 'Discard', danger: true });
+        }
+
+        function save(status, message) {
+            if (!draft.title.trim()) { Hub.toast('Add a title first.', { error: true }); $('title').focus(); return null; }
+            try {
+                const out = B.posts.save({ ...(saved || {}), ...draft, title: draft.title.trim(), status, slug: draft.slug || B.slugify(draft.title) });
+                if (out.id) revisions.set(out.id, null);
+                load(out);
+                Hub.toast(message);
+                return out;
+            } catch (e) {
+                if (E.isQuota(e)) Hub.toast('Not enough room to save in this demo. Use a smaller photo or one of the site photos.', { error: true });
+                else Hub.toast('Could not save: ' + e.message, { error: true });
+                return null;
+            }
+        }
+        // Edits to a published post saved for later: the live post doesn't change.
+        function saveRevision() {
+            if (!draft.title.trim()) { Hub.toast('Add a title first.', { error: true }); $('title').focus(); return; }
+            try {
+                const r = {}; FIELDS.forEach(k => { r[k] = draft[k] || ''; });
+                r.body = B.sanitize(r.body);
+                r.savedAt = Date.now();
+                revisions.set(saved.id, r);
+                base = { ...saved, ...r };
+                draft = { ...base };
+                renderState(); renderList();
+                Hub.toast('Changes saved as a draft. The live post is unchanged.');
+            } catch (e) { Hub.toast(E.isQuota(e) ? 'Not enough room to save in this demo.' : 'Could not save: ' + e.message, { error: true }); }
+        }
+
+        // Preview opens the public post page with the unsaved version handed to it. Nothing is saved.
+        function preview() {
+            if (!draft.title.trim()) { Hub.toast('Add a title first.', { error: true }); $('title').focus(); return; }
+            const slug = (saved && saved.slug) || draft.slug || B.slugify(draft.title);
+            const post = { ...(saved || {}), ...draft, id: (saved && saved.id) || 'preview', slug, status: live() ? 'published' : 'draft', body: B.sanitize(draft.body), date: (saved && saved.date) || Date.now(), updated: Date.now() };
+            const w = window.open(`../journal/post.html?slug=${encodeURIComponent(slug)}&preview=1`, '_blank');
+            if (!w) { Hub.toast('Allow pop-ups for this site to preview.', { error: true }); return; }
+            let tries = 0;
+            const t = setInterval(() => {
+                try {
+                    const WB = w.Bogabee;
+                    if (WB && WB.posts && w.document.readyState === 'complete') {
+                        const get = WB.posts.get;
+                        WB.posts.get = s => (s === slug ? post : get(s));
+                        w.dispatchEvent(new w.CustomEvent('bogabee:change', { detail: { key: WB.KEYS.posts } }));
+                        clearInterval(t);
+                    }
+                } catch (e) { clearInterval(t); }
+                if (++tries > 200) clearInterval(t);
+            }, 50);
+        }
+
+        // ---------- Wiring ----------
+        // The title wraps instead of scrolling sideways, but stays one paragraph.
+        const fitTitle = () => { const t = $('title'); t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; };
+        $('title').addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+        new ResizeObserver(fitTitle).observe($('title'));
+        $('title').addEventListener('input', () => {
+            $('title').value = $('title').value.replace(/\s*\n\s*/g, ' ');
+            fitTitle();
+            draft.title = $('title').value;
+            if (!slugTouched) { draft.slug = draft.title ? B.slugify(draft.title) : ''; $('slug').value = draft.slug; }
+            changed();
+        });
+        $('slug').addEventListener('input', () => { slugTouched = true; draft.slug = $('slug').value; changed(); });
+        $('slug').addEventListener('change', () => { draft.slug = $('slug').value ? B.slugify($('slug').value) : ''; $('slug').value = draft.slug; changed(); });
+        $('slug-change').addEventListener('click', async () => {
+            const ok = await Hub.confirm({ title: 'Change this post’s address?', body: 'Links to the old address, like ones shared on Instagram, will keep working and send readers to the new one.', ok: 'Change address' });
+            if (!ok) return;
+            slugUnlocked = true; slugTouched = true;
+            renderState();
+            $('slug').focus(); $('slug').select();
+        });
+        $('excerpt').addEventListener('input', () => { draft.excerpt = $('excerpt').value; changed(); });
+        $('cover-alt').addEventListener('input', () => { draft.coverAlt = $('cover-alt').value; changed(); });
+
+        $('save-draft').addEventListener('click', () => (live() ? saveRevision() : save('draft', 'Draft saved')));
+        $('publish').addEventListener('click', () => save('published', live() ? 'Post updated' : 'Post published'));
+        $('discard').addEventListener('click', async () => {
+            const ok = await Hub.confirm({ title: 'Discard the saved changes?', body: 'The post goes back to what is live now.', ok: 'Discard', danger: true });
+            if (!ok) return;
+            revisions.set(saved.id, null);
+            load(B.posts.byId(saved.id));
+            Hub.toast('Changes discarded');
+        });
+        $('unpublish').addEventListener('click', async () => {
+            const ok = await Hub.confirm({ title: 'Take this post off the journal?', body: 'It becomes a draft. Its address stops working until you publish it again.', ok: 'Unpublish', danger: true });
+            if (!ok) return;
+            const before = { ...saved };
+            if (save('draft', '')) Hub.toast('Post unpublished', { undo: () => { B.posts.save({ ...before, status: 'published' }); load(B.posts.byId(before.id)); } });
+        });
+        $('preview').addEventListener('click', preview);
+        $('delete').addEventListener('click', async () => {
+            if (!saved || !saved.id) return;
+            const ok = await Hub.confirm({ title: 'Delete this post?', body: `"${saved.title}" will be removed from the journal. This can't be undone.`, ok: 'Delete', danger: true });
+            if (!ok) return;
+            const id = saved.id;
+            revisions.set(id, null);
+            B.posts.remove(id);
+            showEmpty();
+            $('list-title').focus();
+            Hub.toast('Post deleted');
+        });
+        $('new-post').addEventListener('click', async () => {
+            if (!(await leaveOk())) return;
+            load(null);
+            $('title').focus();
+        });
+        $('posts').addEventListener('click', async e => {
+            const b = e.target.closest('button[data-id]');
+            if (!b || (saved && b.dataset.id === saved.id)) return;
+            if (!(await leaveOk())) return;
+            load(B.posts.byId(b.dataset.id));
+            if (matchMedia('(max-width: 1080px)').matches) document.querySelector('.editor').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        });
+        document.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => {
+            filter = b.dataset.filter;
+            document.querySelectorAll('[data-filter]').forEach(x => x.setAttribute('aria-pressed', x === b));
+            renderList();
+        }));
+        $('search').addEventListener('input', () => { query = $('search').value.trim(); renderList(); });
+        addEventListener('beforeunload', e => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
+
+        // Another tab changed the posts: refresh, and reload this post if it has no local edits.
+        addEventListener('bogabee:change', e => {
+            if (e.detail.key !== B.KEYS.posts && e.detail.key !== Hub.REVISIONS) return;
+            if (saved && saved.id && !isDirty()) {
+                const fresh = B.posts.byId(saved.id);
+                if (!fresh) { showEmpty(); return; }
+                if (fresh.updated !== saved.updated) { load(fresh); return; }
+            }
+            renderList();
+        });
+
+        const start = new URLSearchParams(location.search).get('post');
+        load((start && B.posts.byId(start)) || B.posts.all()[0] || null);
+    </script>
+</body>
+</html>

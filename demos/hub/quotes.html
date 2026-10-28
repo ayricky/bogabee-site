@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Quotes | Bogabee Hub</title>
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="hub.css">
+    <style>
+        .hs-state { margin-left: 6px; font-size: 12px; color: var(--muted); }
+        .q-layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
+        .q-layout .panel-head { flex-wrap: wrap; }
+        .table tbody tr { cursor: pointer; transition: background-color .15s; }
+        .table tbody tr:hover { background: rgb(244 211 74 / 0.1); }
+        .table tbody tr[aria-selected="true"] { background: rgb(244 211 74 / 0.22); }
+        .table .who b { display: block; font-weight: 500; overflow-wrap: anywhere; }
+        .table .who span, .table .sub { display: block; font-size: 13px; color: var(--muted); }
+        .row-btn { all: unset; cursor: pointer; }
+        .row-btn:focus-visible { outline: 2px solid var(--honey); outline-offset: 4px; border-radius: 4px; }
+
+        .detail { position: sticky; top: 24px; }
+        .detail .panel-body { display: grid; gap: 18px; }
+        .detail h2 small { display: block; margin-top: 4px; font-size: 13px; font-weight: 400; color: var(--muted); }
+        .facts { display: grid; margin: 0; }
+        .facts div { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+        .facts dt { color: var(--muted); flex: none; }
+        .facts dd { margin: 0; min-width: 0; text-align: right; overflow-wrap: anywhere; }
+        .facts .total dd { font: italic 400 28px/1 var(--display); }
+        .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15); }
+        .callout { padding: 12px 14px; border-radius: 12px; background: rgb(244 211 74 / 0.18); font-size: 14px; overflow-wrap: anywhere; }
+        .detail .panel-body > * { min-width: 0; }
+        .callout b { font-weight: 500; }
+        .link-row { display: flex; gap: 8px; }
+        .link-row input { flex: 1; min-width: 0; padding: 10px 12px; border: 0; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font: 400 13px/1 var(--sans); color: var(--ink); }
+        .detail-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .detail-actions a.btn { text-decoration: none; }
+        .detail h2:focus { outline: none; }
+        .detail-actions .btn { flex: 1; justify-content: center; }
+        .contact a { color: var(--ink); }
+        @media (max-width: 1180px) { .q-layout { grid-template-columns: minmax(0, 1fr); } .detail { position: static; } }
+        .q-layout > * { min-width: 0; }
+        @media (max-width: 720px) {
+            .table .hide-sm { display: none; }
+            .table td, .table th { padding-inline: 14px; }
+        }
+    </style>
+</head>
+<body class="hub">
+    <aside class="hub-side" data-screen="quotes"></aside>
+
+    <main class="hub-main">
+        <header class="hub-head">
+            <div><h1>Quotes</h1></div>
+            <div class="hub-actions"><a class="btn btn-quiet" href="../favors/" target="_blank" rel="noopener">Open the calculator</a></div>
+        </header>
+
+        <div class="stats">
+            <div class="stat"><span>Waiting on you</span><b id="s-new">0</b><small>Labels or logos to approve</small></div>
+            <div class="stat"><span>Approved, unpaid</span><b id="s-approved">0</b><small>Payment link sent</small></div>
+            <div class="stat"><span>Paid</span><b id="s-paid">0</b><small id="s-jars">0 jars</small></div>
+            <div class="stat"><span>Paid total</span><b id="s-revenue">$0</b><small>All favors orders</small></div>
+        </div>
+
+        <div class="q-layout">
+            <section class="panel" aria-labelledby="list-title">
+                <div class="panel-head">
+                    <h2 id="list-title">Quotes</h2>
+                    <div class="chips" role="group" aria-label="Show">
+                        <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+                        <button class="chip" type="button" data-f="new" aria-pressed="false">New</button>
+                        <button class="chip" type="button" data-f="approved" aria-pressed="false">Approved</button>
+                        <button class="chip" type="button" data-f="paid" aria-pressed="false">Paid</button>
+                        <button class="chip" type="button" data-f="declined" aria-pressed="false">Declined</button>
+                    </div>
+                </div>
+                <div class="table-scroll" tabindex="0" role="region" aria-label="Quotes table">
+                    <table class="table">
+                        <thead><tr><th>Customer</th><th class="hide-sm">Event</th><th class="hide-sm">Jars</th><th class="num">Total</th><th>Status</th></tr></thead>
+                        <tbody id="rows"></tbody>
+                    </table>
+                </div>
+                <p class="empty" id="empty" hidden>No quotes with this status.</p>
+            </section>
+
+            <section class="panel detail" id="detail" aria-labelledby="detail-title"></section>
+        </div>
+    </main>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="seed.js"></script>
+    <script src="../crm.js"></script>
+    <script src="hub.js"></script>
+    <script src="../favors/pricing.js"></script>
+    <script>
+        (function () {
+            const { JARS, ADDONS, price, needsApproval } = window.Favors;
+            const { money, quotes } = window.Bogabee;
+            const $ = id => document.getElementById(id);
+            const esc = Hub.esc;
+            const STATUS = { new: ['New', 'gold'], approved: ['Approved', ''], paid: ['Paid', 'green'], declined: ['Declined', 'dim'] };
+            const ORDER = { new: 0, approved: 1, paid: 2, declined: 3 };
+
+            let filter = 'all';
+            let selected = location.hash.slice(1) || null;
+
+            const tag = s => `<span class="tag ${STATUS[s][1]}">${STATUS[s][0]}</span>`;
+            const inDays = q => {
+                const n = Hub.daysUntil(q.event.date);
+                return n < 0 ? 'Event passed' : n === 0 ? 'Event today' : n === 1 ? 'Event tomorrow' : `Event in ${n} days`;
+            };
+            // Open quotes first, soonest event first; the event date is Danny's deadline.
+            const sortQuotes = list => list.slice().sort((a, b) => (ORDER[a.status] - ORDER[b.status]) || (a.event.date < b.event.date ? -1 : a.event.date > b.event.date ? 1 : 0));
+
+            function render({ focus = false } = {}) {
+                const all = sortQuotes(quotes.all());
+                const count = s => all.filter(q => q.status === s);
+                $('s-new').textContent = count('new').length;
+                $('s-approved').textContent = count('approved').length;
+                $('s-paid').textContent = count('paid').length;
+                $('s-jars').textContent = `${count('paid').reduce((n, q) => n + q.qty, 0)} jars`;
+                $('s-revenue').textContent = money(count('paid').reduce((n, q) => n + q.total, 0));
+
+                document.querySelectorAll('[data-f]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === filter)));
+                const shown = all.filter(q => filter === 'all' || q.status === filter);
+                if (!selected || !all.some(q => q.id === selected)) selected = shown[0]?.id || null;
+
+                $('rows').innerHTML = shown.map(q => `
+                    <tr data-id="${q.id}" aria-selected="${q.id === selected}">
+                        <td class="who"><button type="button" class="row-btn" data-id="${q.id}"><b>${esc(q.contact.name)}</b></button><span>${q.id} · ${Hub.when(q.at)}</span></td>
+                        <td class="hide-sm">${esc(q.event.type)}<span class="sub">${Hub.dayText(q.event.date)}${q.status === 'new' || q.status === 'approved' ? ' · ' + inDays(q) : ''}</span></td>
+                        <td class="hide-sm">${q.qty} × ${JARS[q.jar].name.replace(' jar', '')}<span class="sub">${q.addons.includes('label') ? 'Custom label' : q.logoName ? 'Logo' : 'Stock label'}</span></td>
+                        <td class="num">${money(q.total)}</td>
+                        <td>${tag(q.status)}</td>
+                    </tr>`).join('');
+                $('empty').hidden = shown.length > 0;
+                renderDetail(all.find(q => q.id === selected), focus);
+            }
+
+            // The quote's deal in HubSpot: its stage in Party favors and whether that stage has synced.
+            function hubspotFact(q) {
+                const C = window.Bogabee.crm;
+                C.reconcile();
+                const st = C.status('quote:' + q.id);
+                const state = !st ? '' : st.status === 'synced' ? 'synced' : st.status === 'failed' ? 'sync failed' : 'syncing';
+                return `<div><dt>HubSpot deal</dt><dd><a href="${C.link('deals')}" target="_blank" rel="noopener">Party favors · ${esc(C.quoteStage(q))}</a>${state ? ` <span class="hs-state">${state}</span>` : ''}</dd></div>`;
+            }
+
+            function summary(q) {
+                const jar = JARS[q.jar];
+                return `${q.qty} × ${jar.name} (${jar.size})${q.addons.length ? ' with ' + q.addons.map(a => ADDONS[a].name.toLowerCase()).join(', ') : ''}, ${q.assembly === 'diy' ? 'DIY kit' : 'assembled'}${q.labelText ? `, label “${q.labelText}”` : ''}. Total ${money(q.total)}.`;
+            }
+
+            function renderDetail(q, focus) {
+                const d = $('detail');
+                if (!q) { d.innerHTML = '<p class="empty" id="detail-title">Pick a quote to see the details.</p>'; return; }
+                const p = price(q);
+                const jar = JARS[q.jar];
+                const custom = needsApproval(q);
+                const colorDot = q.event.color.startsWith('#') ? q.event.color : ({ Gold: '#e0a526', Blush: '#f3c9d4', Sage: '#a9bf9a', Navy: '#1f3556', White: '#ffffff', Lavender: '#c9b8e6', Burgundy: '#7a1f33' })[q.event.color];
+                const ask = `mailto:${encodeURIComponent(q.contact.email)}?subject=${encodeURIComponent(`Your party favors quote ${q.id}`)}&body=${encodeURIComponent(`Hi ${q.contact.name.split(' ')[0]},\n\nThanks for your party favors request for ${Hub.dayText(q.event.date)}:\n${summary(q)}\n\nBefore we go ahead, could you `)}`;
+                let action = '';
+                if (q.status === 'new') {
+                    action = `${custom ? `<div class="callout"><b>Check before printing.</b> ${q.labelText ? `Label: “${esc(q.labelText)}”.` : ''} ${q.logoName ? `Logo: ${esc(q.logoName)}.` : ''}</div>` : ''}
+                        <div class="detail-actions"><button type="button" class="btn" data-act="approve">Approve and send payment link</button></div>
+                        <div class="detail-actions"><a class="btn btn-quiet" href="${esc(ask)}">Ask for changes</a><button type="button" class="btn btn-quiet" data-act="decline">Decline</button></div>`;
+                } else if (q.status === 'approved') {
+                    action = `<div class="field"><span class="sub">Payment link sent to ${esc(q.contact.email)}</span>
+                        <div class="link-row"><input id="pay-link" readonly value="${esc(q.payLink)}" aria-label="Payment link"><button type="button" class="btn btn-quiet" data-act="copy">Copy</button></div></div>
+                        <div class="detail-actions"><button type="button" class="btn btn-dark" data-act="paid">Mark paid</button></div>`;
+                } else if (q.status === 'paid') {
+                    action = `<div class="callout"><b>Paid ${q.paidAt ? Hub.when(q.paidAt).toLowerCase() : ''}.</b> ${q.assembly === 'diy' ? 'Pack the DIY kit' : 'Assemble the favors'} before ${Hub.dayText(q.event.date)}.</div>`;
+                } else {
+                    action = `<div class="callout"><b>Declined${q.declinedAt ? ' ' + Hub.when(q.declinedAt).toLowerCase() : ''}.</b>${q.declineReason ? ` ${esc(q.declineReason)}` : ''}</div>`;
+                }
+                d.innerHTML = `
+                    <div class="panel-head"><h2 id="detail-title" tabindex="-1">${esc(q.contact.name)}<small>${q.id} · ${esc(q.event.type)} · ${Hub.dayText(q.event.date)}</small></h2>${tag(q.status)}</div>
+                    <div class="panel-body">
+                        <dl class="facts">
+                            <div><dt>Jar</dt><dd>${jar.name} (${jar.size}) · ${money(jar.price)}</dd></div>
+                            <div><dt>Quantity</dt><dd>${q.qty}</dd></div>
+                            <div><dt>Add-ons</dt><dd>${q.addons.length ? q.addons.map(a => `${ADDONS[a].name} ${money(ADDONS[a].price)}`).join(', ') : 'None'}</dd></div>
+                            <div><dt>Assembly</dt><dd>${q.assembly === 'diy' ? 'DIY kit' : 'Assembled · $1'}</dd></div>
+                            ${q.labelText ? `<div><dt>Label text</dt><dd>“${esc(q.labelText)}”</dd></div>` : ''}
+                            ${q.logoName ? `<div><dt>Logo</dt><dd>${esc(q.logoName)}</dd></div>` : ''}
+                            <div><dt>Color</dt><dd>${q.event.color ? `<span class="dot" style="background:${esc(colorDot)}"></span>${esc(q.event.color)}` : 'Not chosen'}</dd></div>
+                            ${q.notes ? `<div><dt>Notes</dt><dd>${esc(q.notes)}</dd></div>` : ''}
+                            <div class="contact"><dt>Contact</dt><dd><a href="mailto:${esc(q.contact.email)}">${esc(q.contact.email)}</a>${q.contact.phone ? `<br><a href="tel:${esc(q.contact.phone.replace(/[^\d+]/g, ''))}">${esc(q.contact.phone)}</a>` : ''}</dd></div>
+                            <div><dt>Per jar</dt><dd>${money(p.perJar)}</dd></div>
+                            <div class="total"><dt>Total</dt><dd>${money(p.total)}</dd></div>
+                            ${hubspotFact(q)}
+                        </dl>
+                        ${action}
+                    </div>`;
+                if (focus) $('detail-title').focus();
+            }
+
+            async function approve(q) {
+                const link = `https://bogabeeapiaries.com/pay/${q.id}`;
+                const ok = await Hub.confirm({
+                    title: 'Send the payment link?',
+                    body: `${q.contact.name} gets this email at ${q.contact.email}:`,
+                    html: `<div class="preview-mail">Your party favors are approved.\n${summary(q)}\nPay here: ${link}</div>`,
+                    ok: 'Approve and send',
+                });
+                if (!ok) return;
+                quotes.update(q.id, { status: 'approved', approvedAt: Date.now(), payLink: link });
+                Hub.toast(`Payment link sent to ${q.contact.name}`);
+            }
+            function decline(q) {
+                const d = Hub.dialog(`<h2>Decline this quote?</h2>
+                    <p>${esc(q.contact.name)} hears from you by email. The reason stays in the hub.</p>
+                    <label>Reason<textarea name="reason" maxlength="300" placeholder="Booked that weekend"></textarea></label>
+                    <div class="acts"><button class="btn btn-quiet" value="no">Cancel</button><button class="btn btn-dark" value="yes">Decline</button></div>`, (v, dlg) => {
+                        if (v !== 'yes') return;
+                        const before = { status: q.status, declinedAt: q.declinedAt, declineReason: q.declineReason };
+                        quotes.update(q.id, { status: 'declined', declinedAt: Date.now(), declineReason: dlg.querySelector('[name=reason]').value.trim() });
+                        Hub.toast(`${q.id} declined`, { undo: () => quotes.update(q.id, before) });
+                    });
+                d.showModal();
+                d.querySelector('textarea').focus();
+            }
+
+            document.addEventListener('click', async e => {
+                const f = e.target.closest('[data-f]');
+                if (f) { filter = f.dataset.f; selected = null; render(); return; }
+                const row = e.target.closest('tr[data-id]');
+                if (row) {
+                    selected = row.dataset.id;
+                    history.replaceState(null, '', '#' + selected);
+                    render({ focus: true });
+                    // On narrow screens the detail sits below the list.
+                    if (matchMedia('(max-width: 1180px)').matches) $('detail').scrollIntoView({ block: 'start' });
+                    return;
+                }
+                const act = e.target.closest('[data-act]');
+                if (!act || !selected) return;
+                const q = quotes.all().find(x => x.id === selected);
+                if (act.dataset.act === 'approve') approve(q);
+                else if (act.dataset.act === 'decline') decline(q);
+                else if (act.dataset.act === 'paid') {
+                    const before = { status: q.status, paidAt: q.paidAt };
+                    quotes.update(q.id, { status: 'paid', paidAt: Date.now() });
+                    Hub.toast(`${q.id} marked paid`, { undo: () => quotes.update(q.id, before) });
+                } else if (act.dataset.act === 'copy') {
+                    const ok = await Hub.copy($('pay-link').value, $('pay-link'));
+                    if (ok) { act.textContent = 'Copied'; setTimeout(() => { act.textContent = 'Copy'; }, 1500); }
+                    else Hub.toast('Link selected. Press Ctrl+C (⌘C on a Mac) to copy it.');
+                }
+            });
+            window.addEventListener('bogabee:change', e => { if (e.detail.key === window.Bogabee.KEYS.quotes || e.detail.key === window.Bogabee.crm.KEY) render(); });
+            render();
+        })();
+    </script>
+</body>
+</html>

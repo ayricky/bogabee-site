@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>HubSpot | Bogabee Hub</title>
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="hub.css">
+    <style>
+        .hs-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+        .hs-grid > .wide { grid-column: 1 / -1; }
+        .conn { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; }
+        .conn .mark { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: #ff7a59; color: #2b1206; font: 700 15px/1 var(--sans); }
+        .conn b { display: block; font-weight: 500; }
+        .conn p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+        .demo-note { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 12px; border-radius: 99px; background: rgb(244 211 74 / .3); color: var(--brown); font-size: 13px; }
+        .conn .links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: end; }
+
+        .rules { list-style: none; margin: 0; padding: 0; }
+        .rules li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+        .rules li:last-child { border-bottom: 0; }
+        .rules b { font-weight: 500; }
+        .rules .obj { margin-left: 8px; }
+        .rules p { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+        .switch { position: relative; width: 46px; height: 26px; flex: none; }
+        .switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+        .switch span { position: absolute; inset: 0; border-radius: 99px; background: rgb(86 54 33 / .2); transition: background-color .2s; pointer-events: none; }
+        .switch span::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / .25); transition: translate .2s var(--ease); }
+        .switch input:checked + span { background: #3f7d2c; }
+        .switch input:checked + span::after { translate: 20px 0; }
+        .switch input:focus-visible + span { outline: 2px solid var(--honey); outline-offset: 2px; }
+
+        .props { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .props td { padding: 10px 20px; border-bottom: 1px solid var(--line); vertical-align: top; }
+        .props tr:last-child td { border-bottom: 0; }
+        .props code { font-size: 13px; background: rgb(86 54 33 / .07); padding: 1px 6px; border-radius: 5px; }
+        .props small { display: block; color: var(--muted); margin-top: 2px; }
+
+        .pipe { padding: 14px 20px; border-bottom: 1px solid var(--line); }
+        .pipe:last-child { border-bottom: 0; }
+        .pipe b { font-weight: 500; }
+        .stages { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+        .stages li { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .stages li + li::before { content: "→"; color: var(--muted); }
+        .stages span { padding: 4px 10px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line); }
+        .stages .count-pill { margin-left: 4px; font-weight: 600; }
+
+        .log-head { flex-wrap: wrap; }
+        .log-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+        .log-filters button { padding: 7px 12px; border: 0; border-radius: 99px; background: transparent; box-shadow: inset 0 0 0 1px var(--line); font: 500 13px/1 var(--sans); color: var(--ink); cursor: pointer; }
+        .log-filters button[aria-pressed="true"] { background: var(--ink); color: var(--cream); box-shadow: none; }
+        .log td small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+        .log .when { white-space: nowrap; color: var(--muted); font-size: 13px; }
+        .tag.red { background: #f6dcd5; color: #7a2617; }
+        .tag.dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .retry { padding: 6px 12px; border: 0; border-radius: 99px; background: var(--ink); color: var(--cream); font: 500 12px/1 var(--sans); cursor: pointer; }
+        .retry:hover { background: var(--brown); }
+        .more { display: block; width: 100%; padding: 12px; border: 0; border-top: 1px solid var(--line); background: none; font: 500 14px/1 var(--sans); color: var(--amber-text); cursor: pointer; border-radius: 0 0 18px 18px; }
+        .more[hidden] { display: none; }
+
+        @media (max-width: 980px) { .hs-grid { grid-template-columns: minmax(0, 1fr); } }
+        @media (max-width: 640px) {
+            .conn { grid-template-columns: auto minmax(0, 1fr); }
+            .conn .links { grid-column: 1 / -1; justify-content: start; }
+            .log thead { display: none; }
+            .log tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+            .log td { padding: 0; border: 0; }
+            .log td.what { grid-column: 1 / -1; }
+        }
+    </style>
+</head>
+<body class="hub">
+    <aside class="hub-side" data-screen="hubspot"></aside>
+
+    <main class="hub-main">
+        <header class="hub-head">
+            <div><h1>HubSpot</h1></div>
+            <div class="hub-actions"><a class="btn btn-quiet" id="open-hs" target="_blank" rel="noopener">Open HubSpot</a></div>
+        </header>
+
+        <div class="hs-grid">
+            <section class="panel wide" aria-labelledby="conn-title">
+                <div class="panel-body conn">
+                    <span class="mark" aria-hidden="true">HS</span>
+                    <div>
+                        <b id="conn-title">Bogabee Apiaries · portal 247317631</b>
+                        <p>Contacts, deals and email subscriptions update from the site as things happen.</p>
+                        <span class="demo-note">Demo: not connected to the live account. Nothing here reaches HubSpot.</span>
+                    </div>
+                    <div class="links">
+                        <a class="btn btn-quiet" id="contacts-link" target="_blank" rel="noopener">Contacts</a>
+                        <a class="btn btn-quiet" id="deals-link" target="_blank" rel="noopener">Deals</a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="stats wide" id="stats"></div>
+
+            <section class="panel" aria-labelledby="rules-title">
+                <div class="panel-head"><h2 id="rules-title">What syncs</h2></div>
+                <ul class="rules" id="rules"></ul>
+            </section>
+
+            <div style="display: grid; gap: 16px;">
+                <section class="panel" aria-labelledby="pipes-title">
+                    <div class="panel-head"><h2 id="pipes-title">Deal pipelines</h2></div>
+                    <div id="pipes"></div>
+                </section>
+                <section class="panel" aria-labelledby="props-title">
+                    <div class="panel-head"><h2 id="props-title">Properties used</h2></div>
+                    <table class="props"><tbody id="props"></tbody></table>
+                </section>
+            </div>
+
+            <section class="panel wide" aria-labelledby="log-title">
+                <div class="panel-head log-head">
+                    <h2 id="log-title">Activity</h2>
+                    <div class="log-filters" role="group" aria-label="Show">
+                        <button type="button" data-f="all" aria-pressed="true">All</button>
+                        <button type="button" data-f="failed" aria-pressed="false">Needs attention</button>
+                        <button type="button" data-f="Contact" aria-pressed="false">Contacts</button>
+                        <button type="button" data-f="Deal" aria-pressed="false">Deals</button>
+                        <button type="button" data-f="Subscription" aria-pressed="false">Subscriptions</button>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table class="table log">
+                        <thead><tr><th>What</th><th>HubSpot</th><th>Status</th><th>When</th></tr></thead>
+                        <tbody id="log"></tbody>
+                    </table>
+                </div>
+                <p class="empty" id="log-empty" hidden>Nothing here yet.</p>
+                <button class="more" type="button" id="more" hidden>Show more</button>
+            </section>
+        </div>
+    </main>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="seed.js"></script>
+    <script src="../crm.js"></script>
+    <script src="hub.js"></script>
+    <script>
+        (function () {
+            const B = window.Bogabee, C = B.crm;
+            const $ = id => document.getElementById(id);
+            const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const when = t => {
+                const d = new Date(t), today = new Date();
+                const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                if (d.toDateString() === today.toDateString()) return 'Today ' + time;
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + time;
+            };
+            const STATUS = {
+                synced: '<span class="tag green dot">Synced</span>',
+                queued: '<span class="tag gold dot">Queued</span>',
+                paused: '<span class="tag dim">Paused</span>',
+                failed: '<span class="tag red dot">Failed</span>',
+            };
+            let filter = 'all', shown = 25;
+
+            $('contacts-link').href = C.LINKS.contacts;
+            $('deals-link').href = C.LINKS.deals;
+            $('open-hs').href = C.LINKS.contacts;
+
+            $('rules').innerHTML = C.TOUCHPOINTS.map(t => `
+                <li>
+                    <div><b>${t.name}</b><span class="tag dim obj">${t.object}</span><p>${t.rule}</p></div>
+                    <label class="switch"><input type="checkbox" role="switch" data-toggle="${t.id}" aria-label="Sync ${t.name.toLowerCase()}"><span></span></label>
+                </li>`).join('');
+            $('props').innerHTML = C.PROPERTIES.map(p => `<tr><td><code>${p.name}</code><small>${p.label} · ${p.on}</small></td><td>${p.note}</td></tr>`).join('');
+
+            $('rules').addEventListener('change', e => {
+                const t = e.target.closest('[data-toggle]');
+                if (t) C.toggle(t.dataset.toggle, t.checked);
+            });
+            document.querySelector('.log-filters').addEventListener('click', e => {
+                const b = e.target.closest('[data-f]');
+                if (!b) return;
+                filter = b.dataset.f; shown = 25;
+                document.querySelectorAll('[data-f]').forEach(x => x.setAttribute('aria-pressed', x === b));
+                render();
+            });
+            $('more').addEventListener('click', () => { shown += 25; render(); });
+            $('log').addEventListener('click', e => {
+                const b = e.target.closest('[data-retry]');
+                if (b) { C.retry(b.dataset.retry); b.closest('td').innerHTML = STATUS.queued; }
+            });
+
+            function render() {
+                const items = C.items();
+                const toggles = C.toggles();
+                document.querySelectorAll('[data-toggle]').forEach(i => { i.checked = toggles[i.dataset.toggle] !== false; });
+
+                const count = s => items.filter(i => i.status === s).length;
+                const contacts = new Set(items.filter(i => i.objects.includes('Contact')).map(i => i.who)).size;
+                const deals = items.filter(i => i.objects.includes('Deal')).length;
+                $('stats').innerHTML = `
+                    <div class="stat"><span>Contacts</span><b>${contacts}</b><small>From check-ins, orders, quotes and sign-ups</small></div>
+                    <div class="stat"><span>Deals</span><b>${deals}</b><small>Online orders and party favors</small></div>
+                    <div class="stat"><span>Queued</span><b>${count('queued') + count('paused')}</b><small>${count('paused') ? count('paused') + ' paused' : 'Syncing now'}</small></div>
+                    <div class="stat"><span>Needs attention</span><b>${count('failed')}</b><small>${count('failed') ? 'Retry below' : 'All clear'}</small></div>`;
+
+                // Deals per stage, so the pipelines read like HubSpot's board.
+                const perStage = {};
+                items.filter(i => i.pipeline).forEach(i => { const k = i.pipeline + '|' + i.stage; perStage[k] = (perStage[k] || 0) + 1; });
+                $('pipes').innerHTML = C.PIPELINES.map(p => `<div class="pipe"><b>${p.name}</b><ul class="stages">${p.stages.map(s => `<li><span>${s}<b class="count-pill">${perStage[p.name + '|' + s] || 0}</b></span></li>`).join('')}</ul></div>`).join('');
+
+                // Anything that failed stays at the top until it's retried.
+                const list = items.filter(i => filter === 'all' || (filter === 'failed' ? i.status === 'failed' : i.objects.includes(filter)))
+                    .sort((a, b) => (b.status === 'failed') - (a.status === 'failed') || b.at - a.at);
+                $('log').innerHTML = list.slice(0, shown).map(i => `
+                    <tr>
+                        <td class="what"><b>${esc(i.what)}</b><small>${esc(i.who)} · ${esc(i.detail)}${i.prev && i.pipeline ? ` · was ${esc(i.prev)}` : ''}</small></td>
+                        <td><a href="${C.link(i.link)}" target="_blank" rel="noopener">${i.objects.join(' + ')}</a>${i.pipeline ? `<small>${esc(i.pipeline)} · ${esc(i.stage)}</small>` : ''}</td>
+                        <td>${STATUS[i.status] || ''}${i.status === 'failed' ? `<small>${esc(i.error)}</small><button class="retry" type="button" data-retry="${esc(i.key)}">Retry</button>` : ''}</td>
+                        <td class="when">${when(i.at)}</td>
+                    </tr>`).join('');
+                $('log-empty').hidden = list.length > 0;
+                $('more').hidden = list.length <= shown;
+            }
+            window.addEventListener('bogabee:change', render);
+            render();
+        })();
+    </script>
+</body>
+</html>

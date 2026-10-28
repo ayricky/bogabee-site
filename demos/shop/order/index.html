@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your order | Bogabee Apiaries</title>
+    <meta name="description" content="Your Bogabee Apiaries order and porch pickup code.">
+    <meta name="robots" content="noindex">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Your order · Bogabee Apiaries">
+    <meta property="og:description" content="Raw wildflower honey from Manalapan, NJ.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <link rel="icon" type="image/png" href="../../assets/favicon-32.png">
+    <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../brand.css">
+    <link rel="stylesheet" href="../shop.css">
+    <style>
+        .order-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+        @media (max-width: 900px) { .order-grid { grid-template-columns: minmax(0, 1fr); } }
+        .ship-card .display { margin: 6px 0 10px; font: italic 400 clamp(28px, 3.4vw, 40px)/1.05 var(--display); letter-spacing: -0.02em; text-transform: none; color: var(--ink); }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../../refined/" data-home aria-label="Bogabee Apiaries"><img src="../../assets/img/logo-96.webp" alt="" width="42" height="42"><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Site">
+                <a href="../../apiary/">The Apiary</a>
+                <a href="../../journal/">Journal</a>
+                <a href="../../refined/#order" data-home-shop>Shop the jars</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="wrap" id="root"></div>
+    </main>
+
+    <script src="../../store.js"></script>
+    <script src="../shop.js"></script>
+    <script>
+        (function () {
+            const B = Bogabee, S = B.shop;
+            const root = document.getElementById('root');
+            document.querySelectorAll('[data-home]').forEach(a => a.href = S.home());
+            document.querySelectorAll('[data-home-shop]').forEach(a => a.href = S.home() + '#order');
+            const id = new URLSearchParams(location.search).get('id');
+            const MAPS = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('93 Tracy Station Road, Manalapan Township, NJ 07726');
+            const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+            // The pass matches what the keypad will say: not yet, open, expired, or used.
+            function passHtml(o) {
+                const p = o.pickup, state = S.codeState(o), w = S.pickupWindow(o);
+                const at = ts => `${S.fmtDay(ts)}, ${S.fmtTime(ts)}`;
+                const line = {
+                    active: 'Opens the cabinet once.',
+                    upcoming: `Works from ${at(w.from)}.`,
+                    expired: 'This code has expired.',
+                    used: `Used ${S.fmtWhen(p.usedAt || p.pickedUpAt).replace(/^[A-Z]/, c => c.toLowerCase())}. Enjoy the honey.`,
+                }[state];
+                const cls = { active: '', upcoming: 'is-waiting', expired: 'is-expired', used: 'is-done' }[state];
+                const open = state === 'active' || state === 'upcoming';
+                return `
+                <section class="card pass ${cls}" aria-labelledby="pass-title">
+                    <div class="pass-top">
+                        <span class="eyebrow" id="pass-title">Cabinet code</span>
+                        <p class="code" id="code" tabindex="-1" aria-label="Code ${p.code.split('').join(' ')}">${S.splitCode(p.code)}</p>
+                        <p class="pass-state" role="status">${line}</p>
+                        <div class="pass-meta">
+                            <div><span>Works</span><b>${S.fmtWindow(o)}</b></div>
+                            <div><span>Where</span><b>Front porch cabinet<br>93 Tracy Station Road, Manalapan · <a href="${MAPS}" target="_blank" rel="noopener">Map</a></b></div>
+                        </div>
+                    </div>
+                    ${open ? `<ol class="pass-steps">
+                        <li>Enter the code on the cabinet keypad.</li>
+                        <li>Take the jars marked with your order number.</li>
+                        <li>Close the cabinet behind you.</li>
+                    </ol>
+                    <div class="pass-actions"><a class="btn btn-line" href="../../porch/">Open the cabinet page</a></div>` : ''}
+                    ${state === 'expired' ? `<div class="pass-actions" style="padding-top:clamp(20px,3vw,28px)"><button class="btn" type="button" id="reissue">Get a new code</button></div>` : ''}
+                </section>`;
+            }
+
+            function shipHtml(o) {
+                const a = o.address || {};
+                const where = [a.street, a.city, [a.state, a.zip].filter(Boolean).join(' ')].filter(Boolean).map(esc).join(', ');
+                const state = B.shop.statusLabel(o);
+                const when = o.fulfillment === 'local'
+                    ? `We’ll deliver on ${S.fmtDay(S.nextDelivery(o.createdAt))}`
+                    : 'We’ll ship to';
+                return `
+                <section class="card ship-card"><div class="card-body">
+                    <span class="eyebrow">${B.FULFILLMENT[o.fulfillment].label}</span>
+                    <div role="status"><h2 class="display">${o.status === 'paid' ? when : state}</h2></div>
+                    <p style="margin:0">${where}</p>
+                    <p style="margin:12px 0 0;color:var(--muted)">${o.fulfillment === 'local' ? 'Deliveries go out on Saturdays.' : B.FULFILLMENT[o.fulfillment].detail}</p>
+                </div></section>`;
+            }
+
+            function receiptHtml(o) {
+                return `
+                <section class="card" aria-labelledby="receipt-title"><div class="card-body">
+                    <h2 id="receipt-title">Receipt · ${o.id}</h2>
+                    ${o.items.map(i => { const p = B.product(i.id); return `<div class="receipt-row"><span>${i.qty} × ${p.name} · ${p.size}</span><b>${B.money(i.price * i.qty)}</b></div>`; }).join('')}
+                    <div class="receipt-row"><span>${B.FULFILLMENT[o.fulfillment].label}</span><b>${o.fee ? B.money(o.fee) : 'Free'}</b></div>
+                    <div class="receipt-row"><span>Paid · ${esc(o.method)}</span><b style="font:italic 400 28px/1 var(--display)">${B.money(o.total)}</b></div>
+                    ${o.customer.email ? `<p style="margin:14px 0 0;color:var(--muted);font-size:14px">Receipt sent to ${esc(o.customer.email)}.</p>` : ''}
+                </div></section>`;
+            }
+
+            function render() {
+                const o = id && B.orders.get(id);
+                if (!o) {
+                    root.innerHTML = `<div class="page-head"><span class="eyebrow">Order</span><h1 class="display">We can’t find that order.</h1>
+                        <p>Check the link in your receipt email.</p></div><a class="btn" href="${S.home()}#order">Shop the jars</a>`;
+                    return;
+                }
+                const first = (o.customer.name || '').split(' ')[0];
+                root.innerHTML = `
+                    <div class="page-head">
+                        <span class="eyebrow">Order ${o.id}</span>
+                        <h1 class="display">Thank you${first ? ', ' + esc(first) : ''}.</h1>
+                    </div>
+                    <div class="order-grid">
+                        <div>${o.fulfillment === 'porch' ? passHtml(o) : shipHtml(o)}</div>
+                        <div>${receiptHtml(o)}</div>
+                    </div>`;
+                const re = document.getElementById('reissue');
+                if (re) re.addEventListener('click', () => { S.reissue(o.id); document.getElementById('code').focus(); });
+            }
+
+            // Redraw only when this order changes, so focus and screen readers aren't reset by unrelated saves.
+            let last = '';
+            function update() {
+                const o = id && B.orders.get(id);
+                const sig = JSON.stringify(o || null) + (o && o.pickup ? S.codeState(o) : '');
+                if (sig === last) return;
+                last = sig;
+                render();
+            }
+            window.addEventListener('bogabee:change', update);
+            // The pass changes on its own when the pickup window opens or closes.
+            setInterval(update, 30000);
+            update();
+        })();
+    </script>
+    <script src="../../nav.js"></script>
+    <script src="../../assets/bee2.js"></script>
+</body>
+</html>

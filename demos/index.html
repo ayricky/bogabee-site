@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's new | Bogabee Apiaries</title>
+    <meta name="description" content="What's new for Bogabee Apiaries: paying on the site, porch pickup codes, event check-in, party favor quotes, the Journal and the owner hub.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="What's new | Bogabee Apiaries">
+    <meta property="og:description" content="What's new for Bogabee Apiaries: paying on the site, porch pickup codes, event check-in, party favor quotes, the Journal and the owner hub.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="brand.css">
+    <style>
+        /* ---------- Device frames ---------- */
+        .browser {
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--paper);
+            box-shadow: 0 0 0 1px rgb(36 24 14 / 0.08), 0 40px 80px -40px rgb(36 24 14 / 0.55);
+        }
+        .browser::before {
+            content: "";
+            display: block;
+            height: 30px;
+            background:
+                radial-gradient(circle at 18px 15px, #e0a526 4.5px, transparent 5px),
+                radial-gradient(circle at 36px 15px, #d9cdb2 4.5px, transparent 5px),
+                radial-gradient(circle at 54px 15px, #d9cdb2 4.5px, transparent 5px),
+                #efe7d4;
+        }
+        .browser img, .phone img { width: 100%; height: auto; }
+        .phone {
+            width: clamp(120px, 12.5vw, 200px);
+            padding: 8px;
+            border-radius: 38px;
+            background: #1c140d;
+            box-shadow: 0 40px 70px -30px rgb(36 24 14 / 0.6), inset 0 0 0 1px rgb(255 255 255 / 0.08);
+        }
+        .phone img { border-radius: 30px; }
+
+        /* ---------- Hero ---------- */
+        .intro { padding: 150px 0 clamp(64px, 9vw, 120px); overflow: clip; }
+        .intro .wrap { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+        .intro h1 { font-size: clamp(48px, 6.6vw, 96px); margin-top: 16px; }
+        .intro p { margin: 22px 0 0; max-width: 38ch; font-size: clamp(17px, 1.6vw, 20px); color: var(--muted); }
+        .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+        .btn-line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+        .btn-line:hover { background: rgb(36 24 14 / 0.05); box-shadow: inset 0 0 0 1.5px var(--ink); }
+        .stage { position: relative; padding: 0 0 48px 0; }
+        .stage .phone { position: absolute; right: -12px; bottom: 0; }
+        .stage .browser { margin-right: clamp(48px, 6vw, 96px); }
+
+        /* ---------- Feature rows ---------- */
+        .feature { padding: clamp(64px, 9vw, 120px) 0; }
+        .feature:nth-of-type(even) { background: var(--paper); }
+        .feature .wrap { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+        .feature.flip .copy { order: 2; }
+        .feature h2 { font-size: clamp(38px, 4.6vw, 64px); margin-top: 14px; }
+        .feature ul { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; }
+        .feature li { position: relative; padding-left: 26px; max-width: 44ch; }
+        .feature li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); box-shadow: inset 0 0 0 1.5px var(--honey); }
+        .feature .ctas { margin-top: 28px; }
+        .feature .btn { padding: 12px 22px; font-size: 15px; }
+        .visual { position: relative; }
+        .visual .phone { position: absolute; right: -10px; bottom: -36px; }
+        .visual.with-phone .browser { margin-right: clamp(48px, 6vw, 96px); }
+        .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+        .duo .browser:last-child { margin-top: 56px; }
+
+        .device-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 16px;
+            align-items: start;
+            margin-top: 28px;
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: var(--cream);
+            box-shadow: inset 0 0 0 1.5px var(--gold);
+        }
+        .feature:nth-of-type(odd) .device-card { background: var(--paper); }
+        .device-card .lock { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--night); color: var(--gold); }
+        .device-card .lock svg { width: 26px; height: 26px; }
+        .device-card b { display: block; font-weight: 500; }
+        .device-card p { margin: 4px 0 0; font-size: 15px; color: var(--muted); }
+        .device-card a { color: var(--amber-text); }
+
+        /* ---------- Hub tabs ---------- */
+        .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+        .tabs button { padding: 8px 16px; border: 0; border-radius: 99px; background: transparent; font: 500 14px/1 var(--sans); color: var(--muted); cursor: pointer; box-shadow: inset 0 0 0 1px var(--line); }
+        .tabs button[aria-selected="true"] { background: var(--ink); color: var(--cream); box-shadow: none; }
+        .tabpanel[hidden] { display: none; }
+
+        /* ---------- Costs and decisions ---------- */
+        .closing { padding: clamp(72px, 10vw, 130px) 0; background: var(--night); color: var(--cream); }
+        .closing .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); }
+        .closing h2 { font-size: clamp(34px, 4vw, 52px); margin: 14px 0 24px; }
+        .closing .eyebrow { color: var(--gold); }
+        .costs { width: 100%; border-collapse: collapse; }
+        .costs td { padding: 14px 0; border-bottom: 1px solid rgb(255 249 235 / 0.12); vertical-align: top; }
+        .costs td:last-child { text-align: right; font: italic 400 22px/1.2 var(--display); color: var(--gold); white-space: nowrap; padding-left: 16px; }
+        .costs small { display: block; color: rgb(255 249 235 / 0.55); font-size: 14px; margin-top: 2px; }
+        .asks { list-style: none; margin: 0; padding: 0; counter-reset: ask; display: grid; gap: 12px; }
+        .asks li { counter-increment: ask; position: relative; padding: 14px 16px 14px 56px; border-radius: 14px; background: rgb(255 249 235 / 0.05); }
+        .asks li::before { content: counter(ask); position: absolute; left: 16px; top: 13px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: var(--brown); font-weight: 600; font-size: 14px; }
+        .closing .more { margin-top: 28px; color: rgb(255 249 235 / 0.7); }
+        .closing .more a { color: var(--gold); }
+
+        .end { padding: 40px 0 110px; text-align: center; color: var(--muted); font-size: 14px; }
+        .end button { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+
+        @media (max-width: 900px) {
+            .intro .wrap, .feature .wrap, .closing .wrap { grid-template-columns: minmax(0, 1fr); }
+            .feature.flip .copy { order: 0; }
+            .visual { margin-bottom: 36px; }
+            .phone { width: 34vw; max-width: 180px; padding: 6px; border-radius: 28px; }
+            .phone img { border-radius: 22px; }
+        }
+        @media (max-width: 560px) {
+            .duo { grid-template-columns: 1fr; }
+            .duo .browser:last-child { margin-top: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="./" aria-label="Bogabee Apiaries, home"><img src="assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Demo">
+                <a href="compare/">Before &amp; after</a>
+                <a href="bees/">Bee lab</a>
+                <a href="journal/">Journal</a>
+                <a href="hub/">Owner hub</a>
+                <a href="ideas/">Plan</a>
+                <a class="btn" href="refined/">Open the site</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="intro">
+            <div class="wrap">
+                <div>
+                    <span class="eyebrow">What's new</span>
+                    <h1 class="display">Sell every jar right on the site.</h1>
+                    <p>Customers pay online and collect from the porch cabinet with their own code. Guests check in at markets, party favors price themselves, and Danny writes the Journal. It all runs from one hub.</p>
+                    <div class="ctas">
+                        <a class="btn btn-lg" href="refined/">Open the new site</a>
+                        <a class="btn btn-lg btn-line" href="compare/">Before and after</a>
+                    </div>
+                </div>
+                <div class="stage">
+                    <div class="browser"><img src="showcase/img/home.webp" width="1600" height="1000" alt="The new Bogabee homepage"></div>
+                    <div class="phone"><img src="showcase/img/m-home.webp" width="780" height="1688" alt="The homepage on a phone"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature" aria-labelledby="f-pay">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">Replaces Instagram DMs</span>
+                    <h2 class="display" id="f-pay">Pay on the site.</h2>
+                    <ul>
+                        <li>Jars go straight into a cart, which shows what's left when a size runs low.</li>
+                        <li>Card, Apple Pay or Google Pay, through Stripe.</li>
+                        <li>Free porch pickup, local delivery or shipping, each with its own fee.</li>
+                    </ul>
+                    <div class="ctas"><a class="btn" href="refined/#order">Shop the jars</a></div>
+                </div>
+                <div class="visual duo">
+                    <div class="browser"><img src="showcase/img/cart.webp" width="1600" height="1000" alt="Cart drawer with two jars" loading="lazy"></div>
+                    <div class="browser"><img src="showcase/img/payment.webp" width="1600" height="1000" alt="Checkout payment with Apple Pay, Google Pay and card" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature flip" aria-labelledby="f-code">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">Porch pickup</span>
+                    <h2 class="display" id="f-code">Every order gets its own cabinet code.</h2>
+                    <ul>
+                        <li>The customer picks a pickup day and time at checkout.</li>
+                        <li>Their code works for 24 hours from then, and only once.</li>
+                        <li>The receipt shows the code, the address and a map link.</li>
+                    </ul>
+                    <div class="ctas"><a class="btn" href="shop/checkout/">Try checkout</a></div>
+                </div>
+                <div class="visual with-phone">
+                    <div class="browser"><img src="showcase/img/order.webp" width="1600" height="1000" alt="Receipt with a six-digit cabinet code" loading="lazy"></div>
+                    <div class="phone"><img src="showcase/img/m-order.webp" width="780" height="1688" alt="Cabinet code on a phone" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature" aria-labelledby="f-cabinet">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">The porch cabinet</span>
+                    <h2 class="display" id="f-cabinet">A QR sticker on the cabinet.</h2>
+                    <ul>
+                        <li>Customers who ordered ahead can look up their code.</li>
+                        <li>Drive-by visitors buy what's inside and get a code on the spot.</li>
+                        <li>The hub tracks what's left in the cabinet and every time it opens.</li>
+                    </ul>
+                    <div class="device-card">
+                        <span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M9.5 15h.01M12 15h.01M14.5 15h.01M9.5 17.6h.01M12 17.6h.01M14.5 17.6h.01"/></svg></span>
+                        <div>
+                            <b>The lock: igloohome Smart Padlock 2</b>
+                            <p>A keypad padlock for the cabinet's latch. It's waterproof, runs on a rechargeable battery and needs no Wi-Fi. The site creates each order's code through igloohome's API. <a href="ideas/#porch">How it works</a></p>
+                        </div>
+                    </div>
+                    <div class="ctas"><a class="btn" href="porch/">Try the cabinet page</a></div>
+                </div>
+                <div class="visual with-phone">
+                    <div class="browser"><img src="showcase/img/porch.webp" width="1600" height="1000" alt="Cabinet page with keypad showing Open" loading="lazy"></div>
+                    <div class="phone"><img src="showcase/img/m-porch-buy.webp" width="780" height="1688" alt="Buying from the cabinet on a phone" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature flip" aria-labelledby="f-favors">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">Weddings and showers</span>
+                    <h2 class="display" id="f-favors">Party favors, priced as they're built.</h2>
+                    <ul>
+                        <li>Pick the jar, quantity, add-ons and assembly, and watch the total update.</li>
+                        <li>Plain orders pay right away.</li>
+                        <li>Custom labels and logos come to you to approve first, then the customer gets a payment link.</li>
+                    </ul>
+                    <div class="ctas"><a class="btn" href="favors/">Try the calculator</a></div>
+                </div>
+                <div class="visual with-phone">
+                    <div class="browser"><img src="showcase/img/favors.webp" width="1600" height="1000" alt="Party favors calculator with a live quote" loading="lazy"></div>
+                    <div class="phone"><img src="showcase/img/m-favors.webp" width="780" height="1688" alt="Party favors calculator on a phone" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature" aria-labelledby="f-events">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">Markets and fairs</span>
+                    <h2 class="display" id="f-events">Check-in at the table.</h2>
+                    <ul>
+                        <li>Guests scan a QR code on the table, or use a tablet that clears after each person.</li>
+                        <li>Each guest becomes a HubSpot contact tagged with the event.</li>
+                        <li>Print the table sign and export the guest list from the hub.</li>
+                    </ul>
+                    <div class="ctas">
+                        <a class="btn" href="events/?e=manalapan-fall-market">Try it on a phone</a>
+                        <a class="btn btn-line" href="events/?e=manalapan-fall-market&amp;kiosk=1">Tablet mode</a>
+                    </div>
+                </div>
+                <div class="visual with-phone">
+                    <div class="browser"><img src="showcase/img/kiosk.webp" width="1600" height="1000" alt="Event check-in in tablet mode" loading="lazy"></div>
+                    <div class="phone"><img src="showcase/img/m-event.webp" width="780" height="1688" alt="Event check-in on a phone" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature flip" aria-labelledby="f-apiary">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">About the bees</span>
+                    <h2 class="display" id="f-apiary">A page for the apiary.</h2>
+                    <ul>
+                        <li>The bees, what they forage, how the honey gets to the jar, and a year at the hives.</li>
+                        <li>Every heading, paragraph and photo can be edited from the hub, with a live preview.</li>
+                    </ul>
+                    <div class="ctas">
+                        <a class="btn" href="apiary/">See the Apiary page</a>
+                        <a class="btn btn-line" href="hub/pages.html">Edit it in the hub</a>
+                    </div>
+                </div>
+                <div class="visual with-phone">
+                    <div class="browser"><img src="showcase/img/apiary.webp" width="1600" height="1000" alt="The Apiary page" loading="lazy"></div>
+                    <div class="phone"><img src="showcase/img/m-apiary.webp" width="780" height="1688" alt="The Apiary page on a phone" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature" aria-labelledby="f-journal">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">Journal</span>
+                    <h2 class="display" id="f-journal">A journal you write yourself.</h2>
+                    <ul>
+                        <li>Posts with headings, lists, links and photos, written in the hub.</li>
+                        <li>Save drafts, preview them privately, and publish when they're ready.</li>
+                        <li>The three newest posts show on the homepage.</li>
+                    </ul>
+                    <div class="ctas">
+                        <a class="btn" href="journal/">Read the journal</a>
+                        <a class="btn btn-line" href="hub/journal.html">Write a post</a>
+                    </div>
+                </div>
+                <div class="visual with-phone">
+                    <div class="browser"><img src="showcase/img/hub-journal.webp" width="1600" height="1000" alt="Writing a post in the hub" loading="lazy"></div>
+                    <div class="phone"><img src="showcase/img/m-post.webp" width="780" height="1688" alt="A journal post on a phone" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature flip" aria-labelledby="f-crm">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">HubSpot</span>
+                    <h2 class="display" id="f-crm">Everyone lands in HubSpot.</h2>
+                    <ul>
+                        <li>Event check-ins, paid orders and party favor quotes create or update contacts in Bogabee's HubSpot.</li>
+                        <li>Orders become deals, and a quote's deal moves through its pipeline as you approve it and it's paid.</li>
+                        <li>Harvest news sign-ups are subscribed only when the person ticked the box.</li>
+                    </ul>
+                    <div class="ctas"><a class="btn" href="hub/hubspot.html">See the HubSpot screen</a></div>
+                </div>
+                <div class="visual">
+                    <div class="browser"><img src="showcase/img/hub-hubspot.webp" width="1600" height="1000" alt="The HubSpot screen in the hub: what syncs, deal pipelines and recent activity" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature" aria-labelledby="f-hub">
+            <div class="wrap">
+                <div class="copy">
+                    <span class="eyebrow">Just for you</span>
+                    <h2 class="display" id="f-hub">One hub for all of it.</h2>
+                    <ul>
+                        <li>Orders, with pickup codes and buttons to mark them picked up, delivered or shipped.</li>
+                        <li>Events, with live check-ins and the table QR.</li>
+                        <li>Party favor quotes, to approve labels and send payment links.</li>
+                        <li>The Journal and the Apiary page, to write and edit.</li>
+                    </ul>
+                    <div class="ctas"><a class="btn" href="hub/">Open the hub</a></div>
+                </div>
+                <div class="visual">
+                    <div class="tabs" role="tablist" aria-label="Hub screens">
+                        <button role="tab" aria-selected="true" aria-controls="t-orders" id="tb-orders">Orders</button>
+                        <button role="tab" aria-selected="false" aria-controls="t-events" id="tb-events" tabindex="-1">Events</button>
+                        <button role="tab" aria-selected="false" aria-controls="t-quotes" id="tb-quotes" tabindex="-1">Quotes</button>
+                        <button role="tab" aria-selected="false" aria-controls="t-journal" id="tb-journal" tabindex="-1">Journal</button>
+                        <button role="tab" aria-selected="false" aria-controls="t-pages" id="tb-pages" tabindex="-1">Pages</button>
+                        <button role="tab" aria-selected="false" aria-controls="t-crm" id="tb-crm" tabindex="-1">HubSpot</button>
+                    </div>
+                    <div class="tabpanel browser" role="tabpanel" id="t-orders" aria-labelledby="tb-orders"><img src="showcase/img/hub-orders.webp" width="1600" height="1000" alt="Hub orders screen" loading="lazy"></div>
+                    <div class="tabpanel browser" role="tabpanel" id="t-events" aria-labelledby="tb-events" hidden><img src="showcase/img/hub-events.webp" width="1600" height="1000" alt="Hub events screen" loading="lazy"></div>
+                    <div class="tabpanel browser" role="tabpanel" id="t-quotes" aria-labelledby="tb-quotes" hidden><img src="showcase/img/hub-quotes.webp" width="1600" height="1000" alt="Hub quotes screen" loading="lazy"></div>
+                    <div class="tabpanel browser" role="tabpanel" id="t-journal" aria-labelledby="tb-journal" hidden><img src="showcase/img/hub-journal.webp" width="1600" height="1000" alt="Writing a Journal post in the hub" loading="lazy"></div>
+                    <div class="tabpanel browser" role="tabpanel" id="t-pages" aria-labelledby="tb-pages" hidden><img src="showcase/img/hub-pages.webp" width="1600" height="1000" alt="Editing the Apiary page in the hub, with a live preview" loading="lazy"></div>
+                    <div class="tabpanel browser" role="tabpanel" id="t-crm" aria-labelledby="tb-crm" hidden><img src="showcase/img/hub-hubspot.webp" width="1600" height="1000" alt="The HubSpot screen in the hub" loading="lazy"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="closing" aria-label="Costs and next steps">
+            <div class="wrap">
+                <div>
+                    <span class="eyebrow">Running costs</span>
+                    <h2 class="display">What it costs</h2>
+                    <table class="costs">
+                        <tr><td>Card and Apple Pay payments<small>Stripe, no monthly fee</small></td><td>2.9% + 30¢</td></tr>
+                        <tr><td>Cabinet lock<small>igloohome Smart Padlock 2, once</small></td><td>about $159</td></tr>
+                        <tr><td>Lock codes from the site<small>igloohome API, per lock</small></td><td>about $2 / mo</td></tr>
+                        <tr><td>Hosting and HubSpot<small>Both already in place. Harvest-news emails count toward the HubSpot plan's sending limits.</small></td><td>Current plans</td></tr>
+                    </table>
+                </div>
+                <div>
+                    <span class="eyebrow">To go live</span>
+                    <h2 class="display">What we need from you</h2>
+                    <ol class="asks">
+                        <li>Open a Stripe account in the business's name.</li>
+                        <li>Choose fulfillment: porch pickup only, or delivery and shipping too, with their fees.</li>
+                        <li>Buy the padlock, or pick another lock option.</li>
+                        <li>For party favors: full payment or a deposit, and how much notice you need.</li>
+                    </ol>
+                    <p class="more">Details, the other lock options and more ideas are in <a href="ideas/">the plan</a>.</p>
+                </div>
+            </div>
+        </section>
+
+        <p class="end">This demo runs in your browser; nothing is charged. <button type="button" id="reset">Reset demo data</button></p>
+    </main>
+
+    <script src="store.js"></script>
+    <script>
+        document.getElementById('reset').addEventListener('click', () => Bogabee.reset());
+
+        // Hub screenshots: arrow keys move between tabs.
+        const tabs = [...document.querySelectorAll('[role="tab"]')];
+        function select(tab) {
+            tabs.forEach(t => {
+                const on = t === tab;
+                t.setAttribute('aria-selected', on);
+                t.tabIndex = on ? 0 : -1;
+                document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+            });
+            tab.focus();
+        }
+        tabs.forEach((t, i) => {
+            t.addEventListener('click', () => select(t));
+            t.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length]);
+                if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length]);
+            });
+        });
+    </script>
+    <script src="nav.js"></script>
+    <script src="assets/bee2.js"></script>
+</body>
+</html>

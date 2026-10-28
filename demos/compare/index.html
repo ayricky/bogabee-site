@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Before and after | Bogabee Apiaries</title>
+    <meta name="description" content="Bogabee Apiaries' website today and the new design, section by section.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Before and after | Bogabee Apiaries">
+    <meta property="og:description" content="Bogabee Apiaries' website today and the new design, section by section.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <style>
+        main { padding: 140px 0 120px; }
+        .top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; }
+        .top h1 { font-size: clamp(48px, 6.4vw, 92px); margin-top: 14px; }
+        .top p { margin: 16px 0 0; color: var(--muted); max-width: 40ch; }
+        .top p a { color: var(--amber-text); }
+
+        .seg { display: inline-flex; padding: 4px; gap: 2px; border-radius: 99px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); }
+        .seg button, .seg a { padding: 9px 18px; border: 0; border-radius: 99px; background: none; font: 500 14px/1 var(--sans); color: var(--muted); cursor: pointer; text-decoration: none; }
+        .seg [aria-pressed="true"], .seg [aria-current="true"] { background: var(--ink); color: var(--cream); }
+
+        .row { display: grid; grid-template-columns: minmax(0, 0.32fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; margin-top: clamp(56px, 8vw, 96px); }
+        .row h2 { margin: 10px 0 12px; font-size: clamp(30px, 3.2vw, 44px); }
+        .row p { margin: 0; color: var(--muted); }
+        .row .copy { position: sticky; top: 110px; }
+
+        /* Drag the divider: before on the left, after on the right. */
+        .cmp {
+            --pos: 50%;
+            position: relative;
+            margin: 0;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 0 0 1px rgb(36 24 14 / 0.08), 0 30px 60px -36px rgb(36 24 14 / 0.5);
+            touch-action: pan-y;
+            user-select: none;
+        }
+        .cmp img { display: block; width: 100%; height: auto; }
+        .cmp .after { position: absolute; inset: 0; height: 100%; object-fit: cover; clip-path: inset(0 0 0 var(--pos)); }
+        .cmp .line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; translate: -1px 0; background: var(--paper); box-shadow: 0 0 12px rgb(0 0 0 / 0.35); pointer-events: none; }
+        .cmp .knob {
+            position: absolute;
+            top: 50%;
+            left: var(--pos);
+            translate: -50% -50%;
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: var(--brown);
+            box-shadow: 0 6px 18px rgb(0 0 0 / 0.3);
+            pointer-events: none;
+        }
+        .cmp .knob svg { width: 22px; height: 22px; }
+        .cmp .tag { position: absolute; bottom: 14px; padding: 6px 12px; border-radius: 99px; font: 500 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; pointer-events: none; }
+        .cmp .tag.b { left: 14px; background: rgb(15 23 42 / 0.75); color: #fff; }
+        .cmp .tag.a { right: 14px; background: var(--gold); color: var(--brown); }
+        .cmp input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+        .cmp:has(input:focus-visible) .knob { outline: 3px solid var(--ink); outline-offset: 3px; }
+        body.phone .cmp { max-width: 390px; border-radius: 28px; }
+
+        .bees { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .bees figure { margin: 0; padding: 18px; border-radius: 18px; background: var(--paper); box-shadow: 0 1px 0 var(--line); text-align: center; }
+        .bees img { width: 100%; max-width: 200px; height: auto; margin: 0 auto; }
+        .bees figcaption { margin-top: 10px; font-size: 14px; color: var(--muted); }
+        .bees figcaption b { display: block; color: var(--ink); font-weight: 500; font-size: 15px; }
+        .fly { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .fly span { font-size: 14px; color: var(--muted); }
+
+        @media (max-width: 860px) {
+            .row { grid-template-columns: minmax(0, 1fr); }
+            .row .copy { position: static; }
+        }
+        @media (max-width: 520px) { .bees { grid-template-columns: 1fr 1fr; } .bees figure:first-child { grid-column: 1 / -1; } }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../" aria-label="Bogabee Apiaries, home"><img src="../assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Demo">
+                <a href="../">Showcase</a>
+                <a class="btn" href="../refined/">Open the new site</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <div class="top">
+            <div>
+                <span class="eyebrow">Bogabee Apiaries</span>
+                <h1 class="display">Before and after.</h1>
+                <p>Drag the divider on each section. Left is <a href="../../">the site today</a>, right is <a href="../refined/">the new one</a>.</p>
+            </div>
+            <div class="seg" role="group" aria-label="Screen size">
+                <button type="button" data-dev="d" aria-pressed="true">Desktop</button>
+                <button type="button" data-dev="m" aria-pressed="false">Phone</button>
+            </div>
+        </div>
+
+        <section class="row" aria-labelledby="s-hero">
+            <div class="copy">
+                <span class="eyebrow">First screen</span>
+                <h2 class="display" id="s-hero">Same photo, warmer.</h2>
+                <p>A nav with a cart, and two buttons into the shop and the apiary. Warm brown-black replaces the slate blue, with a softer serif for headlines and a cleaner typeface for text.</p>
+            </div>
+            <figure class="cmp" data-name="hero"></figure>
+        </section>
+
+        <section class="row" aria-labelledby="s-promises">
+            <div class="copy">
+                <span class="eyebrow">The three promises</span>
+                <h2 class="display" id="s-promises">Icons that mean something.</h2>
+                <p>The same three promises, with a drop, a flower and a jar in place of a checkmark, a pin and a clock.</p>
+            </div>
+            <figure class="cmp" data-name="promises"></figure>
+        </section>
+
+        <section class="row" aria-labelledby="s-apiary">
+            <div class="copy">
+                <span class="eyebrow">The apiary</span>
+                <h2 class="display" id="s-apiary">Same posts, softer frame.</h2>
+                <p>The three Instagram posts stay, with gentler shadows and a "View on Instagram" label on hover.</p>
+            </div>
+            <figure class="cmp" data-name="apiary"></figure>
+        </section>
+
+        <section class="row" aria-labelledby="s-order">
+            <div class="copy">
+                <span class="eyebrow">Ordering</span>
+                <h2 class="display" id="s-order">From a DM to a cart.</h2>
+                <p>Every jar gets its own Add to cart button in place of the single DM button. Stock shows when a size runs low, and checkout happens on the site.</p>
+            </div>
+            <figure class="cmp" data-name="order"></figure>
+        </section>
+
+        <section class="row" aria-labelledby="s-footer">
+            <div class="copy">
+                <span class="eyebrow">Footer</span>
+                <h2 class="display" id="s-footer">Matches the top.</h2>
+                <p>The same links, on the warm brown-black from the first screen.</p>
+            </div>
+            <figure class="cmp" data-name="footer"></figure>
+        </section>
+
+        <section class="row" aria-labelledby="s-bee">
+            <div class="copy">
+                <span class="eyebrow">The bee</span>
+                <h2 class="display" id="s-bee">Drawn like the logo.</h2>
+                <p>It still follows the pointer. Now it keeps its distance from fast moves, carries every jar you add into the cart, and lands and dozes off when you stop.</p>
+            </div>
+            <div>
+                <div class="bees">
+                    <figure><img src="img/bee-old.webp" width="400" height="400" alt="The current bee: orange body, black stripes"><figcaption><b>Today</b>Orange and black</figcaption></figure>
+                    <figure><img src="img/bee-fly.webp" width="400" height="400" alt="The new bee in flight, brown and gold with cream wings"><figcaption><b>New, flying</b>Brown and gold, from the logo</figcaption></figure>
+                    <figure><img src="img/bee-land.webp" width="400" height="400" alt="The new bee landed, wings folded and legs showing"><figcaption><b>New, landed</b>Wings folded, legs down</figcaption></figure>
+                </div>
+                <div class="fly">
+                    <span>Flying on this page:</span>
+                    <div class="seg">
+                        <a href="?bee=new" data-bee="new">New bee</a>
+                        <a href="?bee=old" data-bee="old">Today's bee</a>
+                    </div>
+                    <a class="btn" href="../bees/">See all ten in the Bee lab</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const KNOB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6-6 6 6 6M15 6l6 6-6 6"/></svg>';
+        const figs = [...document.querySelectorAll('.cmp')];
+        figs.forEach(f => {
+            const name = f.dataset.name;
+            // Named after the section heading beside it, so screen readers hear "first screen", not "hero".
+            const title = f.closest('.row').querySelector('.eyebrow').textContent.trim().toLowerCase();
+            f.innerHTML = `<img class="before" alt="The site today: ${title}"><img class="after" alt="The new site: ${title}">
+                <span class="line"></span><span class="knob">${KNOB}</span><span class="tag b">Before</span><span class="tag a">After</span>
+                <input type="range" min="0" max="100" value="50" aria-label="Compare the site today and the new site: ${title}">`;
+            f.querySelector('input').addEventListener('input', e => f.style.setProperty('--pos', e.target.value + '%'));
+        });
+
+        function show(dev) {
+            document.body.classList.toggle('phone', dev === 'm');
+            document.querySelectorAll('[data-dev]').forEach(b => b.setAttribute('aria-pressed', b.dataset.dev === dev));
+            figs.forEach(f => {
+                const [w, h] = dev === 'm' ? [780, 1688] : [1600, 1000];
+                for (const side of ['before', 'after']) {
+                    const img = f.querySelector('.' + side);
+                    img.width = w; img.height = h;
+                    img.src = `img/${dev}-${f.dataset.name}-${side}.webp`;
+                }
+            });
+        }
+        document.querySelectorAll('[data-dev]').forEach(b => b.addEventListener('click', () => show(b.dataset.dev)));
+        show(matchMedia('(max-width: 640px)').matches ? 'm' : 'd');
+
+        // Let the client fly either bee here.
+        const which = new URLSearchParams(location.search).get('bee') === 'old' ? 'old' : 'new';
+        document.querySelectorAll('[data-bee]').forEach(a => a.setAttribute('aria-current', a.dataset.bee === which));
+        if (which === 'old') {
+            const css = document.createElement('link');
+            css.rel = 'stylesheet';
+            css.href = '../../assets/bee.css';
+            document.head.append(css);
+        }
+        const js = document.createElement('script');
+        js.src = which === 'old' ? '../../assets/bee.js' : '../assets/bee2.js';
+        document.body.append(js);
+    </script>
+<script src="../nav.js"></script>
+</body>
+</html>

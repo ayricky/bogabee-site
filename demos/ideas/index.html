@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan &amp; ideas | Bogabee Apiaries</title>
+    <meta name="description" content="How paying on the Bogabee Apiaries site would work: payments, the porch cabinet lock, event check-in, party favor quotes, the Journal and HubSpot.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Plan &amp; ideas | Bogabee Apiaries">
+    <meta property="og:description" content="How paying on the Bogabee Apiaries site would work: payments, the porch cabinet lock, event check-in, party favor quotes, the Journal and HubSpot.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <style>
+        main { padding: 140px 0 120px; }
+        .doc { width: min(860px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+        .doc > h1 { font-size: clamp(44px, 6vw, 76px); margin: 14px 0 20px; }
+        .lede { font-size: 19px; color: var(--muted); max-width: 52ch; margin: 0; }
+        .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0 0; padding: 0; list-style: none; }
+        .toc a { display: inline-block; padding: 8px 14px; border-radius: 99px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; font-size: 14px; }
+        .toc a:hover { box-shadow: inset 0 0 0 1px var(--brown); }
+        section { margin-top: clamp(64px, 9vw, 104px); scroll-margin-top: 100px; }
+        section > h2 { font-size: clamp(32px, 4vw, 48px); margin: 12px 0 16px; }
+        h3 { font: 500 17px/1.3 var(--sans); margin: 28px 0 8px; }
+        p, li { max-width: 68ch; }
+        ol.flow { counter-reset: step; list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
+        ol.flow li { counter-increment: step; position: relative; padding: 14px 16px 14px 60px; border-radius: 14px; background: var(--paper); box-shadow: 0 1px 0 var(--line); max-width: none; }
+        ol.flow li::before { content: counter(step); position: absolute; left: 18px; top: 13px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: var(--brown); font-weight: 600; font-size: 14px; }
+        code { overflow-wrap: anywhere; font-size: .9em; background: rgb(86 54 33 / 0.08); padding: 1px 6px; border-radius: 6px; }
+        .options { display: grid; gap: 14px; margin-top: 20px; }
+        .option { padding: 20px 22px; border-radius: 18px; background: var(--paper); box-shadow: 0 1px 0 var(--line); }
+        .option.pick { box-shadow: inset 0 0 0 2px var(--gold), 0 1px 0 var(--line); }
+        .option header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+        .option h3 { margin: 0; }
+        .option .tag { padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; background: var(--gold); color: var(--brown); }
+        .option .pros { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; font-size: 15px; }
+        .option .pros b { display: block; font-weight: 500; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+        .option ul { margin: 0; padding-left: 18px; }
+        @media (max-width: 640px) { .option .pros { grid-template-columns: 1fr; } }
+        .ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 20px; }
+        .idea { padding: 18px 20px; border-radius: 16px; background: var(--paper); box-shadow: 0 1px 0 var(--line); }
+        .idea h3 { margin: 0 0 6px; }
+        .idea p { margin: 0; font-size: 15px; color: var(--muted); }
+        .decide { margin-top: 20px; padding: 0; list-style: none; display: grid; gap: 8px; }
+        .decide li { padding: 12px 16px; border-left: 3px solid var(--gold); background: var(--paper); border-radius: 0 12px 12px 0; max-width: none; }
+        .sources { font-size: 14px; color: var(--muted); }
+        .sources a { color: var(--amber-text); }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../" aria-label="Bogabee Apiaries, home"><img src="../assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Demo">
+                <a href="../">Showcase</a>
+                <a href="../hub/">Owner hub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article class="doc">
+            <span class="eyebrow">Plan</span>
+            <h1 class="display">Paying on the site, and what comes with it.</h1>
+            <p class="lede">How each demo would work for real, what it needs, and what's left for Danny to decide.</p>
+            <ul class="toc">
+                <li><a href="#payments">Payments</a></li>
+                <li><a href="#porch">Porch cabinet</a></li>
+                <li><a href="#events">Event sign-in</a></li>
+                <li><a href="#favors">Party favors quotes</a></li>
+                <li><a href="#content">Apiary page and Journal</a></li>
+                <li><a href="#hubspot">HubSpot</a></li>
+                <li><a href="#more">More ideas</a></li>
+                <li><a href="#decide">Decisions needed</a></li>
+            </ul>
+
+            <section id="payments">
+                <span class="eyebrow">Replaces Instagram DMs</span>
+                <h2 class="display">Payments</h2>
+                <p>Stripe, called from Cloudflare Pages Functions. The site already runs on Cloudflare Pages, and the event check-in work in PR #4 added Functions, a D1 database and HubSpot, so orders slot into the same setup.</p>
+                <ol class="flow">
+                    <li>The cart lives in the browser. Checkout sends only product IDs and quantities to <code>/api/checkout</code>.</li>
+                    <li>The server reads prices and stock from D1, recomputes the total, and creates a Stripe Checkout Session. The browser's prices are never trusted.</li>
+                    <li>The customer pays with a card, Apple Pay or Google Pay on Stripe's hosted page, or in an embedded Payment Element styled like the demo.</li>
+                    <li>Stripe's <code>checkout.session.completed</code> webhook records the order in D1, reduces stock, and for porch pickup creates the cabinet code.</li>
+                    <li>The customer gets a receipt and the order page. Danny sees the order in the hub and gets a text or email.</li>
+                </ol>
+                <h3>Cost</h3>
+                <p>No monthly fee. Stripe's standard US online card rate is 2.9% + 30¢ per payment, so a $16 jar costs about 76¢ to process.</p>
+                <h3>At markets and events</h3>
+                <p>Stripe's Tap to Pay on iPhone takes cards and phones at the table with no reader, and those sales can come off the same stock count as the website once the two are connected.</p>
+            </section>
+
+            <section id="porch">
+                <span class="eyebrow">Self-serve pickup</span>
+                <h2 class="display">Unlocking the porch cabinet</h2>
+                <p>Customers already come to the house and take honey from a cabinet on the front porch. Paying online lets each order carry its own code for that cabinet. Four ways to do it:</p>
+                <div class="options">
+                    <div class="option pick">
+                        <header><h3>Keypad padlock with offline codes: igloohome Smart Padlock 2</h3><span class="tag">Recommended</span></header>
+                        <p>A keypad padlock on a hasp across the cabinet doors. It has steel-capped buttons, an IPX7 waterproof rating and a rechargeable battery, and needs no Wi-Fi or outlet. About $159 from igloohome. The commercial Padlock 2E is rated IP68 if the cabinet gets direct weather.</p>
+                        <div class="pros">
+                            <div><b>Good</b><ul><li>One code per order, used once, expiring on its own</li><li>Checks codes offline, so a Wi-Fi outage can't lock anyone out</li><li>The lock records every open</li></ul></div>
+                            <div><b>Watch</b><ul><li>A code can't be cancelled remotely before it expires</li><li>A limited number of one-time codes can start in the same time slot (5 through Seam), so busy pickup times need spreading</li><li>The battery needs recharging a few times a year (igloohome quotes up to about nine months per charge)</li></ul></div>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <header><h3>Wi-Fi smart lock</h3></header>
+                        <p>A lock on the home Wi-Fi with an "Open cabinet" button on the order page.</p>
+                        <div class="pros">
+                            <div><b>Good</b><ul><li>Unlimited codes, instant revoke</li><li>Opens from the phone, no typing</li></ul></div>
+                            <div><b>Watch</b><ul><li>Needs Wi-Fi reaching the porch</li><li>Stops working when the Wi-Fi does</li></ul></div>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <header><h3>One shared code, changed weekly</h3></header>
+                        <p>A basic keypad lock. The order page shows this week's code.</p>
+                        <div class="pros">
+                            <div><b>Good</b><ul><li>Cheapest, no integration</li></ul></div>
+                            <div><b>Watch</b><ul><li>Anyone who paid once knows the code all week</li><li>No record of who opened it</li></ul></div>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <header><h3>Unlocked, pay by QR</h3></header>
+                        <p>Keep the cabinet as an honor box, with a QR sticker for paying on the spot.</p>
+                        <div class="pros">
+                            <div><b>Good</b><ul><li>No hardware at all</li></ul></div>
+                            <div><b>Watch</b><ul><li>Relies on trust, like today</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+                <h3>How the padlock connects to the site</h3>
+                <ol class="flow">
+                    <li>Danny sets up the padlock in the igloohome app, then turns on API access in igloohome's developer portal (iglooaccess). The client ID and secret go into Cloudflare as secrets.</li>
+                    <li>When Stripe confirms a porch pickup, the server asks igloohome for a one-time code starting at the chosen pickup time. It works for 24 hours and stops after one use.</li>
+                    <li>The code is saved with the order and shown on the receipt, in the email, and by text if we add it.</li>
+                    <li>The padlock checks the code itself. The igloohome servers and the padlock compute the same codes, so nothing has to be sent to the porch.</li>
+                    <li>The padlock records each open. Those records reach the hub when the igloohome app syncs near the cabinet, or close to real time with igloohome's Bridge. The Bridge plugs in within a meter of the padlock. Until then, the customer's "I picked up my honey" button marks the order.</li>
+                </ol>
+                <p>Cost: igloohome lists API access from $2 per active lock per month. Seam is an alternative layer over the same API; it's free for up to 3 devices and gives cleaner webhooks, but may still need igloohome's API plan behind it. Either works with the same site code.</p>
+                <h3>Either way, a QR sticker on the cabinet</h3>
+                <p>The <a href="../porch/">cabinet page</a> covers both kinds of visitor: someone who ordered ahead looks up their code, and someone who just drove by buys what's in the cabinet and gets a code on the spot. Stock in the cabinet is tracked separately from the website, so the hub knows when to restock.</p>
+            </section>
+
+            <section id="events">
+                <span class="eyebrow">Markets and fairs</span>
+                <h2 class="display">Event sign-in</h2>
+                <p>A QR code on the table opens a short sign-in form. A tablet can run it as a kiosk that clears after each guest. Each sign-in becomes a HubSpot contact tagged with the event; returning customers keep their history. The <a href="../hub/events.html">hub</a> shows sign-ins live, prints the table sign and exports the list.</p>
+                <p>The backend for this is already built in PR #4 (paused): the HubSpot form and property exist, and D1 holds the events. The demo is the front end it would get.</p>
+            </section>
+
+            <section id="favors">
+                <span class="eyebrow">Weddings and showers</span>
+                <h2 class="display">Party favors quotes</h2>
+                <p>The <a href="../favors/">calculator</a> prices favors as you choose them: jar, quantity, add-ons, assembly. Plain orders pay on the spot. Orders with a custom label or logo go to Danny for approval first, and the customer gets a payment link once the label is approved. Pricing comes from the party-favors draft in PR #3. The full spec is in <code>docs/QUOTE-CALCULATOR.md</code>.</p>
+            </section>
+
+            <section id="content">
+                <span class="eyebrow">Edited from the hub</span>
+                <h2 class="display">Apiary page and Journal</h2>
+                <p>Danny edits the <a href="../apiary/">Apiary page</a> and writes <a href="../journal/">Journal</a> posts in the hub, with no developer in the loop. Posts have drafts, a private preview, a cover photo and simple formatting: headings, bold, lists, links, quotes and photos.</p>
+                <ol class="flow">
+                    <li>The hub sits behind Cloudflare Access, the same sign-in planned for the event dashboard in PR #4, so only Danny's account can edit.</li>
+                    <li>Posts and page text are saved in D1. Photos are shrunk in the browser and uploaded to Cloudflare R2.</li>
+                    <li>The server cleans every post to a short list of allowed tags before saving, so a pasted script or styling can't reach the public site.</li>
+                    <li>Public pages are rendered on the server and cached, so they load fast and search engines can read them. Drafts show only through Danny's preview link.</li>
+                    <li>Each save keeps the previous version, so an edit can be rolled back.</li>
+                </ol>
+                <p>For search engines, the Journal also gets an RSS feed and a sitemap, and draft previews and the hub are marked not to be indexed.</p>
+                <p>The demo stores everything in the browser instead, so edits show up on the public pages in other tabs right away but aren't shared between devices.</p>
+            </section>
+
+            <section id="hubspot">
+                <span class="eyebrow">CRM</span>
+                <h2 class="display">HubSpot</h2>
+                <p>Every place a customer meets the site updates Bogabee's HubSpot account (portal 247317631). The <a href="../hub/hubspot.html">HubSpot screen</a> in the hub shows what synced, what's queued and what failed, with Retry.</p>
+                <ol class="flow">
+                    <li><b>Event sign-ins</b> create or update a contact. New people become leads; people HubSpot already knows keep their stage. Each sign-in sets Last Bogabee event (<code>bogabee_last_event</code>) and their interests. This is the PR #4 flow, unchanged.</li>
+                    <li><b>Paid orders</b>, online or from the porch cabinet, update the contact to Customer and add a closed-won deal in an Online orders pipeline, with the amount, the jars and how it's fulfilled. A walk-up with no email gets the deal without a contact.</li>
+                    <li><b>Party favor quotes</b> add a deal in a Party favors pipeline that moves as the quote does: New request, Label approval, Payment link sent, Paid.</li>
+                    <li><b>Harvest news</b> subscribes a contact to a Harvest news email list only when they ask: the box at an event or at checkout, or the Journal sign-up.</li>
+                    <li>Contacts are matched by email, then by phone. A phone number that matches more than one contact is never merged.</li>
+                </ol>
+                <h3>To go live</h3>
+                <ul>
+                    <li>The <code>HUBSPOT_TOKEN</code> secret from PR #4 is already in Cloudflare. Its private app needs two more scopes: deals (<code>crm.objects.deals.write</code>) and email subscriptions (<code>communication_preferences.write</code>).</li>
+                    <li>Create the Online orders and Party favors pipelines, the Harvest news subscription type, and the properties for interests and fulfillment.</li>
+                    <li>Syncs run on the server after Stripe confirms a payment or a form is sent, and retry on their own when HubSpot is slow.</li>
+                </ul>
+            </section>
+
+            <section id="more">
+                <span class="eyebrow">Next</span>
+                <h2 class="display">More ideas</h2>
+                <div class="ideas">
+                    <div class="idea"><h3>Harvest pre-orders</h3><p>Reserve and pay for jars from the next harvest before it's bottled, so a limited batch sells out to regulars first.</p></div>
+                    <div class="idea"><h3>Back-in-stock alerts</h3><p>When a size sells out, a "Text me when it's back" button replaces Add to cart.</p></div>
+                    <div class="idea"><h3>Pickup texts</h3><p>The cabinet code arrives by text as well as on the page, with a reminder if the order isn't collected.</p></div>
+                    <div class="idea"><h3>Gift orders</h3><p>Ship a jar to someone else with a note, or buy a gift card.</p></div>
+                    <div class="idea"><h3>Honey club</h3><p>A seasonal subscription: a jar from each harvest, charged when it's bottled.</p></div>
+                    <div class="idea"><h3>Local shops</h3><p>A wholesale form for cafés and farm stands that want to stock Bogabee.</p></div>
+                    <div class="idea"><h3>Swarm calls</h3><p>If Danny collects swarms, a form with a photo upload and address turns those calls into leads.</p></div>
+                    <div class="idea"><h3>Reviews</h3><p>Ask for a review a few days after pickup and show the best ones by the jars.</p></div>
+                </div>
+            </section>
+
+            <section id="decide">
+                <span class="eyebrow">For Danny</span>
+                <h2 class="display">Decisions needed</h2>
+                <ul class="decide">
+                    <li>Open a Stripe account in the business's name, with the bank account for payouts.</li>
+                    <li>Buy the igloohome Smart Padlock 2 (about $159), or pick another lock option. Check that the cabinet doors can take a hasp.</li>
+                    <li>Which fulfillment to offer: porch pickup only, or local delivery and shipping too, and their fees. The demo's $5 delivery and $8.95 shipping are placeholders.</li>
+                    <li>Party favors: full payment or a deposit, the minimum lead time, and whether favors are picked up or delivered.</li>
+                    <li>Read the starter copy on the Apiary page and Journal and correct anything that isn't right. It was written from the current site and general beekeeping, so the specifics about the hives are his to add.</li>
+                    <li>A short privacy page. The site will collect names, emails, phones and harvest-news consent at checkout and at events, so it needs one; the wording is his and his accountant's or lawyer's to approve.</li>
+                    <li>Sales tax: honey is food, which New Jersey doesn't tax, but charms and dippers may be. Confirm with the accountant.</li>
+                </ul>
+                <p class="sources">Sources: <a href="https://igloohome.co/products/padlock-2">igloohome Padlock 2</a> · <a href="https://www.bhphotovideo.com/c/product/1775381-REG/igloohome_sp2_smart_padlock_2.html/specs">B&amp;H: Padlock 2 specs</a> · <a href="https://www.igloohome.co/pricing">igloohome pricing</a> · <a href="https://www.igloohome.co/developers">igloohome for developers</a> · <a href="https://www.seam.co/pricing">Seam pricing</a> · <a href="https://lesterchan.net/blog/2023/04/25/igloohome-bridge-review/">igloohome Bridge review</a> · <a href="https://docs.seam.co/device-and-system-integration-guides/igloohome-locks/creating-igloohome-offline-access-codes">Seam: creating igloohome offline access codes</a> · <a href="https://www.igloohome.co/blog/accessanywhere-igloohome-smart-lock-offline-access">igloohome: offline access</a> · <a href="https://docs.stripe.com/terminal/payments/setup-reader/tap-to-pay?platform=ios">Stripe: Tap to Pay</a> · <a href="https://stripe.com/terminal/tap-to-pay-on-iphone">Stripe: Tap to Pay on iPhone</a></p>
+            </section>
+        </article>
+    </main>
+<script src="../nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Apiary | Bogabee Apiaries</title>
+    <meta name="description" content="Where Bogabee honey comes from: our hives in Manalapan Township, NJ, the bees, what they forage, and how raw wildflower honey gets to the jar.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Apiary | Bogabee Apiaries">
+    <meta property="og:description" content="Where Bogabee honey comes from: our hives in Manalapan Township, NJ, the bees, what they forage, and how raw wildflower honey gets to the jar.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Bogabee Apiaries","description":"Raw wildflower honey from hives in Manalapan Township, NJ.","address":{"@type":"PostalAddress","streetAddress":"93 Tracy Station Road","addressLocality":"Manalapan","addressRegion":"NJ","postalCode":"07726","addressCountry":"US"},"sameAs":["https://www.instagram.com/bogabee_apiaries/"]}</script>
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="../cart.css">
+    <link rel="stylesheet" href="../content.css">
+    <style>
+        main { display: block; }
+        .a-hero { position: relative; display: grid; align-items: end; min-height: min(78svh, 760px); padding: 150px 0 clamp(48px, 8vw, 96px); background: var(--night); color: var(--cream); overflow: hidden; }
+        .a-hero-bg { position: absolute; inset: 0; }
+        .a-hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 30% 40%; }
+        .a-hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(23 16 10 / .92), rgb(23 16 10 / .35) 55%, rgb(23 16 10 / .55)); }
+        .a-hero .wrap { position: relative; }
+        .a-hero .eyebrow { color: var(--gold); }
+        .a-hero h1 { font-size: clamp(48px, 7.4vw, 104px); margin-top: 16px; max-width: 14ch; }
+        .a-hero p { margin: 22px 0 0; max-width: 46ch; font-size: clamp(17px, 1.7vw, 21px); font-weight: 300; color: rgb(255 249 235 / .86); }
+        .a-hero.plain { min-height: 0; background: var(--cream); color: var(--ink); padding-top: clamp(128px, 14vw, 170px); }
+        .a-hero.plain .eyebrow { color: var(--amber-text); }
+        .a-hero.plain p { color: var(--muted); }
+
+        .a-sections { padding: clamp(72px, 10vw, 130px) 0; display: grid; gap: clamp(64px, 9vw, 120px); }
+        .a-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+        .a-row:nth-child(even) .a-img { order: 2; }
+        .a-row.text-only { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+        .a-img { margin: 0; border-radius: var(--radius); overflow: hidden; box-shadow: 0 30px 60px -36px rgb(36 24 14 / .5); }
+        .a-img img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3.4; object-fit: cover; }
+        .a-row h2 { font-size: clamp(36px, 4.4vw, 60px); margin-bottom: 20px; }
+
+        .a-seasons { padding: clamp(72px, 10vw, 120px) 0; background: var(--paper); border-block: 1px solid var(--line); }
+        .a-seasons h2 { font-size: clamp(36px, 4.6vw, 60px); margin-bottom: clamp(36px, 5vw, 60px); }
+        .a-seasons ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 0; counter-reset: s; position: relative; }
+        .a-seasons li { counter-increment: s; position: relative; padding: 0 clamp(14px, 2vw, 28px) 0 0; }
+        .a-seasons li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 18px; border-radius: 50%; background: var(--gold); color: var(--brown); font-weight: 600; position: relative; z-index: 1; }
+        .a-seasons li::after { content: ""; position: absolute; left: 40px; right: 0; top: 20px; height: 2px; background: repeating-linear-gradient(90deg, rgb(86 54 33 / .25) 0 6px, transparent 6px 12px); }
+        .a-seasons li:last-child::after { display: none; }
+        .a-seasons h3 { margin: 0 0 6px; font: italic 400 26px/1.1 var(--display); }
+        .a-seasons p { margin: 0; color: var(--muted); max-width: 30ch; }
+        @media (max-width: 700px) {
+            .a-seasons ol { gap: 28px; }
+            .a-seasons li { display: grid; grid-template-columns: 40px 1fr; column-gap: 16px; padding: 0; }
+            .a-seasons li::before { grid-row: span 2; margin: 0; }
+            .a-seasons li::after { left: 19px; right: auto; top: 44px; bottom: -28px; width: 2px; height: auto; background: repeating-linear-gradient(180deg, rgb(86 54 33 / .25) 0 6px, transparent 6px 12px); }
+        }
+
+        .a-keeper { padding: clamp(72px, 10vw, 130px) 0; }
+        .a-keeper .wrap { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+        .a-keeper .wrap.text-only { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+        .a-keeper .a-img img { aspect-ratio: 4 / 4.4; object-position: 22% center; }
+        .a-keeper h2 { font-size: clamp(36px, 4.4vw, 60px); margin-bottom: 20px; }
+
+        .a-end { padding: clamp(72px, 10vw, 120px) 0; background: var(--night); color: var(--cream); text-align: center; }
+        .a-end h2 { font-size: clamp(36px, 5vw, 64px); }
+        .a-end .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 30px; }
+        .a-end .btn-line { background: transparent; color: var(--cream); box-shadow: inset 0 0 0 1.5px rgb(255 249 235 / .5); }
+        .a-end .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--gold); }
+        @media (max-width: 760px) {
+            .a-row, .a-keeper .wrap { grid-template-columns: minmax(0, 1fr); }
+            .a-row:nth-child(even) .a-img { order: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../refined/" aria-label="Bogabee Apiaries, home"><img src="../assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Site">
+                <a href="../apiary/" aria-current="page">The Apiary</a>
+                <a href="../journal/">Journal</a>
+                <a href="../refined/#order">Jars</a>
+                <button class="btn cart-btn" type="button" data-cart-open aria-label="Cart, 0 items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg>Cart<span class="cart-count" data-cart-count hidden>0</span></button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="apiary-page">
+        <section class="a-hero" id="a-hero" aria-labelledby="a-title"></section>
+        <div class="wrap a-sections" id="a-sections"></div>
+        <section class="a-seasons" id="a-seasons" aria-labelledby="a-seasons-title"></section>
+        <section class="a-keeper" id="a-keeper" aria-labelledby="a-keeper-title"></section>
+        <section class="a-end" aria-labelledby="a-end-title">
+            <div class="wrap">
+                <h2 class="display" id="a-end-title">Honey from these hives.</h2>
+                <div class="ctas">
+                    <a class="btn btn-lg" href="../refined/#order">Shop the jars</a>
+                    <a class="btn btn-lg btn-line" href="../porch/">Porch pickup</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap">
+            <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener"><img class="logo" src="../assets/img/logo-192.webp" width="104" height="104" alt="Bogabee Apiaries on Instagram"></a>
+            <h2 class="display">Support Local Bees.</h2>
+            <div class="row">
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".9" fill="currentColor" stroke="none"/></svg>@bogabee_apiaries</a>
+                <a href="../favors/">Party favors</a>
+                <a href="../porch/">Porch pickup</a>
+                <span>Manalapan Township, NJ</span>
+            </div>
+            <small>© 2023–<span data-year>2026</span> Bogabee Apiaries</small>
+        </div>
+    </footer>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="../cart.js"></script>
+    <script src="../content.js"></script>
+    <script>
+        (function () {
+            const B = window.Bogabee, { esc, live, picture, siteName } = B.content;
+            const $ = id => document.getElementById(id);
+            // `alt` comes from the hub when Danny describes a photo; site photos have their own descriptions.
+            const figure = (src, alt, cls = 'a-img') => src ? `<figure class="${cls}">${picture(src, { sizes: '(max-width: 760px) 100vw, 560px', alt: alt || undefined })}</figure>` : '';
+            // A photo shows once per page: later repeats (like the hero reused for the beekeeper) are dropped.
+            const key = src => siteName(src) || src;
+
+            function render() {
+                const a = B.pages.get('apiary') || {};
+                const hero = $('a-hero');
+                const used = new Set(a.heroImage ? [key(a.heroImage)] : []);
+                const once = src => { if (!src || used.has(key(src))) return ''; used.add(key(src)); return src; };
+                hero.classList.toggle('plain', !a.heroImage);
+                hero.innerHTML = `${a.heroImage ? `<div class="a-hero-bg">${picture(a.heroImage, { sizes: '100vw', alt: '', eager: true })}</div>` : ''}
+                    <div class="wrap">
+                        ${a.eyebrow ? `<span class="eyebrow">${esc(a.eyebrow)}</span>` : ''}
+                        <h1 class="display" id="a-title">${esc(a.title || 'The Apiary')}</h1>
+                        ${a.intro ? `<p>${esc(a.intro)}</p>` : ''}
+                    </div>`;
+                document.title = `${a.title ? a.title.replace(/\.$/, '') : 'The Apiary'} | Bogabee Apiaries`;
+
+                const sections = (a.sections || []).filter(s => s && (s.heading || (s.body || '').replace(/<[^>]*>/g, '').trim() || s.image));
+                $('a-sections').innerHTML = sections.map(s => { const img = once(s.image); return `
+                    <section class="a-row${img ? '' : ' text-only'}">
+                        ${figure(img, s.imageAlt)}
+                        <div>
+                            ${s.heading ? `<h2 class="display">${esc(s.heading)}</h2>` : ''}
+                            <div class="prose">${B.render(s.body)}</div>
+                        </div>
+                    </section>`; }).join('');
+                $('a-sections').hidden = !sections.length;
+
+                const seasons = (a.seasons || []).filter(s => s && (s.name || s.text));
+                $('a-seasons').hidden = !seasons.length;
+                $('a-seasons').innerHTML = `<div class="wrap">
+                        <h2 class="display" id="a-seasons-title">${esc(a.seasonsTitle || 'A year at the hives')}</h2>
+                        <ol>${seasons.map(s => `<li><h3>${esc(s.name)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>
+                    </div>`;
+
+                const keeperText = (a.keeper || '').replace(/<[^>]*>/g, '').trim();
+                const keeperImg = once(a.keeperImage);
+                $('a-keeper').hidden = !keeperText && !keeperImg;
+                $('a-keeper').innerHTML = `<div class="wrap${keeperImg ? '' : ' text-only'}">
+                        ${figure(keeperImg, a.keeperImageAlt)}
+                        <div>
+                            <h2 class="display" id="a-keeper-title">${esc(a.keeperTitle || 'The beekeeper')}</h2>
+                            <div class="prose">${B.render(a.keeper)}</div>
+                        </div>
+                    </div>`;
+            }
+            live([B.KEYS.pages], render);
+        })();
+    </script>
+    <script src="../nav.js"></script>
+    <script src="../assets/bee2.js"></script>
+    <script>document.querySelectorAll('[data-year]').forEach(s => s.textContent = new Date().getFullYear());</script>
+</body>
+</html>

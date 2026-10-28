@@ -1,0 +1,73 @@
+/* Rich-text bodies (Journal posts, Apiary sections) and the post cards. Load after brand.css. */
+
+.prose { font-size: 18px; line-height: 1.7; color: var(--ink); }
+.prose > :first-child { margin-top: 0; }
+.prose > :last-child { margin-bottom: 0; }
+.prose p { margin: 0 0 1.1em; max-width: 68ch; }
+.prose h2, .prose h3 { font-family: var(--display); font-weight: 400; font-style: italic; letter-spacing: -0.01em; line-height: 1.15; text-wrap: balance; }
+.prose h2 { font-size: clamp(28px, 3vw, 36px); margin: 1.6em 0 .5em; }
+.prose h3 { font-size: clamp(22px, 2.2vw, 26px); margin: 1.4em 0 .4em; }
+.prose a { color: var(--amber-text); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.prose a:hover { color: var(--brown); }
+.prose strong, .prose b { font-weight: 600; }
+.prose ul, .prose ol { margin: 0 0 1.1em; padding-left: 1.3em; max-width: 64ch; }
+.prose li { margin: .3em 0; }
+.prose li::marker { color: var(--honey); }
+.prose blockquote {
+    margin: 1.4em 0;
+    padding: .2em 0 .2em 1.1em;
+    border-left: 3px solid var(--gold);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.2em;
+    line-height: 1.45;
+    color: var(--brown);
+}
+.prose blockquote p { margin: 0; }
+.prose figure { margin: 1.6em 0; }
+.prose img { display: block; width: 100%; height: auto; border-radius: var(--radius); }
+.prose figcaption { margin-top: 10px; font-size: 14px; color: var(--muted); }
+
+/* ---------- Post cards ---------- */
+.post-card {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border-radius: calc(var(--radius) + 4px);
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: 0 1px 0 var(--line), 0 24px 50px -36px rgb(36 24 14 / 0.45);
+    transition: translate .6s var(--ease), box-shadow .6s var(--ease);
+}
+.post-card:hover { translate: 0 -4px; box-shadow: 0 1px 0 var(--line), 0 36px 60px -34px rgb(36 24 14 / 0.5); }
+.post-card:focus-within { outline: 2px solid var(--honey); outline-offset: 3px; }
+.post-cover { overflow: hidden; background: #e9dfc6; }
+.post-cover img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: scale 1.2s var(--ease); }
+.post-card:hover .post-cover img { scale: 1.04; }
+.post-text { display: grid; align-content: start; gap: 8px; padding: 20px 22px 24px; }
+.post-text time { font: 500 12px/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--amber-text); }
+.post-text :is(h2, h3) { margin: 0; font: italic 400 clamp(24px, 2.4vw, 30px)/1.15 var(--display); letter-spacing: -0.01em; text-wrap: balance; }
+.post-text :is(h2, h3) a { color: inherit; text-decoration: none; }
+.post-text :is(h2, h3) a:focus-visible { outline: none; }
+/* The whole card is the link. */
+.post-text :is(h2, h3) a::after { content: ""; position: absolute; inset: 0; }
+.post-text p { margin: 0; color: var(--muted); }
+.post-card.no-cover { grid-template-rows: 1fr; }
+
+.post-card.feature { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: none; }
+.post-card.feature .post-cover img { height: 100%; aspect-ratio: 4 / 3; }
+.post-card.feature .post-text { align-content: center; gap: 14px; padding: clamp(24px, 4vw, 56px); }
+.post-card.feature :is(h2, h3) { font-size: clamp(32px, 4vw, 52px); }
+.post-card.feature p { font-size: 18px; }
+@media (max-width: 760px) {
+    .post-card.feature { grid-template-columns: minmax(0, 1fr); }
+}
+
+.post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: clamp(14px, 2.4vw, 32px); }
+
+/* Content pages share a quiet header under the solid nav. */
+.page-head { padding: clamp(128px, 14vw, 170px) 0 clamp(40px, 6vw, 72px); }
+.page-head h1 { font-size: clamp(48px, 7vw, 96px); margin-top: 14px; }
+.page-head p { margin: 18px 0 0; max-width: 48ch; font-size: clamp(17px, 1.6vw, 20px); color: var(--muted); }
+
+.nav .links a[aria-current="page"] { opacity: 1; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 8px; }

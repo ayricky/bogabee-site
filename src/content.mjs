@@ -3,10 +3,10 @@
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-// The site's own photos, in public/assets/img as NAME.webp and NAME-640.webp (market: NAME-800.webp).
+// The site's own photos, in public/assets/img as NAME.webp and NAME-640.webp (market: NAME-1000.webp).
 // Content refers to them by name; anything else is used as a plain URL.
 export const PHOTOS = {
-    market: { w: 1500, h: 2000, small: 800, alt: 'The Bogabee Apiaries table at an outdoor market, with jars, honey bears and a price board' },
+    market: { w: 1500, h: 2000, small: 1000, alt: 'The Bogabee Apiaries table at an outdoor market, with jars, honey bears and a price board' },
     danny: { w: 1168, h: 880, small: 640, alt: 'Danny crouched beside a white hive box covered in bees' },
     hello_honey_bee: { w: 1080, h: 1350, small: 640, alt: 'A honey bee peeking over a piece of wax comb' },
     sunflower: { w: 1080, h: 1350, small: 640, alt: 'Honey bees foraging on a sunflower' },

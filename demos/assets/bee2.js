@@ -158,7 +158,9 @@
         const el = makeEl('b2 flying' + (skin === 'bumble' ? ' bumble' : ''), `<div class="b2-roll">${skin === 'bumble' ? bumbleSkin() : logoSkin()}</div>`, E);
         return {
             el, shadow, roll: el.firstElementChild,
-            x: E.P.x + (Math.random() - .5) * 120, y: E.P.y + 60, vx: 0, vy: 0,
+            x: E.P.x + (Math.random() - .5) * 120, y: E.P.y + 60, vx: 0, vy: 0, px: 0, py: 0, pa: 0,
+            // kx/ky: a shove spread over a few frames; k/damp/cap: the spring, eased between modes.
+            kx: 0, ky: 0, k: 0, damp: 0, cap: 0, facePtr: true, shown: true,
             angle: 0, bank: 0, lift: 1, spin: 0, landed: false, landedAt: 0, seed: Math.random() * 100, cargo: null,
         };
     }
@@ -277,18 +279,19 @@
                     const edges = [[-40, P.y], [W() + 40, P.y], [P.x, -40], [P.x, H() + 40]];
                     const d = edges.map(([ex, ey]) => Math.hypot(ex - P.x, ey - P.y));
                     const [ex, ey] = edges[d.indexOf(Math.min(...d))];
-                    bees.forEach((b, i) => { b.x = ex + i * 20; b.y = ey; b.vx = b.vy = 0; });
+                    bees.forEach((b, i) => { b.x = b.px = ex + i * 20; b.y = b.py = ey; b.vx = b.vy = b.kx = b.ky = 0; });
                     setMode('follow');
                 } else if (mode === 'sleep') {
                     // Startled awake: a hop and a burst of speed.
-                    bees.forEach(b => { b.vy -= 7; b.vx += (Math.random() - .5) * 6; b.spin += 40; });
+                    bees.forEach(b => { b.ky -= 7; b.kx += (Math.random() - .5) * 6; b.spin += 25; });
                     setMode('follow');
                 } else if (['land', 'perch', 'waggle'].includes(mode)) setMode('follow');
                 if (o.shy && P.speed > 1.4) {
                     bees.forEach(b => {
                         const dx = b.x - P.x, dy = b.y - P.y, d = Math.hypot(dx, dy) || 1;
                         const toward = (P.vx * -dx + P.vy * -dy) / d;
-                        if (d < 190 && toward > 0.6) { b.vx += dx / d * 9; b.vy += dy / d * 9; }
+                        // One scoot per approach: pointer events can arrive 120 times a second.
+                        if (d < 190 && toward > 0.6 && Math.hypot(b.kx, b.ky) < 1) { b.kx += dx / d * 9; b.ky += dy / d * 9; }
                     });
                 }
             },
@@ -304,7 +307,7 @@
             },
             scroll(dy) {
                 if (still || !o.breeze) return;
-                bees.forEach(b => { b.vy -= clamp(dy * .45, -26, 26); b.vx += (Math.random() - .5) * Math.abs(dy) * .15; b.spin += clamp(dy, -60, 60) * 2; });
+                bees.forEach(b => { b.ky = clamp(b.ky - dy * .45, -26, 26); b.kx += (Math.random() - .5) * Math.abs(dy) * .15; b.spin += clamp(dy, -60, 60) * 2; });
                 if (['land', 'perch', 'sleep'].includes(mode)) setMode('follow');
             },
             // A jar going into (+1) or out of (-1) the cart. Quick taps queue up as back-to-back trips.
@@ -454,22 +457,28 @@
             return orbit(b, t);
         }
 
-        function step(now) {
-            if (!alive) return;
-            if (paused) { raf = 0; return; }
-            const t = now / 1000;
+        // One physics tick at a fixed 60 Hz, so the bee flies the same on 60 and 120 Hz screens
+        // and doesn't lurch when a frame is dropped.
+        function tick(now, t) {
             for (const b of bees) {
                 const it = intent(b, now, t);
-                b.el.style.opacity = b.shadow.style.opacity = it ? '' : 0;
+                b.shown = !!it;
                 if (!it) continue;
-                b.vx = (b.vx + (it.tx - b.x) * it.k) * it.damp;
-                b.vy = (b.vy + (it.ty - b.y) * it.k) * it.damp;
+                b.px = b.x; b.py = b.y; b.pa = b.angle;
+                // Ease into each mode's spring rather than switching it in one frame.
+                const ease = still || !b.cap ? 1 : .12, cap = o.breeze ? it.max * 3 : it.max;
+                b.k += (it.k - b.k) * ease; b.damp += (it.damp - b.damp) * ease; b.cap += (cap - b.cap) * ease;
+                b.vx = (b.vx + (it.tx - b.x) * b.k) * b.damp + b.kx * .3;
+                b.vy = (b.vy + (it.ty - b.y) * b.k) * b.damp + b.ky * .3;
+                b.kx *= .7; b.ky *= .7;
                 // Gusts may push a bee past its own top speed; nothing else may.
-                const sp = Math.hypot(b.vx, b.vy), cap = o.breeze ? it.max * 3 : it.max;
-                if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
+                const sp = Math.hypot(b.vx, b.vy);
+                if (sp > b.cap) { b.vx *= b.cap / sp; b.vy *= b.cap / sp; }
                 b.x += b.vx; b.y += b.vy;
 
-                const landed = !!it.land && Math.hypot(it.tx - b.x, it.ty - b.y) < 3;
+                // Touch down within 3px, take off only past 7px, so it doesn't flicker between the two.
+                const gap = Math.hypot(it.tx - b.x, it.ty - b.y);
+                const landed = !!it.land && gap < (b.landed ? 7 : 3);
                 if (landed && !b.landed) b.landedAt = now;
                 b.landed = landed;
                 b.el.classList.toggle('landed', landed);
@@ -477,27 +486,21 @@
                 b.el.classList.toggle('asleep', !!it.sleep && landed);
 
                 // Face the way it's flying when fast; face the pointer when hovering or landed.
+                // The two thresholds keep it from flipping back and forth around one speed.
+                if (sp < 1.6) b.facePtr = true; else if (sp > 2.8) b.facePtr = false;
+                const ptrD = Math.hypot(P.x - b.x, P.y - b.y);
                 let target = b.angle;
                 if (it.face !== undefined) target = it.face * 180 / Math.PI + 90;
-                else if (landed || (mode === 'follow' && sp < 2.2)) target = Math.atan2(P.y - b.y, P.x - b.x) * 180 / Math.PI + 90;
-                else if (sp > .6) target = Math.atan2(b.vy, b.vx) * 180 / Math.PI + 90;
+                else if ((landed || (mode === 'follow' && b.facePtr)) && ptrD > 24) target = Math.atan2(P.y - b.y, P.x - b.x) * 180 / Math.PI + 90;
+                else if (!landed && sp > .6 && !(mode === 'follow' && b.facePtr)) target = Math.atan2(b.vy, b.vx) * 180 / Math.PI + 90;
                 let diff = target - b.angle;
                 diff -= Math.round(diff / 360) * 360;
-                b.angle += diff * (heavy ? .07 : landed ? .12 : .1);
+                // Turn at most 8° a tick, so a U-turn sweeps round instead of snapping.
+                b.angle += clamp(diff * (heavy ? .07 : landed ? .12 : .1), -8, 8);
                 b.spin *= .9;
                 // Lean into turns: the rate of turn becomes a roll, drawn as a narrowing of the body.
-                b.bank += (clamp(diff / 40, -1, 1) - b.bank) * .15;
+                b.bank += (clamp(diff / 40, -1, 1) - b.bank) * .12;
                 b.lift += ((landed ? 0 : 1) - b.lift) * .08;
-
-                // Heavier bees bob more and wobble when they turn hard.
-                const bob = reduce || landed ? 0 : Math.sin(t * (heavy ? 6 : 9) + b.seed) * (heavy ? 2.6 : 1.4) * b.lift;
-                const wob = heavy && !reduce ? Math.sin(t * 13 + b.seed) * Math.abs(b.bank) * 9 : 0;
-                b.roll.style.transform = `scaleX(${1 - Math.abs(b.bank) * .22})`;
-                b.el.style.transform = `translate3d(${b.x}px, ${b.y + bob}px, 0) rotate(${b.angle + b.spin + wob}deg)`;
-                // The shadow falls down-right and tightens as the bee comes down.
-                const off = 4 + 14 * b.lift;
-                b.shadow.style.transform = `translate3d(${b.x + off * .6}px, ${b.y + off}px, 0) rotate(${b.angle}deg) scale(${1 + b.lift * .25})`;
-                b.shadow.style.opacity = .55 + (1 - b.lift) * .45;
 
                 if (b === lead && it.pollen && landed && now - lastPollen > 320) {
                     lastPollen = now;
@@ -508,6 +511,36 @@
                     burst('b2-z', b.x + 12, b.y - 18, s => { s.textContent = 'z'; });
                 }
             }
+        }
+
+        // Draw between the last two ticks, so motion stays smooth at any refresh rate.
+        function draw(a, t) {
+            for (const b of bees) {
+                b.el.style.opacity = b.shadow.style.opacity = b.shown ? '' : 0;
+                if (!b.shown) continue;
+                const x = b.px + (b.x - b.px) * a, y = b.py + (b.y - b.py) * a, angle = b.pa + (b.angle - b.pa) * a;
+                // Heavier bees bob more and wobble when they turn hard.
+                const bob = reduce || b.landed ? 0 : Math.sin(t * (heavy ? 6 : 9) + b.seed) * (heavy ? 2.6 : 1.4) * b.lift;
+                const wob = heavy && !reduce ? Math.sin(t * 13 + b.seed) * Math.abs(b.bank) * 9 : 0;
+                b.roll.style.transform = `scaleX(${1 - Math.abs(b.bank) * .22})`;
+                b.el.style.transform = `translate3d(${x}px, ${y + bob}px, 0) rotate(${angle + b.spin + wob}deg)`;
+                // The shadow falls down-right and tightens as the bee comes down.
+                const off = 4 + 14 * b.lift;
+                b.shadow.style.transform = `translate3d(${x + off * .6}px, ${y + off}px, 0) rotate(${angle}deg) scale(${1 + b.lift * .25})`;
+                b.shadow.style.opacity = .55 + (1 - b.lift) * .45;
+            }
+        }
+
+        const TICK = 1000 / 60;
+        let acc = 0, then = 0;
+        function step(now) {
+            if (!alive) return;
+            if (paused) { raf = 0; then = 0; return; }
+            // A hidden tab or a long stall resumes where it was instead of fast-forwarding.
+            acc += then ? Math.min(now - then, 100) : TICK;
+            then = now;
+            while (acc >= TICK) { acc -= TICK; const at = now - acc; tick(at, at / 1000); }
+            draw(acc / TICK, now / 1000);
             raf = requestAnimationFrame(step);
         }
         raf = requestAnimationFrame(step);

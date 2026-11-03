@@ -44,7 +44,7 @@ export function homeMain(posts) {
     const latest = published(posts).slice(0, 3);
     return `    <main>
     <section class="hero" aria-labelledby="title">
-        <div class="hero-bg">${picture('market', { sizes: HERO_SIZES, eager: true })}</div>
+        <div class="hero-bg">${picture('market', { sizes: HERO_SIZES, eager: true, alt: '' })}</div>
         <div class="hero-inner">
             <img class="hero-logo" src="/assets/img/logo-303.webp" width="260" height="260" alt="Bogabee Apiaries">
             <h1 class="display" id="title">The <em>Gold</em> Standard Honey</h1>
@@ -54,6 +54,7 @@ export function homeMain(posts) {
                 <a class="btn btn-lg btn-ghost" href="/apiary/">Meet the bees</a>
             </div>
         </div>
+        <figure class="hero-photo">${picture('market', { sizes: HERO_SIZES, eager: true })}</figure>
     </section>
 
     <section class="trust" aria-labelledby="why-title">

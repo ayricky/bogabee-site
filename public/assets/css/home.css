@@ -29,6 +29,40 @@
 .hero h1 em { color: var(--gold); }
 .hero p { max-width: 34ch; margin: 16px 0 0; font-size: clamp(16px, 1.8vw, 20px); font-weight: 300; color: rgb(255 249 235 / 0.85); animation: rise 1.2s .3s var(--ease) both; }
 .hero .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; animation: rise 1.2s .45s var(--ease) both; }
+/* Wide screens: the photo would have to stretch past its resolution to fill the hero, so it
+   sits beside the words at a size it can fill sharply, over a blurred copy of itself. */
+.hero-photo { display: none; }
+@media (min-width: 900px) {
+    .hero {
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+        place-items: center;
+        column-gap: clamp(40px, 5vw, 88px);
+        padding: 112px max(var(--gutter), (100vw - var(--max)) / 2) 72px;
+        text-align: left;
+    }
+    .hero-bg img { filter: blur(28px) saturate(1.15); scale: 1.15; }
+    .hero-bg::after {
+        background:
+            linear-gradient(to right, rgb(23 16 10 / 0.85), rgb(23 16 10 / 0.55) 60%, rgb(23 16 10 / 0.45)),
+            linear-gradient(to bottom, rgb(23 16 10 / 0.35), transparent 20%, transparent 75%, var(--night));
+    }
+    .hero-inner { justify-items: start; justify-self: start; }
+    .hero h1 { font-size: clamp(56px, 6vw, 92px); }
+    .hero .ctas { justify-content: flex-start; }
+    .hero-photo {
+        display: block;
+        position: relative;
+        justify-self: end;
+        width: min(100%, (min(100svh, 980px) - 184px) * 3 / 4, 600px);
+        aspect-ratio: 3 / 4;
+        margin: 0;
+        border-radius: calc(var(--radius) + 6px);
+        overflow: hidden;
+        box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 249 235 / 0.1);
+        animation: rise 1.2s .2s var(--ease) both;
+    }
+    .hero-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
 .btn-ghost { background: rgb(255 249 235 / 0.08); color: var(--cream); box-shadow: inset 0 0 0 1px rgb(255 249 235 / 0.35); backdrop-filter: blur(6px); }
 .btn-ghost:hover { background: rgb(255 249 235 / 0.16); box-shadow: inset 0 0 0 1px rgb(255 249 235 / 0.6); }
 .trust { background: var(--paper); border-bottom: 1px solid var(--line); padding: clamp(48px, 8vw, 96px) 0; }

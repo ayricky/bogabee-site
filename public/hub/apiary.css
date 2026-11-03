@@ -1,0 +1,31 @@
+/* The hub's Apiary page editor. */
+.p-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.form { display: grid; gap: 16px; }
+.form .panel-body { display: grid; gap: 16px; }
+.savebar { border-radius: 18px; box-shadow: 0 1px 0 var(--line); }
+.savebar .btn { padding: 10px 16px; font-size: 14px; }
+.savebar a.btn { text-decoration: none; }
+.card { display: grid; gap: 14px; padding: 16px; border-radius: 14px; background: var(--cream); box-shadow: inset 0 0 0 1px var(--line); }
+.card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.card-head b { font-weight: 500; }
+.order { display: flex; gap: 4px; }
+.icon-btn { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 8px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); cursor: pointer; font: 500 15px/1 var(--sans); }
+.icon-btn:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--brown); }
+.icon-btn:disabled { opacity: .35; cursor: default; }
+.icon-btn.danger { width: auto; padding: 0 12px; font-size: 13px; }
+.season { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+.add { justify-self: start; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+
+.preview { display: none; }
+@media (min-width: 1320px) {
+    .p-layout { grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); }
+    .preview { display: block; position: sticky; top: 24px; }
+}
+.preview .panel-head a { font-size: 14px; color: var(--amber-text); }
+.frame { position: relative; height: calc(100svh - 140px); overflow: hidden; border-radius: 0 0 18px 18px; background: var(--cream); }
+.frame iframe { position: absolute; left: 0; top: 0; width: 1280px; border: 0; transform-origin: 0 0; }
+@media (max-width: 640px) {
+    .season { grid-template-columns: minmax(0, 1fr); }
+    .two { grid-template-columns: 1fr; }
+}

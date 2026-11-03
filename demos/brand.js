@@ -1,9 +1,3 @@
-const heroImage = document.getElementById('hero-image');
-if (heroImage && (location.search.includes('gigachad') || location.hash === '#gigachad')) {
-    heroImage.removeAttribute('srcset');
-    heroImage.src = '../assets/img/danny-chad.webp';
-}
-
 // Give the nav a solid background once the hero has scrolled away.
 const nav = document.querySelector('.nav');
 const hero = document.querySelector('.hero');

@@ -14,7 +14,7 @@
         const list = [
             make({ id: 'BG-7Q2M', createdAt: now - 2 * H, status: 'paid', fulfillment: 'porch', fee: 0, method: 'Apple Pay', source: 'web',
                 items: [line('signature-16', 2)], customer: { name: 'Maria Lopez', email: 'maria.lopez@example.com', phone: '' },
-                pickup: { code: '418273', day: isoDay(new Date(now)), hour: new Date(now - H).getHours(), opened: [], usedAt: null, pickedUpAt: null } }),
+                pickup: { code: '418273', day: isoDay(new Date(now - H)), hour: new Date(now - H).getHours(), opened: [], usedAt: null, pickedUpAt: null } }),
             make({ id: 'BG-4KD9', createdAt: now - D - 5 * H, status: 'picked-up', fulfillment: 'porch', fee: 0, method: 'Visa •••• 4242', source: 'web',
                 items: [line('small-8', 1), line('tasting', 1)], customer: { name: 'James Kim', email: 'james.kim@example.com', phone: '(732) 555-0144' },
                 pickup: { code: '905531', day: isoDay(new Date(now - D)), hour: 15, opened: [yesterday(17.6)], usedAt: yesterday(17.6), pickedUpAt: yesterday(17.6) } }),

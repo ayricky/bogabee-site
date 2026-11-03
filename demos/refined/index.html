@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="../demo.css">
     <link rel="stylesheet" href="../cart.css">
     <link rel="stylesheet" href="../content.css">
+    <link rel="stylesheet" href="../hero/variants.css">
     <style>
         .apiary, .shop { padding: clamp(80px, 12vw, 150px) 0; }
         .shop { padding-top: 0; }
@@ -129,8 +130,13 @@
                 <a class="btn btn-lg btn-ghost" href="../apiary/">Meet the bees</a>
             </div>
         </div>
-        <figure class="hero-photo"><img src="../assets/img/market.webp" srcset="../assets/img/market-1000.webp 1000w, ../assets/img/market.webp 1500w" sizes="(max-aspect-ratio: 3/4) 75vh, 100vw" width="1500" height="2000" alt="The Bogabee Apiaries table at an outdoor market, with jars, honey bears and a price board" fetchpriority="high"></figure>
+        <div class="hero-stage">
+            <figure class="hero-photo"><img src="../assets/img/market.webp" srcset="../assets/img/market-1000.webp 1000w, ../assets/img/market.webp 1500w" sizes="(max-aspect-ratio: 3/4) 75vh, 100vw" width="1500" height="2000" alt="The Bogabee Apiaries table at an outdoor market, with jars, honey bears and a price board" fetchpriority="high"><img class="hero-sticker" src="../assets/img/logo-192.webp" width="192" height="192" alt="" hidden><figcaption hidden>Market day, Manalapan</figcaption></figure>
+            <figure class="hero-extra one" hidden><img src="../assets/img/honey_overflow-640.webp" width="640" height="804" alt="" loading="lazy"></figure>
+            <figure class="hero-extra two" hidden><img src="../assets/img/sunflower-640.webp" width="640" height="800" alt="" loading="lazy"></figure>
+        </div>
     </section>
+    <script src="../hero/variants.js"></script>
 
     <section class="trust" aria-labelledby="why-title">
         <div class="wrap">
@@ -228,7 +234,7 @@
         </div>
     </footer>
 
-    <nav class="demo-switch" aria-label="Demo"><a href="../">Showcase</a><a href="../compare/">Before &amp; after</a><a href="../bees/">Bee lab</a><a href="../refined/" aria-current="page">Site</a><a href="../hub/">Owner hub</a></nav>
+    <nav class="demo-switch" aria-label="Demo"><a href="../">Showcase</a><a href="../compare/">Before &amp; after</a><a href="../hero/">Photo layouts</a><a href="../bees/">Bee lab</a><a href="../refined/" aria-current="page">Site</a><a href="../hub/">Owner hub</a></nav>
 
     <script type="application/ld+json">
     {

@@ -1,0 +1,121 @@
+/* Ways to show the Market Day photo in the homepage hero (see variants.js). The page's own
+   styles are "Framed"; each [data-hero] block below changes only what differs. */
+.hero-stage { display: contents; }
+.hero-sticker, .hero-photo figcaption, .hero-extra { display: none; }
+.hero-sticker[hidden], .hero-extra[hidden], .hero-photo figcaption[hidden] { display: none !important; }
+
+/* ---------- Split screen: the photo fills one side edge to edge ---------- */
+.hero[data-hero="split"] { display: block; min-height: 0; padding: 0; text-align: center; }
+.hero[data-hero="split"] .hero-bg { position: relative; inset: auto; height: max(62svh, 440px); }
+.hero[data-hero="split"] .hero-bg img { filter: none; scale: 1; object-position: 50% 30%; }
+.hero[data-hero="split"] .hero-bg::after { background: linear-gradient(to bottom, rgb(23 16 10 / 0.55), transparent 22%, transparent 60%, var(--night)); }
+.hero[data-hero="split"] .hero-inner { margin-top: -52px; padding: 0 var(--gutter) 64px; }
+.hero[data-hero="split"] .hero-logo { width: 104px; }
+@media (min-width: 900px) {
+    .hero[data-hero="split"] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: min(100svh, 980px); text-align: left; }
+    .hero[data-hero="split"] .hero-bg { grid-column: 2; grid-row: 1; height: auto; }
+    .hero[data-hero="split"] .hero-bg::after { background: linear-gradient(to right, var(--night), rgb(23 16 10 / 0) 24%), linear-gradient(to bottom, rgb(23 16 10 / 0.5), transparent 16%); }
+    .hero[data-hero="split"] .hero-inner { grid-column: 1; grid-row: 1; align-self: center; justify-self: stretch; justify-items: start; margin: 0; padding: 120px clamp(28px, 4vw, 72px) 72px max(var(--gutter), (100vw - var(--max)) / 2); }
+    .hero[data-hero="split"] .hero-logo { width: clamp(92px, 9vw, 140px); }
+    .hero[data-hero="split"] h1 { font-size: clamp(52px, 5.4vw, 84px); }
+    .hero[data-hero="split"] .hero-photo { display: none; }
+}
+
+/* ---------- Snapshot: a printed photo on cream, taped up, with the logo as a sticker ---------- */
+.hero[data-hero="print"] { place-items: center; min-height: 0; padding: 112px var(--gutter) 72px; background: var(--cream); color: var(--ink); text-align: center; }
+.hero[data-hero="print"] .hero-bg, .hero[data-hero="print"] .hero-logo { display: none; }
+.hero[data-hero="print"] .hero-stage { display: block; position: relative; grid-row: 1; }
+.hero[data-hero="print"] .hero-photo {
+    display: block; position: relative; width: min(78vw, 360px); aspect-ratio: auto; margin: 0 auto; padding: 12px 12px 56px;
+    border-radius: 6px; overflow: visible; background: #fff; rotate: -2.5deg;
+    box-shadow: 0 1px 0 rgb(36 24 14 / 0.06), 0 30px 60px -26px rgb(36 24 14 / 0.5);
+}
+.hero[data-hero="print"] .hero-photo > img:first-child { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 2px; }
+.hero[data-hero="print"] .hero-photo::before { content: ""; position: absolute; z-index: 1; top: -14px; left: 50%; width: 112px; height: 30px; translate: -50% 0; rotate: 4deg; background: rgb(244 211 74 / 0.6); box-shadow: 0 1px 2px rgb(36 24 14 / 0.12); }
+.hero[data-hero="print"] .hero-photo figcaption { display: block; position: absolute; inset: auto 0 16px; font: italic 400 22px/1 var(--display); color: var(--brown); }
+.hero[data-hero="print"] .hero-sticker { display: block; position: absolute; z-index: 2; top: -30px; right: -34px; width: 104px; height: auto; rotate: 12deg; filter: drop-shadow(0 10px 18px rgb(36 24 14 / 0.3)); }
+.hero[data-hero="print"] .hero-inner { margin-top: 44px; }
+.hero[data-hero="print"] h1 em { color: var(--amber-text); }
+.hero[data-hero="print"] p { color: var(--muted); }
+.hero[data-hero="print"] .btn-ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); backdrop-filter: none; }
+@media (min-width: 900px) {
+    .hero[data-hero="print"] { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); min-height: min(100svh, 940px); text-align: left; }
+    .hero[data-hero="print"] .hero-stage { grid-column: 2; grid-row: 1; justify-self: center; }
+    .hero[data-hero="print"] .hero-photo { width: min(100%, 420px, (min(100svh, 940px) - 270px) * 0.72); rotate: 3deg; }
+    .hero[data-hero="print"] .hero-inner { grid-column: 1; grid-row: 1; margin: 0; }
+}
+
+/* ---------- Arch: the photo in an arched window, the headline over its foot ---------- */
+.hero[data-hero="arch"] {
+    place-items: center; grid-template-columns: minmax(0, 1fr); min-height: 0; padding: 108px var(--gutter) 64px; text-align: center;
+    background: radial-gradient(ellipse 70% 55% at 50% 30%, rgb(244 211 74 / 0.14), transparent 70%), var(--night);
+}
+.hero[data-hero="arch"] .hero-bg, .hero[data-hero="arch"] .hero-logo { display: none; }
+.hero[data-hero="arch"] .hero-stage { display: block; position: relative; grid-row: 1; }
+.hero[data-hero="arch"] .hero-photo { display: block; position: relative; width: min(72vw, 330px); height: auto; aspect-ratio: 3 / 4; margin: 0 auto; overflow: visible; border-radius: 0; box-shadow: none; }
+.hero[data-hero="arch"] .hero-photo > img:first-child {
+    display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%;
+    border-radius: 999px 999px 22px 22px; outline: 1.5px solid rgb(244 211 74 / 0.55); outline-offset: 10px;
+    box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7);
+}
+.hero[data-hero="arch"] .hero-sticker { display: block; position: absolute; z-index: 2; right: -30px; top: 46%; width: 96px; height: auto; rotate: -10deg; filter: drop-shadow(0 12px 20px rgb(0 0 0 / 0.45)); }
+.hero[data-hero="arch"] .hero-inner { grid-row: 2; position: relative; z-index: 2; justify-items: center; justify-self: center; margin-top: -0.45em; font-size: clamp(42px, 9vw, 84px); }
+.hero[data-hero="arch"] h1 { font-size: 1em; text-shadow: 0 6px 30px rgb(0 0 0 / 0.65); }
+.hero[data-hero="arch"] .ctas { justify-content: center; }
+@media (min-width: 900px) {
+    .hero[data-hero="arch"] { min-height: min(100svh, 980px); grid-template-columns: minmax(0, 1fr); }
+    .hero[data-hero="arch"] .hero-stage { grid-column: 1; }
+    .hero[data-hero="arch"] .hero-photo { width: auto; height: min(52svh, 540px); justify-self: center; }
+    .hero[data-hero="arch"] .hero-inner { font-size: clamp(56px, 5.6vw, 88px); }
+}
+
+/* ---------- Collage: the market photo with two smaller snapshots tucked around it ---------- */
+.hero[data-hero="collage"] { place-items: center; min-height: 0; padding: 108px var(--gutter) 64px; }
+.hero[data-hero="collage"] .hero-bg img { filter: blur(28px) saturate(1.15); scale: 1.15; }
+.hero[data-hero="collage"] .hero-bg::after { background: linear-gradient(to bottom, rgb(23 16 10 / 0.7), rgb(23 16 10 / 0.6) 50%, var(--night)); }
+.hero[data-hero="collage"] .hero-stage { display: block; position: relative; grid-row: 1; width: min(66vw, 300px); margin: 0 auto 40px; }
+.hero[data-hero="collage"] .hero-photo { display: block; width: 100%; aspect-ratio: 3 / 4; margin: 0; border-radius: var(--radius); overflow: hidden; rotate: -2deg; box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(255 249 235 / 0.1); }
+.hero[data-hero="collage"] .hero-photo > img:first-child { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero[data-hero="collage"] .hero-extra { display: block; position: absolute; width: 44%; aspect-ratio: 4 / 5; margin: 0; border: 5px solid var(--paper); border-radius: 16px; overflow: hidden; box-shadow: 0 24px 40px -18px rgb(0 0 0 / 0.7); }
+.hero[data-hero="collage"] .hero-extra img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero[data-hero="collage"] .hero-extra.one { left: -22%; bottom: -10%; rotate: -8deg; }
+.hero[data-hero="collage"] .hero-extra.two { right: -22%; top: 8%; rotate: 7deg; }
+.hero[data-hero="collage"] .hero-inner { grid-row: 2; }
+.hero[data-hero="collage"] .hero-logo { width: 88px; }
+@media (min-width: 900px) {
+    .hero[data-hero="collage"] { min-height: min(100svh, 980px); }
+    .hero[data-hero="collage"] .hero-stage { grid-column: 2; grid-row: 1; justify-self: center; width: min(100%, 400px, (min(100svh, 980px) - 300px) * 0.75); margin: 0; }
+    .hero[data-hero="collage"] .hero-photo { rotate: 2deg; }
+    .hero[data-hero="collage"] .hero-inner { grid-column: 1; grid-row: 1; }
+    .hero[data-hero="collage"] .hero-logo { width: clamp(92px, 9vw, 140px); }
+}
+
+/* ---------- Full screen: the photo fills the screen (soft on large, sharp screens) ---------- */
+@media (min-width: 900px) {
+    .hero[data-hero="full"] { grid-template-columns: minmax(0, 1fr); place-items: end center; padding: 120px var(--gutter) clamp(44px, 7vh, 88px); text-align: center; }
+    .hero[data-hero="full"] .hero-bg img { filter: none; scale: 1; }
+    .hero[data-hero="full"] .hero-bg::after { background: linear-gradient(to bottom, rgb(23 16 10 / 0.6), rgb(23 16 10 / 0.12) 20%, rgb(23 16 10 / 0.2) 40%, rgb(23 16 10 / 0.78) 68%, var(--night)); }
+    .hero[data-hero="full"] .hero-inner { justify-items: center; justify-self: center; }
+    .hero[data-hero="full"] .hero-logo { width: clamp(92px, 11vw, 168px); }
+    .hero[data-hero="full"] h1 { font-size: clamp(42px, 9vw, 128px); }
+    .hero[data-hero="full"] .ctas { justify-content: center; }
+    .hero[data-hero="full"] .hero-photo { display: none; }
+}
+
+/* The comparison pill. */
+.hero-pick { position: fixed; z-index: 9001; top: 88px; left: 50%; translate: -50% 0; display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: 99px; background: rgb(24 20 14 / 0.85); backdrop-filter: blur(14px); color: #fff; font: 500 13px/1 var(--sans); box-shadow: 0 10px 30px rgb(0 0 0 / 0.25); white-space: nowrap; }
+.hero-pick a { display: grid; place-items: center; min-width: 36px; height: 36px; padding: 0 10px; border-radius: 99px; color: rgb(255 255 255 / 0.8); text-decoration: none; }
+.hero-pick a:hover { color: #fff; background: rgb(255 255 255 / 0.1); }
+.hero-pick span { padding: 0 8px; }
+.hero-pick b { color: var(--gold); font-weight: 500; }
+.hero-pick :focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+@media (max-width: 640px) { .hero-pick { top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 52px); } }
+
+/* Phones: keep the stickers and side snapshots inside the screen. */
+@media (max-width: 640px) {
+    .hero[data-hero="print"] .hero-sticker { right: -14px; top: -24px; width: 84px; }
+    .hero[data-hero="arch"] .hero-sticker { right: -16px; width: 80px; }
+    .hero[data-hero="collage"] .hero-stage { width: min(58vw, 280px); }
+    .hero[data-hero="collage"] .hero-extra.one { left: -16%; }
+    .hero[data-hero="collage"] .hero-extra.two { right: -16%; }
+}

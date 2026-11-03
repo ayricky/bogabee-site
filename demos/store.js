@@ -9,7 +9,7 @@
         signins: 'bogabee-demo-signins',
         quotes: 'bogabee-demo-quotes',
         cabinet: 'bogabee-demo-cabinet',
-        posts: 'bogabee-demo-posts',
+        posts: 'bogabee-demo-posts-v2',
         pages: 'bogabee-demo-pages',
     };
 
@@ -206,30 +206,10 @@
         },
     };
 
+    // The Journal starts empty; Danny writes the first posts in the hub.
     function seedPosts() {
-        const day = 86400000, now = Date.now();
-        const list = [
-            {
-                id: 'seed-unfiltered', slug: 'why-we-dont-filter-our-honey', status: 'published', date: now - 4 * day, cover: 'honey_overflow.jpg',
-                title: "Why we don't filter our honey",
-                excerpt: 'Raw honey keeps the pollen and enzymes that filtering takes out.',
-                body: '<p>Most honey on store shelves has been filtered to make it clear and keep it from crystallizing. Filtering also strips out the pollen and enzymes that come with it from the hive.</p><p>We skip that step. Every Bogabee jar is raw: spun out of the comb and poured by hand, with the natural pollen and enzymes still in it.</p><h2>If it crystallizes</h2><p>Raw honey can thicken and turn grainy over time. That is natural, not spoilage. Set the jar in warm water and stir, and it turns smooth again.</p>',
-            },
-            {
-                id: 'seed-sunflowers', slug: 'sunflower-shift', status: 'published', date: now - 19 * day, cover: 'sunflower.jpg',
-                title: 'Sunflower shift',
-                excerpt: 'Three of ours, hard at work on one flower head.',
-                body: '<p>Sunflowers are a favorite stop. One flower head is made of hundreds of tiny florets, each with its own nectar and pollen, so a single bloom can keep several bees busy at once.</p><figure><img src="sunflower.jpg" alt="Honey bees foraging on a sunflower"><figcaption>Three foragers on one sunflower.</figcaption></figure>',
-            },
-            {
-                id: 'seed-hello', slug: 'hello-honey', status: 'draft', date: null, cover: 'hello_honey_bee.jpg',
-                title: 'Hello, honey',
-                excerpt: 'A visitor at the wax.',
-                body: '<p>Caught mid-wave on a piece of comb.</p>',
-            },
-        ];
-        localStorage.setItem(KEYS.posts, JSON.stringify(list));
-        return list;
+        localStorage.setItem(KEYS.posts, '[]');
+        return [];
     }
 
     // ---------- Sample data so the owner hub isn't empty on first open ----------

@@ -53,10 +53,12 @@ try {
         const { ctx, page, errors, jwt } = await owner(viewport);
         const title = `Spring splits ${label}`, slug = `spring-splits-${label}`;
 
-        await check(`${label}: the Journal opens with the site's posts`, async () => {
+        await check(`${label}: the Journal opens`, async () => {
             await page.goto(B + '/hub/');
-            await page.locator('#posts').getByText('Sunflower shift').waitFor();
-            await page.locator('#posts').getByText("Why we don't filter our honey").waitFor();
+            await page.locator('#posts').waitFor();
+            // The site launches with no posts, so the hub opens a new one to write.
+            // (The phone run sees the desktop run's posts.)
+            if (label === 'desktop') await page.locator('#posts').getByText('Not saved').waitFor();
         });
 
         let id;

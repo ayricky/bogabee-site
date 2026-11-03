@@ -20,7 +20,7 @@ const check = async (name, fn) => { await fn(); n++; console.log('ok', name); };
 try {
     await check('public pages come from the build before the hub is used', async () => {
         const r = await get('/journal/'); assert.equal(r.status, 200);
-        assert.match(await text(r), /Sunflower shift/);
+        assert.match(await text(r), /No posts yet/);
     });
     await check('the hub turns away anyone not signed in as an owner', async () => {
         assert.equal((await get('/api/hub/content')).status, 401);
@@ -30,11 +30,11 @@ try {
         assert.equal((await get('/hub/')).status, 401);
     });
     let seeded;
-    await check('first use copies the site content into the hub', async () => {
+    await check('first use copies the Apiary page into the hub; the Journal starts empty', async () => {
         const r = await get('/api/hub/content', { headers: await as() }); assert.equal(r.status, 200);
         assert.equal(r.headers.get('cache-control'), 'no-store');
         seeded = await r.json();
-        assert.equal(seeded.posts.length, 2);
+        assert.equal(seeded.posts.length, 0);
         assert.equal(seeded.pages.apiary.title, 'Where the honey comes from.');
     });
     await check('changes from another site are refused', async () => {
@@ -69,8 +69,9 @@ try {
         assert.equal(new URL(old.headers.get('location')).pathname, '/journal/splitting-hives/');
     });
     await check('slugs stay unique', async () => {
-        const r = await api('PUT', '/api/hub/posts', { title: 'Sunflower shift', status: 'draft' });
-        assert.equal((await r.json()).post.slug, 'sunflower-shift-2');
+        await api('PUT', '/api/hub/posts', { title: 'Honey notes', status: 'draft' });
+        const r = await api('PUT', '/api/hub/posts', { title: 'Honey notes', status: 'draft' });
+        assert.equal((await r.json()).post.slug, 'honey-notes-2');
     });
     await check('a post needs a title', async () => {
         const r = await api('PUT', '/api/hub/posts', { title: '  ' });

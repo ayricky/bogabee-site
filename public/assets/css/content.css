@@ -63,7 +63,10 @@
     .post-card.feature { grid-template-columns: minmax(0, 1fr); }
 }
 
-.post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: clamp(14px, 2.4vw, 32px); }
+/* Cards are a third of the row and centered, so one or two posts sit in the middle, not to the left. */
+.post-grid { --gap: clamp(14px, 2.4vw, 32px); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
+.post-grid > * { flex: 0 1 calc((100% - 2 * var(--gap)) / 3); min-width: min(100%, 280px); }
+@media (max-width: 640px) { .post-grid > * { flex-basis: 100%; } }
 
 /* Content pages share a quiet header under the solid nav. */
 .page-head { padding: clamp(128px, 14vw, 170px) 0 clamp(40px, 6vw, 72px); }

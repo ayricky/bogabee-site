@@ -1,6 +1,6 @@
 // Builds the site into dist/: copies public/ and renders the pages from src/ and content/.
 // Cloudflare Pages runs this on every push (build command `npm run build`, output `dist`).
-import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { layout, ORIGIN } from '../src/layout.mjs';
@@ -12,7 +12,9 @@ const out = join(root, 'dist');
 const json = p => JSON.parse(readFileSync(join(root, p), 'utf8'));
 
 const apiary = json('content/apiary.json');
-const posts = readdirSync(join(root, 'content/journal')).filter(f => f.endsWith('.json')).map(f => {
+// The Journal starts empty; Danny adds posts in the owner hub (or as files here).
+const journalDir = join(root, 'content/journal');
+const posts = (existsSync(journalDir) ? readdirSync(journalDir) : []).filter(f => f.endsWith('.json')).map(f => {
     const p = json(`content/journal/${f}`);
     for (const k of ['slug', 'status', 'title']) if (!p[k]) throw new Error(`content/journal/${f}: missing "${k}"`);
     if (p.status === 'published' && !/^\d{4}-\d{2}-\d{2}$/.test(p.date || '')) throw new Error(`content/journal/${f}: published posts need a date like 2026-10-29`);

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porch cabinet | Bogabee Apiaries</title>
+    <meta name="description" content="Pick up your Bogabee honey from the porch cabinet at 93 Tracy Station Road, Manalapan, or buy a jar on the spot.">
+    <meta name="robots" content="noindex">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The porch cabinet · Bogabee Apiaries">
+    <meta property="og:description" content="Pick up a pre-paid order or buy honey on the spot.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <link rel="icon" type="image/png" href="../assets/favicon-32.png">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="../shop/shop.css">
+    <link rel="stylesheet" href="../cart.css">
+    <style>
+        .found .code { color: var(--brown); font-size: clamp(48px, 10vw, 80px); margin: 8px 0; }
+        .found { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+        .find { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+        .find .btn { min-height: 48px; }
+        @media (max-width: 640px) { .find { grid-template-columns: minmax(0, 1fr); } .find .btn { justify-content: center; } }
+        .walkup-contact { margin: 4px 0 18px; }
+        .walkup-pay { width: 100%; justify-content: center; margin-top: 14px; }
+        .keypad-card h2 { text-align: center; }
+        .keypad-card .demo-note { margin-top: 18px; }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../refined/" data-home aria-label="Bogabee Apiaries"><img src="../assets/img/logo-96.webp" alt="" width="42" height="42"><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Site">
+                <a href="../apiary/">The Apiary</a>
+                <a href="../journal/">Journal</a>
+                <a href="../refined/#order" data-home-shop>Shop the jars</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="wrap">
+            <div class="page-head">
+                <span class="eyebrow">93 Tracy Station Road · Manalapan</span>
+                <h1 class="display">The porch cabinet.</h1>
+            </div>
+
+            <div class="porch">
+                <section class="card">
+                    <div class="card-body">
+                        <div class="tabs" role="tablist" aria-label="Porch cabinet">
+                            <button role="tab" id="tab-order" aria-controls="panel-order" aria-selected="true">My order</button>
+                            <button role="tab" id="tab-buy" aria-controls="panel-buy" aria-selected="false" tabindex="-1">Buy now</button>
+                        </div>
+
+                        <div role="tabpanel" id="panel-order" aria-labelledby="tab-order">
+                            <form class="find" id="find" novalidate>
+                                <div class="field">
+                                    <label for="lookup">Order number</label>
+                                    <input id="lookup" autocomplete="off" placeholder="BG-1234" autocapitalize="characters">
+                                </div>
+                                <div class="field">
+                                    <label for="lookup-contact">Email or phone</label>
+                                    <input id="lookup-contact" autocomplete="email">
+                                </div>
+                                <button class="btn btn-dark" type="submit">Find my code</button>
+                            </form>
+                            <p class="key-msg error" id="find-msg" role="alert" style="text-align:left;margin-top:10px"></p>
+                            <div id="found"></div>
+                        </div>
+
+                        <div role="tabpanel" id="panel-buy" aria-labelledby="tab-buy" hidden>
+                            <ul class="stock-lines" id="stock"></ul>
+                            <div class="walkup-total"><span>Total</span><b id="walkup-total">$0</b></div>
+                            <div class="field walkup-contact">
+                                <label for="walkup-contact">Email or phone <small>(optional, for your receipt and code)</small></label>
+                                <input id="walkup-contact" autocomplete="email">
+                                <p class="error" id="walkup-contact-error"></p>
+                            </div>
+                            <div class="express">
+                                <button class="pay-btn apple" type="button" data-wallet="Apple Pay" aria-label="Pay with Apple Pay" disabled><svg viewBox="0 0 17 20" aria-hidden="true"><path fill="currentColor" d="M14.1 10.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9C3.6 4.8 2 5.8 1.1 7.4c-1.9 3.2-.5 8 1.3 10.6.9 1.3 1.9 2.7 3.3 2.6 1.3-.1 1.8-.9 3.4-.9s2 .9 3.4.8c1.4 0 2.3-1.3 3.2-2.6 1-1.5 1.4-2.9 1.4-3-.1 0-2.9-1.1-3-4.3zM11.6 2.9c.7-.9 1.2-2.1 1.1-3.3-1 0-2.3.7-3 1.5-.7.8-1.3 2-1.1 3.2 1.1.1 2.3-.6 3-1.4z"/></svg>Pay</button>
+                                <button class="pay-btn google" type="button" data-wallet="Google Pay" aria-label="Pay with Google Pay" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#4285F4" d="M19.6 10.2c0-.7-.1-1.4-.2-2H10v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M10 20c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H1.1v2.6A10 10 0 0 0 10 20z"/><path fill="#FBBC05" d="M4.4 12a6 6 0 0 1 0-3.9V5.5H1.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M10 4c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 1.1 5.5l3.3 2.6C5.2 5.8 7.4 4 10 4z"/></svg>Pay</button>
+                            </div>
+                            <div class="or">or pay with card</div>
+                            <div class="card-element">
+                                <label class="num">
+                                    <span class="visually-hidden">Card number</span>
+                                    <input id="card" inputmode="numeric" autocomplete="cc-number" value="4242 4242 4242 4242" aria-describedby="card-error">
+                                    <span class="brand-mark" aria-hidden="true">VISA</span>
+                                </label>
+                                <div class="row">
+                                    <input id="exp" aria-label="Expiration date (MM / YY)" autocomplete="cc-exp" value="12 / 34" aria-describedby="card-error">
+                                    <input id="cvc" aria-label="Security code" inputmode="numeric" autocomplete="cc-csc" value="123" aria-describedby="card-error">
+                                </div>
+                            </div>
+                            <p class="error card-error" id="card-error"></p>
+                            <button class="btn btn-dark btn-lg walkup-pay" type="button" id="walkup-card" disabled>Pay</button>
+                            <p class="demo-note">Demo: no card is charged.</p>
+                            <div id="bought" tabindex="-1"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card keypad-card" aria-labelledby="keypad-title">
+                    <div class="card-body">
+                        <h2 id="keypad-title">Cabinet keypad</h2>
+                        <div class="keypad-wrap" id="keypad">
+                            <p class="lock-state" id="lock-state"></p>
+                            <div class="digits" aria-hidden="true"></div>
+                            <p class="visually-hidden" id="digit-count" aria-live="polite"></p>
+                            <div class="keys" role="group" aria-label="Keypad">
+                                <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
+                                <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
+                                <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
+                                <button type="button" class="clear" data-key="clear">Clear</button><button type="button" data-key="0">0</button><button type="button" class="enter" data-key="enter">Open</button>
+                            </div>
+                            <p class="key-msg" id="key-msg" role="status"></p>
+                            <button class="btn" type="button" id="close-door" hidden>Close the door</button>
+                        </div>
+                        <p class="demo-note">Simulates the keypad lock on the cabinet.</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script>
+        (function () {
+            const B = Bogabee, S = B.shop;
+            const $ = id => document.getElementById(id);
+            document.querySelectorAll('[data-home]').forEach(a => a.href = S.home());
+            document.querySelectorAll('[data-home-shop]').forEach(a => a.href = S.home() + '#order');
+
+            const LOCKED = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+            const OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.7-1.5"/></svg>';
+
+            // ---------- Tabs ----------
+            const tabs = [...document.querySelectorAll('[role="tab"]')];
+            function select(tab) {
+                tabs.forEach(t => {
+                    const on = t === tab;
+                    t.setAttribute('aria-selected', on);
+                    t.tabIndex = on ? 0 : -1;
+                    $(t.getAttribute('aria-controls')).hidden = !on;
+                });
+            }
+            tabs.forEach((t, i) => {
+                t.addEventListener('click', () => select(t));
+                t.addEventListener('keydown', e => {
+                    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                    const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+                    select(next); next.focus();
+                });
+            });
+            if (location.hash === '#buy') select(tabs[1]);
+
+            const codeBlock = o => {
+                const state = S.codeState(o), w = S.pickupWindow(o);
+                const line = {
+                    active: `Works once, ${S.fmtWindow(o)}.`,
+                    upcoming: `Works from ${S.fmtDay(w.from)}, ${S.fmtTime(w.from)}.`,
+                    expired: `This code has expired. <a href="../shop/order/?id=${encodeURIComponent(o.id)}">Get a new one</a>.`,
+                    used: 'This code has been used.',
+                }[state];
+                return `<div class="found" aria-live="polite">
+                    <span class="eyebrow">Order ${o.id}</span>
+                    <p class="code">${S.splitCode(o.pickup.code)}</p>
+                    <p style="margin:0;color:var(--muted)">${line}</p>
+                </div>`;
+            };
+
+            // ---------- My order ----------
+            // Both the order number and the email or phone on it are needed, so nobody can look up a stranger's code.
+            const digitsOf = v => String(v || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+            const sameContact = (c, q) => Boolean(q) && Boolean(c) && (
+                (c.email && c.email.toLowerCase() === q.toLowerCase()) ||
+                (c.phone && digitsOf(q).length >= 7 && digitsOf(c.phone) === digitsOf(q)));
+            $('find').addEventListener('submit', e => {
+                e.preventDefault();
+                const id = $('lookup').value.trim().toUpperCase(), who = $('lookup-contact').value.trim();
+                $('find-msg').textContent = '';
+                $('found').innerHTML = '';
+                if (!id || !who) { $('find-msg').textContent = 'Enter your order number and the email or phone you ordered with.'; return; }
+                const match = B.orders.all().find(o => o.pickup && o.id.toUpperCase() === id && sameContact(o.customer, who));
+                if (!match) { $('find-msg').textContent = 'No porch pickup matches that order number and email or phone. Check your receipt.'; return; }
+                $('found').innerHTML = codeBlock(match);
+            });
+
+            // ---------- Buy from the cabinet ----------
+            const picks = {};
+            function renderStock() {
+                const stock = S.cabinet.stock();
+                $('stock').innerHTML = B.PRODUCTS.map(p => {
+                    const have = stock[p.id] || 0, n = Math.min(picks[p.id] || 0, have);
+                    picks[p.id] = n;
+                    return `<li>
+                        <img src="${B.photo(p.img, 640)}" alt="" width="56" height="68">
+                        <div><b>${p.name} · ${B.money(p.price)}</b><span>${have ? `${have} in the cabinet` : 'None in the cabinet'}</span></div>
+                        <div class="stepper" role="group" aria-label="${p.name} quantity">
+                            <button type="button" data-pick="${p.id}" data-step="-1" aria-label="One fewer ${p.name}" ${n === 0 ? 'disabled' : ''}>−</button>
+                            <output>${n}</output>
+                            <button type="button" data-pick="${p.id}" data-step="1" aria-label="One more ${p.name}" ${n >= have ? 'disabled' : ''}>+</button>
+                        </div>
+                    </li>`;
+                }).join('');
+                const total = B.PRODUCTS.reduce((s, p) => s + p.price * (picks[p.id] || 0), 0);
+                $('walkup-total').textContent = B.money(total);
+                document.querySelectorAll('[data-wallet]').forEach(b => b.disabled = total === 0);
+                $('walkup-card').disabled = total === 0;
+                $('walkup-card').textContent = total ? `Pay ${B.money(total)}` : 'Pay';
+            }
+            $('stock').addEventListener('click', e => {
+                const b = e.target.closest('[data-pick]');
+                if (!b) return;
+                picks[b.dataset.pick] = (picks[b.dataset.pick] || 0) + Number(b.dataset.step);
+                const id = b.dataset.pick, step = b.dataset.step;
+                renderStock();
+                const again = $('stock').querySelector(`[data-pick="${id}"][data-step="${step}"]`);
+                if (again && !again.disabled) again.focus();
+            });
+            // An optional email or phone gets the receipt and code (and gives HubSpot a contact).
+            function walkupContact() {
+                const v = $('walkup-contact').value.trim();
+                const ok = !v || /^\S+@\S+\.\S+$/.test(v) || (digitsOf(v).length >= 10 && /^[+\d\s().-]+$/.test(v));
+                $('walkup-contact').setAttribute('aria-invalid', ok ? 'false' : 'true');
+                $('walkup-contact-error').textContent = ok ? '' : 'Enter an email or a 10-digit phone, or leave it blank.';
+                if (!ok) $('walkup-contact').focus();
+                return ok ? (v.includes('@') ? { email: v, phone: '' } : { email: '', phone: v }) : null;
+            }
+            function buy(btn, method) {
+                const items = B.PRODUCTS.filter(p => picks[p.id]).map(p => ({ id: p.id, qty: picks[p.id], price: p.price }));
+                if (!items.length) return;
+                const contact = walkupContact();
+                if (!contact) return;
+                const label = btn.innerHTML;
+                btn.disabled = true;
+                btn.textContent = 'Processing…';
+                setTimeout(() => {
+                    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+                    const now = new Date();
+                    const order = B.orders.create({
+                        items, fulfillment: 'porch', subtotal, fee: 0, total: subtotal, method, source: 'cabinet',
+                        customer: { name: 'Porch walk-up', ...contact },
+                        pickup: { day: S.isoDay(now), hour: now.getHours() },
+                    });
+                    S.cabinet.take(items);
+                    items.forEach(i => picks[i.id] = 0);
+                    btn.innerHTML = label;
+                    $('walkup-contact').value = '';
+                    renderStock();
+                    const sent = contact.email ? `Sent to ${contact.email}.` : contact.phone ? `Texted to ${contact.phone}.` : 'Keep this page open until the cabinet is closed.';
+                    $('bought').innerHTML = codeBlock(order).replace('Works once,', 'Paid. Enter it on the keypad. Works once,')
+                        .replace('</div>', `<p style="margin:6px 0 0;color:var(--muted)">${sent.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</p></div>`);
+                    $('bought').focus();
+                }, 800);
+            }
+            document.querySelectorAll('[data-wallet]').forEach(btn => btn.addEventListener('click', () => buy(btn, btn.dataset.wallet)));
+            $('walkup-card').addEventListener('click', () => {
+                const errs = S.cardErrors({ number: $('card').value, exp: $('exp').value, cvc: $('cvc').value });
+                ['card', 'exp', 'cvc'].forEach((id, i) => $(id).setAttribute('aria-invalid', errs[['number', 'exp', 'cvc'][i]] ? 'true' : 'false'));
+                $('card-error').textContent = Object.values(errs).join(' ');
+                if (Object.keys(errs).length) { $(['card', 'exp', 'cvc'].find(id => $(id).getAttribute('aria-invalid') === 'true')).focus(); return; }
+                buy($('walkup-card'), 'Visa •••• ' + $('card').value.replace(/\D/g, '').slice(-4));
+            });
+
+            // ---------- Keypad ----------
+            let typed = '';
+            let open = false;
+            const digits = document.querySelector('.digits');
+            function renderKeypad() {
+                digits.innerHTML = Array.from({ length: 6 }, (_, i) => `<span class="${i < typed.length ? 'filled' : ''}">${typed[i] ? '•' : ''}</span>`).join('');
+                $('digit-count').textContent = typed.length ? `${typed.length} of 6 digits entered` : '';
+                $('lock-state').className = 'lock-state' + (open ? ' open' : '');
+                $('lock-state').innerHTML = (open ? OPEN : LOCKED) + (open ? 'Open' : 'Locked');
+                $('keypad').classList.toggle('is-open', open);
+                $('close-door').hidden = !open;
+            }
+            function message(text, kind) {
+                $('key-msg').textContent = text;
+                $('key-msg').className = 'key-msg' + (kind ? ' ' + kind : '');
+            }
+            function press(key) {
+                if (open) return;
+                if (key === 'clear') { typed = ''; message(''); }
+                else if (key === 'enter') {
+                    if (typed.length < 6) { message('Enter all 6 digits.', 'error'); }
+                    else {
+                        const res = S.checkCode(typed);
+                        if (res.ok) {
+                            S.logOpen(res.order);
+                            open = true;
+                            message(`Order ${res.order.id}. Take your honey and close the door.`, 'ok');
+                        } else message(res.reason, 'error');
+                        typed = '';
+                    }
+                } else if (typed.length < 6) { typed += key; if (typed.length === 1) message(''); }
+                renderKeypad();
+            }
+            document.querySelector('.keys').addEventListener('click', e => {
+                const k = e.target.closest('[data-key]');
+                if (k) press(k.dataset.key);
+            });
+            // Typing digits works too, but only while the keypad is in use (or nothing else has focus).
+            document.addEventListener('keydown', e => {
+                const onKeypad = e.target.closest && e.target.closest('.keypad-card');
+                if (!onKeypad && e.target !== document.body) return;
+                if (/^\d$/.test(e.key)) press(e.key);
+                else if (e.key === 'Backspace') { typed = typed.slice(0, -1); renderKeypad(); }
+                else if (e.key === 'Enter' && e.target.closest('.keypad-card') && !e.target.closest('button')) press('enter');
+            });
+            $('close-door').addEventListener('click', () => {
+                open = false;
+                message('Locked.');
+                renderKeypad();
+                document.querySelector('[data-key="1"]').focus();
+            });
+
+            window.addEventListener('bogabee:change', renderStock);
+            renderStock();
+            renderKeypad();
+        })();
+    </script>
+    <script src="../nav.js"></script>
+    <script src="../assets/bee2.js"></script>
+</body>
+</html>

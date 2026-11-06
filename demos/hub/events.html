@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Events | Bogabee Hub</title>
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="hub.css">
+    <style>
+        .ev-layout { display: grid; grid-template-columns: 252px minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+        .ev-center, .ev-rail { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+        /* Event list */
+        .ev-list { position: sticky; top: 20px; padding: 10px 8px; max-height: calc(100svh - 40px); overflow-y: auto; }
+        .ev-find { display: flex; align-items: center; gap: 8px; margin: 0 4px 6px; padding: 0 12px; height: 40px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
+        .ev-find:focus-within { box-shadow: inset 0 0 0 1.5px var(--honey); }
+        .ev-find input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; color: var(--ink); }
+        .ev-find svg { width: 16px; height: 16px; flex: none; }
+        .ev-group { display: flex; gap: 6px; margin: 14px 10px 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+        .ev-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+        .ev-item { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background-color .15s; }
+        .ev-item:hover { background: rgb(86 54 33 / 0.05); }
+        .ev-item[aria-current="page"] { background: rgb(244 211 74 / 0.32); }
+        .ev-date { display: grid; place-items: center; align-content: center; height: 42px; border-radius: 9px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); line-height: 1; }
+        .ev-date span { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+        .ev-date b { font-size: 17px; font-weight: 600; margin-top: 3px; }
+        .ev-item[aria-current="page"] .ev-date { background: var(--brown); box-shadow: none; color: var(--gold); }
+        .ev-item[aria-current="page"] .ev-date span { color: rgb(244 211 74 / 0.8); }
+        .ev-text { display: grid; min-width: 0; }
+        .ev-text b, .ev-text span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ev-text b { font-weight: 500; font-size: 14px; }
+        .ev-text span { font-size: 12px; color: var(--muted); }
+        .ev-side { display: grid; justify-items: end; font-size: 11px; color: var(--muted); line-height: 1.15; }
+        .ev-side b { font-size: 15px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+        .ev-side.soon { font-size: 12px; font-weight: 500; color: var(--amber-text); white-space: nowrap; }
+        .ev-none { margin: 6px 10px; font-size: 14px; color: var(--muted); }
+        .ev-new { display: flex; align-items: center; gap: 10px; width: calc(100% - 8px); margin: 8px 4px 0; padding: 10px 12px; border: 1.5px dashed rgb(86 54 33 / 0.25); border-radius: 12px; background: none; font: 500 14px/1 var(--sans); color: var(--brown); cursor: pointer; }
+        .ev-new:hover { border-color: var(--brown); background: rgb(86 54 33 / 0.04); }
+
+        /* Detail */
+        .ev-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; min-width: 0; }
+        .ev-meta span { min-width: 0; }
+        #ev-details > summary { list-style: none; display: none; }
+        #ev-details > summary::-webkit-details-marker { display: none; }
+        .ev-meta .tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .ev-center .stats { margin-bottom: 0; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); }
+        .table th, .table td.when { white-space: nowrap; }
+        .table .none { color: var(--muted); }
+        .stat small b { display: inline; margin: 0; font: inherit; font-weight: 600; color: var(--ink); }
+
+        .guests-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+        .guests-tools .ev-find { margin: 0; flex: 1 1 200px; max-width: 280px; }
+        .filters { display: flex; flex-wrap: wrap; gap: 6px; }
+        .filter { padding: 7px 12px; border: 0; border-radius: 99px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font: 500 13px/1 var(--sans); color: var(--ink); cursor: pointer; }
+        .filter span { color: var(--muted); font-weight: 400; margin-left: 4px; }
+        .filter[aria-pressed="true"] { background: var(--ink); color: var(--cream); box-shadow: none; }
+        .filter[aria-pressed="true"] span { color: rgb(255 249 235 / 0.65); }
+        .table-scroll { overflow-x: auto; }
+        .table td .who { display: grid; }
+        .table td .who b { font-weight: 500; }
+        .table td .who span { font-size: 13px; color: var(--muted); }
+        .table .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+        .table tr.fresh td { animation: fresh 2.4s ease-out; }
+        @keyframes fresh { from { background: rgb(244 211 74 / 0.55); } }
+
+        /* Rail */
+        .qr { display: grid; justify-items: center; gap: 12px; }
+        .qr-img { width: 100%; max-width: 220px; aspect-ratio: 1; padding: 10px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+        .qr-img svg { display: block; width: 100%; height: 100%; }
+        .qr-url { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--muted); }
+        .qr-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+        .qr-actions .btn { padding-inline: 10px; }
+        .qr-actions .btn { justify-content: center; }
+        .qr-actions .kiosk { grid-column: 1 / -1; }
+        .sync dl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin: 0 0 14px; }
+        .sync dt { font-size: 12px; color: var(--muted); }
+        .sync dd { margin: 2px 0 0; font: italic 400 26px/1 var(--display); }
+        .sync .btn { margin-top: 14px; }
+        .sync ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted); display: grid; gap: 6px; }
+
+        /* New event */
+        #new-event { width: min(440px, 100% - 32px); padding: 0; border: 0; border-radius: 20px; background: var(--paper); color: var(--ink); box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.5); }
+        #new-event::backdrop { background: rgb(23 16 10 / 0.45); }
+        #new-event form { display: grid; gap: 14px; padding: 24px; }
+        #new-event h2 { margin: 0 0 4px; font: italic 400 30px/1 var(--display); }
+        #new-event label { display: grid; gap: 6px; font-size: 14px; font-weight: 500; }
+        #new-event input { min-height: 46px; padding: 10px 12px; border: 1px solid rgb(86 54 33 / 0.22); border-radius: 10px; background: #fff; font: inherit; color: var(--ink); }
+        #new-event input:focus { outline: none; border-color: var(--honey); box-shadow: 0 0 0 3px rgb(224 165 38 / 0.25); }
+        #new-event .times { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        #new-event .actions { display: flex; flex-wrap: wrap; justify-content: end; gap: 8px; margin-top: 6px; }
+        #new-event .danger { margin-right: auto; color: #7a2617; }
+
+        .print-sign { display: none; }
+
+        /* Below 1480px the QR and HubSpot panels sit under the event list so the guests table keeps its width. */
+        @media (max-width: 1480px) {
+            .ev-layout { grid-template-columns: 252px minmax(0, 1fr); }
+            .ev-list { grid-column: 1; grid-row: 1; position: static; max-height: none; }
+            .ev-rail { grid-column: 1; grid-row: 2; }
+            .ev-center { grid-column: 2; grid-row: 1 / span 2; }
+        }
+        /* Phones: the event list folds away, then QR, stats, guests and HubSpot in that order. */
+        @media (max-width: 860px) {
+            .ev-layout { grid-template-columns: minmax(0, 1fr); }
+            .ev-rail, .ev-center { display: contents; }
+            .ev-list { grid-column: 1; grid-row: auto; max-height: none; order: 0; }
+            .ev-rail > :first-child { order: 1; }
+            #meta { order: 2; }
+            #stats { order: 3; }
+            .ev-center > .panel { order: 4; }
+            .ev-rail > .sync { order: 5; }
+            #ev-details > summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 10px; font-weight: 500; cursor: pointer; }
+            #ev-details > summary::after { content: "Show"; font-size: 13px; font-weight: 400; color: var(--muted); }
+            #ev-details[open] > summary::after { content: "Hide"; }
+            .guests-tools .ev-find { max-width: none; }
+        }
+
+        @media print {
+            @page { margin: 0; }
+            body.hub { display: block; background: #fff; }
+            body.hub > :not(.print-sign) { display: none !important; }
+            .print-sign {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 18px;
+                min-height: 100vh;
+                padding: 48px;
+                text-align: center;
+                color: var(--brown);
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .print-sign img { width: 120px; }
+            .print-sign .eyebrow { color: var(--brown); font-size: 14px; }
+            .print-sign h1 { margin: 0; font: italic 400 64px/1 var(--display); }
+            .print-sign p { margin: 0; font-size: 18px; }
+            .print-sign .code { width: 340px; height: 340px; padding: 16px; border: 3px solid var(--gold); border-radius: 24px; }
+            .print-sign .code svg { width: 100%; height: 100%; }
+            .print-sign .scan { font: 500 22px/1.3 var(--sans); letter-spacing: 0.04em; }
+        }
+    </style>
+</head>
+<body class="hub">
+    <aside class="hub-side" data-screen="events"></aside>
+
+    <main class="hub-main">
+        <header class="hub-head">
+            <div>
+                <span class="eyebrow">Events</span>
+                <h1 id="title">Events</h1>
+            </div>
+            <div class="hub-actions">
+                <button class="btn btn-quiet" type="button" id="edit-event">Edit event</button>
+                <button class="btn" type="button" data-new-event>New event</button>
+            </div>
+        </header>
+
+        <div class="ev-layout">
+            <section class="panel ev-list" aria-labelledby="ev-list-title">
+                <details id="ev-details" open>
+                <summary id="ev-list-title">All events</summary>
+                <label class="ev-find">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+                    <input type="search" id="find-event" placeholder="Find an event" aria-label="Find an event">
+                </label>
+                <div id="event-list"></div>
+                </details>
+            </section>
+
+            <div class="ev-center">
+                <div class="ev-meta" id="meta"></div>
+                <div class="stats" id="stats"></div>
+
+                <section class="panel" aria-labelledby="guests-title">
+                    <div class="panel-head">
+                        <h2 id="guests-title">Guests</h2>
+                        <button class="btn btn-quiet" type="button" id="export">Export CSV</button>
+                    </div>
+                    <div class="guests-tools">
+                        <label class="ev-find">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+                            <input type="search" id="find-guest" placeholder="Find a guest" aria-label="Find a guest">
+                        </label>
+                        <div class="filters" id="filters" role="group" aria-label="Filter guests"></div>
+                    </div>
+                    <div class="table-scroll" tabindex="0" role="region" aria-label="Guests table">
+                        <table class="table">
+                            <thead><tr><th>Name</th><th>Interested in</th><th>HubSpot</th><th>News</th><th>Checked in</th></tr></thead>
+                            <tbody id="guests"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="ev-rail">
+                <section class="panel" aria-labelledby="qr-title">
+                    <div class="panel-head"><h2 id="qr-title">Check-in QR</h2></div>
+                    <div class="panel-body qr">
+                        <div class="qr-img" id="qr"></div>
+                        <a class="qr-url" id="qr-url" target="_blank" rel="noopener"></a>
+                        <div class="qr-actions">
+                            <button class="btn btn-quiet" type="button" id="copy">Copy link</button>
+                            <button class="btn btn-quiet" type="button" id="print">Print sign</button>
+                            <a class="btn btn-dark kiosk" id="kiosk" target="_blank" rel="noopener">Run as kiosk</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel sync" aria-labelledby="sync-title">
+                    <div class="panel-head"><h2 id="sync-title">HubSpot</h2><span class="tag dim">Demo</span></div>
+                    <div class="panel-body">
+                        <dl id="sync"></dl>
+                        <ul>
+                            <li>New guests become contacts with the stage Lead.</li>
+                            <li>Returning contacts keep their stage.</li>
+                            <li>Every check-in sets Last Bogabee event and is kept in the form history.</li>
+                        </ul>
+                        <a class="btn btn-quiet" href="hubspot.html">All HubSpot activity</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div class="print-sign" aria-hidden="true">
+        <img src="../assets/img/logo-192.webp" alt="">
+        <span class="eyebrow">Bogabee Apiaries</span>
+        <h1 id="sign-name"></h1>
+        <p id="sign-when"></p>
+        <div class="code" id="sign-qr"></div>
+        <p class="scan">Scan to check in</p>
+    </div>
+
+    <dialog id="new-event" aria-labelledby="new-title">
+        <form method="dialog" id="new-form">
+            <h2 id="new-title">New event</h2>
+            <label>Name<input name="name" required placeholder="Manalapan Spring Market"></label>
+            <label>Date<input name="date" type="date" required></label>
+            <div class="times">
+                <label>Starts<input name="start" type="time" value="10:00" required></label>
+                <label>Ends<input name="end" type="time" value="15:00" required></label>
+            </div>
+            <label>Place<input name="place" required placeholder="Manalapan, NJ"></label>
+            <div class="actions">
+                <button class="btn btn-quiet danger" type="button" id="delete-event" hidden>Delete event</button>
+                <button class="btn btn-quiet" type="button" value="cancel" id="new-cancel">Cancel</button>
+                <button class="btn" type="submit" id="new-submit">Create event</button>
+            </div>
+        </form>
+    </dialog>
+
+
+
+    <script src="../assets/qrcode.js"></script>
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="seed.js"></script>
+    <script src="../crm.js"></script>
+    <script src="hub.js"></script>
+    <script src="events.js"></script>
+</body>
+</html>

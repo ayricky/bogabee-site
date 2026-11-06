@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal | Bogabee Apiaries</title>
+    <meta name="description" content="Notes from the Bogabee Apiaries hives in Manalapan Township, NJ: the bees, the harvest and raw wildflower honey.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Journal | Bogabee Apiaries">
+    <meta property="og:description" content="Notes from the Bogabee Apiaries hives in Manalapan Township, NJ: the bees, the harvest and raw wildflower honey.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="../cart.css">
+    <link rel="stylesheet" href="../content.css">
+    <style>
+        .j-feature { margin-bottom: clamp(32px, 5vw, 56px); }
+        .j-list { padding-bottom: clamp(80px, 10vw, 130px); }
+        .j-empty { padding: 48px 0 120px; color: var(--muted); font-size: 18px; }
+        .j-empty a { color: var(--amber-text); }
+    </style>
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../refined/" aria-label="Bogabee Apiaries, home"><img src="../assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Site">
+                <a href="../apiary/">The Apiary</a>
+                <a href="../journal/" aria-current="page">Journal</a>
+                <a href="../refined/#order">Jars</a>
+                <button class="btn cart-btn" type="button" data-cart-open aria-label="Cart, 0 items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg>Cart<span class="cart-count" data-cart-count hidden>0</span></button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="wrap page-head">
+            <span class="eyebrow">Journal</span>
+            <h1 class="display">Notes from the hives.</h1>
+        </div>
+        <div class="wrap j-list">
+            <div class="j-feature" id="feature"></div>
+            <div class="post-grid" id="grid"></div>
+            <p class="j-empty" id="empty" hidden>No posts yet. In the meantime, the hives are on <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener">Instagram</a>.</p>
+        </div>
+        <section data-signup="journal"></section>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap">
+            <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener"><img class="logo" src="../assets/img/logo-192.webp" width="104" height="104" alt="Bogabee Apiaries on Instagram"></a>
+            <h2 class="display">Support Local Bees.</h2>
+            <div class="row">
+                <a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".9" fill="currentColor" stroke="none"/></svg>@bogabee_apiaries</a>
+                <a href="../favors/">Party favors</a>
+                <a href="../porch/">Porch pickup</a>
+                <span>Manalapan Township, NJ</span>
+            </div>
+            <small>© 2023–<span data-year>2026</span> Bogabee Apiaries</small>
+        </div>
+    </footer>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="../cart.js"></script>
+    <script src="../content.js"></script>
+    <script src="../crm.js"></script>
+    <script>
+        (function () {
+            const B = window.Bogabee, { card, live } = B.content;
+            live([B.KEYS.posts], () => {
+                const list = B.posts.published();
+                document.getElementById('feature').innerHTML = list[0] ? card(list[0], './', 'feature', 'h2') : '';
+                document.getElementById('grid').innerHTML = list.slice(1).map(p => card(p, './', '', 'h2')).join('');
+                document.getElementById('empty').hidden = list.length > 0;
+            });
+        })();
+    </script>
+    <script src="../nav.js"></script>
+    <script src="../assets/bee2.js"></script>
+    <script>document.querySelectorAll('[data-year]').forEach(s => s.textContent = new Date().getFullYear());</script>
+</body>
+</html>

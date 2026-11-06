@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event check-in | Bogabee Apiaries</title>
+    <meta name="description" content="Check in with Bogabee Apiaries at a market or event and get harvest news from our hives in Manalapan Township, NJ.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Event check-in | Bogabee Apiaries">
+    <meta property="og:description" content="Check in with Bogabee Apiaries at a market or event.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..500;1,9..144,400..500&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="events.css">
+</head>
+<body class="signin">
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../refined/" aria-label="Bogabee Apiaries, home"><img src="../assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Sections">
+                <a href="../apiary/">The Apiary</a>
+                <a href="../journal/">Journal</a>
+                <a href="../refined/#order">Jars</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <img class="kiosk-logo" src="../assets/img/logo-192.webp" width="84" height="84" alt="Bogabee Apiaries">
+
+        <section class="missing" id="missing" hidden>
+            <h1 class="display">Event not found</h1>
+            <p>This check-in link doesn't match an event. Check the QR code or ask at the table.</p>
+            <a class="btn" href="../refined/">Visit Bogabee Apiaries</a>
+        </section>
+
+        <div id="signin" hidden>
+            <header class="event-head">
+                <span class="eyebrow" id="event-when"></span>
+                <h1 class="display" id="event-name"></h1>
+                <p id="event-place"></p>
+                <p class="past" id="event-past" hidden></p>
+            </header>
+
+            <div class="card">
+                <form class="signin-form" id="form" novalidate>
+                    <div class="row">
+                        <div class="field">
+                            <label for="first">First name</label>
+                            <input id="first" name="first" autocomplete="given-name" required aria-describedby="first-error">
+                            <p class="error" id="first-error" hidden>Enter your first name.</p>
+                        </div>
+                        <div class="field">
+                            <label for="last">Last name</label>
+                            <input id="last" name="last" autocomplete="family-name">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" aria-describedby="contact-error email-error">
+                        <p class="error" id="email-error" hidden>Enter a valid email, like name@example.com.</p>
+                    </div>
+                    <div class="field">
+                        <label for="phone">Phone</label>
+                        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby="contact-error phone-error">
+                        <p class="error" id="phone-error" hidden>Enter a phone number with 7 to 15 digits.</p>
+                    </div>
+                    <p class="error contact-error" id="contact-error" hidden>Add an email or a phone number.</p>
+
+                    <fieldset>
+                        <legend class="legend">Interested in</legend>
+                        <div class="chips">
+                            <label class="chip"><input type="checkbox" name="interests" value="Honey"><span>Honey</span></label>
+                            <label class="chip"><input type="checkbox" name="interests" value="Party favors"><span>Party favors</span></label>
+                            <label class="chip"><input type="checkbox" name="interests" value="Bee talks"><span>Bee talks</span></label>
+                        </div>
+                    </fieldset>
+
+                    <label class="check">
+                        <input type="checkbox" name="news" id="news" aria-describedby="news-error">
+                        <span>Email me when a new harvest is ready. Unsubscribe anytime.</span>
+                    </label>
+                    <p class="error contact-error" id="news-error" hidden>Add an email to get harvest news.</p>
+
+                    <button class="btn btn-lg btn-dark submit" type="submit">Check in</button>
+                    <p class="fine">We only use this to follow up from Bogabee.</p>
+                </form>
+
+                <section class="done" id="done" hidden tabindex="-1" aria-live="polite">
+                    <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+                    <h2 class="display" id="done-title">Thanks!</h2>
+                    <p id="done-text"></p>
+                    <a class="btn" id="done-link" href="../refined/#order" hidden>Shop the jars</a>
+                    <button class="btn btn-lg" id="next-guest" type="button" hidden>Next guest</button>
+                    <div class="countdown" id="countdown" hidden><i></i></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer site-foot">
+        <div class="wrap">
+            <div class="row-links"><a href="https://www.instagram.com/bogabee_apiaries/" target="_blank" rel="noopener">@bogabee_apiaries</a><a href="../favors/">Party favors</a><a href="../porch/">Porch pickup</a><span>Manalapan Township, NJ</span></div>
+            <small>© 2023–<span data-year>2026</span> Bogabee Apiaries</small>
+        </div>
+    </footer>
+
+    <script src="../store.js"></script>
+    <script src="../nav.js"></script>
+    <script src="events.js"></script>
+    <script>document.querySelectorAll('[data-year]').forEach(s => s.textContent = new Date().getFullYear());</script>
+</body>
+</html>

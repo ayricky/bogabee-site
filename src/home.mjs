@@ -20,11 +20,7 @@ const PILLARS = [
     ['Small Batch', 'Hand-poured &amp; bottled', '<rect x="8" y="3" width="8" height="3" rx="1"/><path d="M7.5 6h9A1.5 1.5 0 0 1 18 7.5V19a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7.5A1.5 1.5 0 0 1 7.5 6z"/><path d="M9 12.5h6M9 15.5h4"/>'],
 ];
 
-// On portrait screens the hero is cropped from the sides, so the photo is drawn wider than the
-// screen: about 3/4 of the hero's height. Telling the browser so gets phones the full-size file.
-const HERO_SIZES = '(max-aspect-ratio: 3/4) 75vh, 100vw';
-
-export const homeHead = `<link rel="preload" as="image" href="/assets/img/market.webp" imagesrcset="/assets/img/market-1000.webp 1000w, /assets/img/market.webp 1500w" imagesizes="${HERO_SIZES}" fetchpriority="high">
+export const homeHead = `<link rel="preload" as="image" href="/assets/img/danny.webp" imagesrcset="/assets/img/danny-640.webp 640w, /assets/img/danny.webp 1168w" imagesizes="100vw" fetchpriority="high">
     <link rel="stylesheet" href="/assets/css/home.css">
     <script type="application/ld+json">
     {
@@ -44,7 +40,7 @@ export function homeMain(posts) {
     const latest = published(posts).slice(0, 3);
     return `    <main>
     <section class="hero" aria-labelledby="title">
-        <div class="hero-bg">${picture('market', { sizes: HERO_SIZES, eager: true, alt: '' })}</div>
+        <div class="hero-bg">${picture('danny', { eager: true, alt: '' })}</div>
         <div class="hero-inner">
             <img class="hero-logo" src="/assets/img/logo-303.webp" width="260" height="260" alt="Bogabee Apiaries">
             <h1 class="display" id="title">The <em>Gold</em> Standard Honey</h1>
@@ -54,7 +50,6 @@ export function homeMain(posts) {
                 <a class="btn btn-lg btn-ghost" href="/apiary/">Meet the bees</a>
             </div>
         </div>
-        <figure class="hero-photo">${picture('market', { sizes: HERO_SIZES, eager: true })}</figure>
     </section>
 
     <section class="trust" aria-labelledby="why-title">

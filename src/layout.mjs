@@ -31,7 +31,7 @@ const NAV = [
  * @param {boolean} [page.noindex]
  */
 export function layout(page) {
-    const image = ORIGIN + (page.image || '/assets/og.jpg');
+    const image = new URL(page.image || '/assets/og.jpg', ORIGIN).href;
     const nav = NAV.map(n => `<a href="${n.href}"${n.key === page.active ? ' aria-current="page"' : ''}>${n.label}</a>`).join('\n                ');
     return `<!DOCTYPE html>
 <html lang="en">
@@ -61,7 +61,6 @@ export function layout(page) {
     ${page.head || ''}
 </head>
 <body id="top">
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <header class="nav${page.overHero ? ' on-dark' : ' is-solid'}">
         <div class="wrap">
             <a class="brand" href="/" aria-label="Bogabee Apiaries, home"><img src="/assets/img/logo-96.webp" width="42" height="42" alt=""><span>Bogabee Apiaries</span></a>
@@ -86,7 +85,7 @@ ${page.body}
         </div>
     </footer>
 
-    <script src="/assets/js/site.js"></script>
+    <script src="/assets/js/site.js" onerror="document.documentElement.classList.remove('js')"></script>
     <script src="/assets/js/bee.js"></script>
 </body>
 </html>

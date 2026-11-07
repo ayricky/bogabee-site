@@ -20,7 +20,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 88px; }
 body {
     margin: 0;
     background: var(--cream);
@@ -99,14 +99,14 @@ a { color: inherit; }
     backdrop-filter: blur(14px) saturate(1.3);
     box-shadow: 0 1px 0 var(--line);
 }
-/* Phones: the text links move into a Menu panel (nav.js). */
+/* Phones: the text links move into a Menu panel (site.js). */
 .nav-menu-btn { display: none; }
 .nav-panel { display: none; }
 @media (max-width: 640px) {
     .nav .wrap { gap: 12px; }
     .nav .links { gap: 8px; }
     .nav .btn { padding: 11px 16px; }
-    .nav .links a:not(.btn) { display: none; }
+    .js .nav .links a:not(.btn) { display: none; }
     .nav .brand span { display: none; }
     .nav-menu-btn {
         display: inline-flex;
@@ -267,5 +267,7 @@ a { color: inherit; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 /* Content that fades in on scroll stays visible if scripts don't run (pages add the js class in <head>). */
 html:not(.js) .reveal { opacity: 1; translate: none; }
+/* Without site.js nothing turns the nav solid on scroll, so it starts that way. */
+html:not(.js) .nav { color: var(--ink); background: var(--cream); box-shadow: 0 1px 0 var(--line); }
 /* Photos carry width/height attributes to reserve space; CSS still sets their shape. */
 .photo img, .product .shot img { height: auto; }

@@ -1,0 +1,30 @@
+name: Merge Readiness Check
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  merge-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for do_not_merge label
+        env:
+          BLOCKED: ${{ contains(github.event.pull_request.labels.*.name, 'do_not_merge') }}
+        run: |
+          if [ "$BLOCKED" = "true" ]; then
+            echo "::error::This PR has the 'do_not_merge' label and cannot be merged."
+            exit 1
+          fi
+
+      - name: Check for WIP in title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$TITLE" | grep -iqw 'WIP'; then
+            echo "::error::This PR is a Work in Progress. Remove 'WIP' from the title when it's ready to merge."
+            exit 1
+          fi

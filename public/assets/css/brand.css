@@ -20,7 +20,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 88px; }
 body {
     margin: 0;
     background: var(--cream);
@@ -99,14 +99,14 @@ a { color: inherit; }
     backdrop-filter: blur(14px) saturate(1.3);
     box-shadow: 0 1px 0 var(--line);
 }
-/* Phones: the text links move into a Menu panel (nav.js). */
+/* Phones: the text links move into a Menu panel (site.js). */
 .nav-menu-btn { display: none; }
 .nav-panel { display: none; }
 @media (max-width: 640px) {
     .nav .wrap { gap: 12px; }
     .nav .links { gap: 8px; }
     .nav .btn { padding: 11px 16px; }
-    .nav .links a:not(.btn) { display: none; }
+    .js .nav .links a:not(.btn) { display: none; }
     .nav .brand span { display: none; }
     .nav-menu-btn {
         display: inline-flex;

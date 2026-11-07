@@ -123,7 +123,8 @@
     .b2-shadow.staged { z-index: 2; }
     @media (prefers-reduced-motion: reduce) { .b2.flying .b2-wing { animation: none; opacity: .75; } .b2.asleep .b2-roll { animation: none; } }`;
 
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = motion.matches;
     const canPop = typeof HTMLElement.prototype.showPopover === 'function';
     const W = () => innerWidth, H = () => innerHeight;
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -212,10 +213,15 @@
         // With reduced motion the bee sits still in a free spot and ignores everything else.
         const still = reduce && !E.staged;
         let rest = still ? spotNear(innerWidth - 64, innerHeight - 120, -1, 30) : null;
-        if (still) addEventListener('resize', () => { rest = spotNear(innerWidth - 64, innerHeight - 120, -1, 30); });
         const bees = [createBee(o.skin, E)];
         if (o.pair) bees.push(createBee(o.skin, E));
-        if (still) bees.forEach((b, i) => { b.x = rest.x - i * 34; b.y = rest.y; b.lift = 0; b.angle = (-Math.PI / 2 - .3) * 180 / Math.PI + 90; });
+        const settle = () => bees.forEach((b, i) => { b.x = b.px = rest.x - i * 34; b.y = b.py = rest.y; });
+        const onResize = () => { rest = spotNear(innerWidth - 64, innerHeight - 120, -1, 30); settle(); };
+        if (still) {
+            settle();
+            bees.forEach(b => { b.lift = 0; b.angle = (-Math.PI / 2 - .3) * 180 / Math.PI + 90; });
+            addEventListener('resize', onResize);
+        }
         const fx = makeEl('b2-fx', '', E);
         const lead = bees[0];
         let alive = true, paused = false, raf = 0;
@@ -289,7 +295,7 @@
                 if (o.shy && P.speed > 1.4) {
                     bees.forEach(b => {
                         const dx = b.x - P.x, dy = b.y - P.y, d = Math.hypot(dx, dy) || 1;
-                        const toward = (P.vx * -dx + P.vy * -dy) / d;
+                        const toward = (P.vx * dx + P.vy * dy) / d;
                         // One scoot per approach: pointer events can arrive 120 times a second.
                         if (d < 190 && toward > 0.6 && Math.hypot(b.kx, b.ky) < 1) { b.kx += dx / d * 9; b.ky += dy / d * 9; }
                     });
@@ -552,6 +558,7 @@
             destroy() {
                 alive = false;
                 cancelAnimationFrame(raf);
+                removeEventListener('resize', onResize);
                 bees.forEach(b => { b.el.remove(); b.shadow.remove(); });
                 fx.remove();
             },
@@ -629,10 +636,14 @@
         window.dispatchEvent(new CustomEvent('bogabee:bee', { detail: null }));
     }
 
+    // Turning reduced motion on or off mid-visit swaps the bee between flying and sitting still.
+    motion.addEventListener('change', e => { reduce = e.matches; if (active) start(active.variant.id); });
+
     window.BogabeeBee = { VARIANTS, start, stop, stage, get current() { return active && active.variant; } };
 
     const OFF = 'bogabee-bee-off';
     const get = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
+    let off = !!get(OFF);
     // The site flies the chosen bee; a bee picked in the lab sticks only while you're comparing.
     const choice = () => new URLSearchParams(location.search).get('bee') || (get('bogabee-bee-lab') && get('bogabee-bee')) || 'bogabee';
 
@@ -643,10 +654,11 @@
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'b2-toggle';
-        const label = () => { btn.textContent = get(OFF) ? 'Show the bee' : 'Hide the bee'; };
+        const label = () => { btn.textContent = off ? 'Show the bee' : 'Hide the bee'; };
         btn.addEventListener('click', () => {
-            try { get(OFF) ? sessionStorage.removeItem(OFF) : sessionStorage.setItem(OFF, '1'); } catch (e) {}
-            get(OFF) ? stop() : start(choice());
+            off = !off;
+            try { off ? sessionStorage.setItem(OFF, '1') : sessionStorage.removeItem(OFF); } catch (e) {}
+            off ? stop() : start(choice());
             label();
         });
         label();
@@ -659,7 +671,7 @@
         document.head.appendChild(style);
         if (window.BOGABEE_BEE_MANUAL) return;
         addToggle();
-        if (!get(OFF)) start(choice());
+        if (!off) start(choice());
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();

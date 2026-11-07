@@ -155,3 +155,4 @@ main { display: block; }
 .missing h1 { font-size: clamp(40px, 5vw, 64px); }
 .missing p { color: var(--muted); font-size: 18px; }
 @media (max-width: 560px) { .post-nav { grid-template-columns: 1fr; } .post-nav .next { grid-column: auto; } }
+.draft-bar { position: sticky; top: 76px; z-index: 20; padding: 10px 16px; background: var(--gold); color: var(--brown); text-align: center; font-weight: 500; font-size: 15px; }

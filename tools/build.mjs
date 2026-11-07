@@ -4,7 +4,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, write
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { layout, ORIGIN } from '../src/layout.mjs';
-import { apiaryMain, journalMain, postMain, published, postPath } from '../src/content.mjs';
+import { apiaryMain, journalMain, postMain, published, postPath, photoUrl } from '../src/content.mjs';
 import { homeMain, homeHead } from '../src/home.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -41,7 +41,7 @@ page('/apiary/', layout({
     title: `${apiary.title.replace(/\.$/, '')} | Bogabee Apiaries`,
     description: apiary.intro,
     path: '/apiary/', active: 'apiary',
-    image: apiary.heroImage ? `/assets/img/${apiary.heroImage}.webp` : undefined,
+    image: apiary.heroImage ? photoUrl(apiary.heroImage) : undefined,
     body: `    <main>${apiaryMain(apiary)}\n    </main>`,
 }));
 
@@ -56,10 +56,10 @@ for (const p of live) {
         title: `${p.title} | Bogabee Apiaries`,
         description: p.excerpt || 'Notes from the Bogabee Apiaries hives in Manalapan Township, NJ.',
         path: postPath(p), active: 'journal', type: 'article',
-        image: p.cover ? `/assets/img/${p.cover}.webp` : undefined,
+        image: p.cover ? photoUrl(p.cover) : undefined,
         head: `<script type="application/ld+json">${JSON.stringify({
             '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, description: p.excerpt || undefined,
-            datePublished: p.date, image: p.cover ? `${ORIGIN}/assets/img/${p.cover}.webp` : undefined,
+            datePublished: p.date, image: p.cover ? new URL(photoUrl(p.cover), ORIGIN).href : undefined,
             author: { '@type': 'Organization', name: 'Bogabee Apiaries' }, publisher: { '@type': 'Organization', name: 'Bogabee Apiaries' },
         }).replace(/</g, '\\u003c')}</script>`,
         body: `    <main>${postMain(p, posts)}\n    </main>`,

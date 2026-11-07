@@ -31,7 +31,7 @@ const NAV = [
  * @param {boolean} [page.noindex]
  */
 export function layout(page) {
-    const image = ORIGIN + (page.image || '/assets/og.jpg');
+    const image = new URL(page.image || '/assets/og.jpg', ORIGIN).href;
     const nav = NAV.map(n => `<a href="${n.href}"${n.key === page.active ? ' aria-current="page"' : ''}>${n.label}</a>`).join('\n                ');
     return `<!DOCTYPE html>
 <html lang="en">

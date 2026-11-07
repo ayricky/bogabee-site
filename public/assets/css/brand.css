@@ -267,5 +267,7 @@ a { color: inherit; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 /* Content that fades in on scroll stays visible if scripts don't run (pages add the js class in <head>). */
 html:not(.js) .reveal { opacity: 1; translate: none; }
+/* Without site.js nothing turns the nav solid on scroll, so it starts that way. */
+html:not(.js) .nav { color: var(--ink); background: var(--cream); box-shadow: 0 1px 0 var(--line); }
 /* Photos carry width/height attributes to reserve space; CSS still sets their shape. */
 .photo img, .product .shot img { height: auto; }

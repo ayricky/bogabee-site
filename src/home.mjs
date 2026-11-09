@@ -22,8 +22,11 @@ const PILLARS = [
 
 // The 3:4 photo covers its box, so it's drawn at least 3/4 as wide as the box is tall. On wide
 // screens the box is half the width and the hero's height, which stops at 980px; on phones it's
-// the full width and 62% of the height. Plain lengths, since older Safari drops sizes with max().
+// the full width and 62% of the height. Below 650px tall the words hold the hero at about 650px.
+// Plain lengths, since older Safari drops sizes with max().
 const HERO_SIZES = [
+    '(min-width: 970px) and (max-height: 650px) 50vw',
+    '(min-width: 900px) and (max-height: 650px) 490px',
     '(min-width: 900px) and (min-aspect-ratio: 3/2) 50vw',
     '(min-width: 1470px) and (min-height: 980px) 50vw',
     '(min-width: 900px) and (min-height: 980px) 735px',

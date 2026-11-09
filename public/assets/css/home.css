@@ -15,7 +15,9 @@
 .hero .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; animation: rise 1.2s .45s var(--ease) both; }
 @media (min-width: 900px) {
     .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: min(100svh, 980px); text-align: left; }
+    /* The photo fills its half without setting the hero's height. */
     .hero-bg { grid-column: 2; grid-row: 1; height: auto; }
+    .hero-bg img { position: absolute; inset: 0; }
     .hero-bg::after { background: linear-gradient(to right, var(--night), rgb(23 16 10 / 0) 24%), linear-gradient(to bottom, rgb(23 16 10 / 0.5), transparent 16%); }
     .hero-inner { grid-column: 1; grid-row: 1; align-self: center; justify-items: start; margin: 0; padding: 120px clamp(28px, 4vw, 72px) 72px max(var(--gutter), (100vw - var(--max)) / 2); }
     .hero-logo { width: clamp(92px, 9vw, 140px); }

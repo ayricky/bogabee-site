@@ -20,8 +20,10 @@ const PILLARS = [
     ['Small Batch', 'Hand-poured &amp; bottled', '<rect x="8" y="3" width="8" height="3" rx="1"/><path d="M7.5 6h9A1.5 1.5 0 0 1 18 7.5V19a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7.5A1.5 1.5 0 0 1 7.5 6z"/><path d="M9 12.5h6M9 15.5h4"/>'],
 ];
 
-// The photo fills the screen's width on phones and half of it on wide screens.
-const HERO_SIZES = '(min-width: 900px) 50vw, 100vw';
+// The 3:4 photo covers its box, so it's drawn at least 3/4 as wide as the box is tall: on wide
+// screens half the width or 3/4 of the hero (up to 980px tall), on phones the full width or 3/4
+// of the photo's height (62% of the screen, at least 440px).
+const HERO_SIZES = '(min-width: 900px) max(50vw, min(75vh, 735px)), max(100vw, 46.5vh, 330px)';
 
 export const homeHead = `<link rel="preload" as="image" href="/assets/img/market.webp" imagesrcset="/assets/img/market-1000.webp 1000w, /assets/img/market.webp 1500w" imagesizes="${HERO_SIZES}" fetchpriority="high">
     <link rel="stylesheet" href="/assets/css/home.css">

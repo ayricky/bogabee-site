@@ -21,10 +21,16 @@ const PILLARS = [
 ];
 
 // The 3:4 photo covers its box, so it's drawn at least 3/4 as wide as the box is tall. On wide
-// screens the box is half the width and the hero's height (up to 980px), so it's 75vh on
-// screens narrower than 3:2. On phones it's the full width and 62% of the height, so it's 46.5vh
-// on screens narrower than 93:200. Plain lengths, since older Safari drops sizes with max().
-const HERO_SIZES = '(min-width: 900px) and (min-aspect-ratio: 3/2) 50vw, (min-width: 900px) 75vh, (max-aspect-ratio: 93/200) 46.5vh, 100vw';
+// screens the box is half the width and the hero's height, which stops at 980px; on phones it's
+// the full width and 62% of the height. Plain lengths, since older Safari drops sizes with max().
+const HERO_SIZES = [
+    '(min-width: 900px) and (min-aspect-ratio: 3/2) 50vw',
+    '(min-width: 1470px) and (min-height: 980px) 50vw',
+    '(min-width: 900px) and (min-height: 980px) 735px',
+    '(min-width: 900px) 75vh',
+    '(max-aspect-ratio: 93/200) 46.5vh',
+    '100vw',
+].join(', ');
 
 export const homeHead = `<link rel="preload" as="image" href="/assets/img/market.webp" imagesrcset="/assets/img/market-1000.webp 1000w, /assets/img/market.webp 1500w" imagesizes="${HERO_SIZES}" fetchpriority="high">
     <link rel="stylesheet" href="/assets/css/home.css">

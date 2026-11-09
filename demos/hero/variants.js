@@ -1,9 +1,9 @@
 // Ways to show the Market Day photo in the homepage hero. ../refined/?hero=split picks one;
-// without ?hero the page shows the default (Framed). Runs right after the hero, before it paints.
+// without ?hero the page shows the default (Split screen). Runs right after the hero, before it paints.
 (function () {
     const V = [
-        { id: 'framed', name: 'Framed' },
         { id: 'split', name: 'Split screen' },
+        { id: 'framed', name: 'Framed' },
         { id: 'print', name: 'Snapshot', light: true },
         { id: 'arch', name: 'Arch' },
         { id: 'collage', name: 'Collage' },

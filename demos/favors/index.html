@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Favors | Bogabee Apiaries</title>
+    <meta name="description" content="Honey party favors for weddings, showers and events: mini jars of raw New Jersey wildflower honey with dippers, ribbons and custom labels. Price them as you build.">
+    <link rel="canonical" href="https://bogabeeapiaries.com/favors/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Honey party favors · Bogabee Apiaries">
+    <meta property="og:description" content="Mini jars of raw New Jersey honey for weddings, showers and events. Price your favors as you build them.">
+    <meta property="og:image" content="/demos/assets/og.jpg">
+    <link rel="icon" type="image/png" href="../assets/favicon-32.png">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="../cart.css">
+    <link rel="stylesheet" href="favors.css">
+</head>
+<body>
+    <header class="nav is-solid">
+        <div class="wrap">
+            <a class="brand" href="../refined/" aria-label="Bogabee Apiaries"><img src="../assets/img/logo-96.webp" alt="" width="42" height="42"><span>Bogabee Apiaries</span></a>
+            <nav class="links" aria-label="Site">
+                <a href="../apiary/">The Apiary</a>
+                <a href="../journal/">Journal</a>
+                <a href="../refined/#order">Jars</a>
+                <button class="btn cart-btn" type="button" data-cart-open><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg>Cart<span class="cart-count" data-cart-count hidden>0</span></button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="favors wrap">
+        <header class="favors-head">
+            <span class="eyebrow">Party Favors</span>
+            <h1 class="display">Honey favors for your event.</h1>
+            <p>Raw New Jersey wildflower honey in gift jars, dressed in your colors.</p>
+        </header>
+
+        <form class="favors-grid" id="quote-form" novalidate>
+            <div class="favors-form">
+                <section class="block" aria-labelledby="h-jar">
+                    <h2 id="h-jar">Jar</h2>
+                    <div class="choice-grid jars" id="jars"></div>
+                </section>
+
+                <section class="block" aria-labelledby="h-qty">
+                    <h2 id="h-qty">Quantity</h2>
+                    <div class="qty-row">
+                        <div class="stepper">
+                            <button type="button" class="step-btn" data-step="-5" aria-label="5 fewer jars">−</button>
+                            <input id="qty" name="qty" type="number" inputmode="numeric" min="10" step="5" value="25" aria-label="Number of jars" aria-describedby="qty-hint">
+                            <button type="button" class="step-btn" data-step="5" aria-label="5 more jars">+</button>
+                        </div>
+                        <div class="quick" role="group" aria-label="Common quantities">
+                            <button type="button" data-qty="25">25</button>
+                            <button type="button" data-qty="50">50</button>
+                            <button type="button" data-qty="100">100</button>
+                            <button type="button" data-qty="150">150</button>
+                        </div>
+                    </div>
+                    <p class="hint" id="qty-hint">10 to 500 jars, in fives. Larger orders are quoted by hand.</p>
+                </section>
+
+                <section class="block" aria-labelledby="h-addons">
+                    <h2 id="h-addons">Add-ons <small>per jar</small></h2>
+                    <div class="choice-grid addons" id="addons"></div>
+                    <div class="label-details" id="label-details" hidden>
+                        <label class="field">
+                            <span>What should the label say?</span>
+                            <input type="text" id="label-text" placeholder="Meant to Bee · Sarah &amp; Mike · 6.14.27" maxlength="60">
+                            <em class="error" id="err-label">Write the label text.</em>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="block" aria-labelledby="h-asm">
+                    <h2 id="h-asm">Assembly</h2>
+                    <div class="choice-grid two" id="assembly">
+                        <label class="choice">
+                            <input type="radio" name="assembly" value="assembled" checked>
+                            <span class="choice-body"><b>Assembled</b><span>Every favor tied and ready to set out</span><i class="price">+$1 / jar</i></span>
+                        </label>
+                        <label class="choice">
+                            <input type="radio" name="assembly" value="diy">
+                            <span class="choice-body"><b>DIY kit</b><span>Jars and supplies packed loose</span><i class="price">Included</i></span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="block" aria-labelledby="h-event">
+                    <h2 id="h-event">Event</h2>
+                    <div class="fields two">
+                        <label class="field">
+                            <span>Event type</span>
+                            <select id="event-type" required>
+                                <option value="">Choose one</option>
+                                <option>Wedding</option>
+                                <option>Baby shower</option>
+                                <option>Bridal shower</option>
+                                <option>Birthday party</option>
+                                <option>Corporate event</option>
+                                <option>Holiday party</option>
+                                <option>Other</option>
+                            </select>
+                            <em class="error" id="err-type">Choose the event type.</em>
+                        </label>
+                        <label class="field">
+                            <span>Event date</span>
+                            <input type="date" id="event-date" required>
+                            <em class="error" id="err-date">Pick a date at least two weeks out.</em>
+                        </label>
+                    </div>
+                    <fieldset class="field colors">
+                        <legend>Color <small>optional</small></legend>
+                        <div class="swatches" id="swatches"></div>
+                    </fieldset>
+                    <div class="fields two">
+                        <label class="field upload">
+                            <span>Logo or monogram <small>optional</small></span>
+                            <input type="file" id="logo" accept="image/*,.pdf,.svg">
+                            <span class="upload-box"><b id="logo-name">Choose a file</b><small>PNG, JPG, SVG or PDF</small></span>
+                        </label>
+                        <label class="field">
+                            <span>Notes <small>optional</small></span>
+                            <textarea id="notes" rows="3" placeholder="Anything we should know"></textarea>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="block" aria-labelledby="h-contact">
+                    <h2 id="h-contact">Contact</h2>
+                    <div class="fields three">
+                        <label class="field">
+                            <span>Name</span>
+                            <input type="text" id="c-name" autocomplete="name" required>
+                            <em class="error" id="err-name">Enter your name.</em>
+                        </label>
+                        <label class="field">
+                            <span>Email</span>
+                            <input type="email" id="c-email" autocomplete="email" required>
+                            <em class="error" id="err-email">Enter an email for your receipt.</em>
+                        </label>
+                        <label class="field">
+                            <span>Phone</span>
+                            <input type="tel" id="c-phone" autocomplete="tel" inputmode="tel" required>
+                            <em class="error" id="err-phone">Enter a 10-digit phone number.</em>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="summary" id="summary" aria-labelledby="h-summary">
+                <div class="summary-card">
+                    <h2 id="h-summary">Your quote</h2>
+                    <div class="summary-detail" id="summary-detail">
+                        <ul class="lines" id="lines"></ul>
+                        <dl class="per">
+                            <div><dt>Per jar</dt><dd id="per-jar"></dd></div>
+                            <div><dt>Jars</dt><dd id="qty-out"></dd></div>
+                        </dl>
+                    </div>
+                    <div class="total-row">
+                        <span>Total</span>
+                        <b id="total" aria-live="polite"></b>
+                    </div>
+                    <button type="button" class="detail-toggle" id="detail-toggle" aria-expanded="false" aria-controls="summary-detail">Details</button>
+                    <button type="submit" class="btn btn-lg submit" id="submit"></button>
+                    <p class="approval-note" id="approval-note" hidden>Custom labels, logos and orders over 500 jars are checked first. We email a payment link once it's approved.</p>
+                </div>
+            </aside>
+        </form>
+
+        <section class="done" id="done" hidden tabindex="-1" aria-live="polite"></section>
+    </main>
+
+    <dialog class="pay" id="pay" aria-labelledby="pay-title">
+        <form method="dialog" class="pay-form" id="pay-form" novalidate>
+            <header class="pay-head">
+                <img src="../assets/img/logo-96.webp" alt="" width="40" height="40">
+                <div><span id="pay-title">Bogabee Apiaries</span><b id="pay-amount"></b></div>
+                <button type="button" class="pay-close" id="pay-close" aria-label="Close">×</button>
+            </header>
+            <button type="button" class="express" id="express" aria-label="Pay with Apple Pay"><svg viewBox="0 0 17 20" aria-hidden="true"><path fill="currentColor" d="M14.1 10.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9C3.6 4.8 2 5.8 1.1 7.4c-1.9 3.2-.5 8 1.3 10.6.9 1.3 1.9 2.7 3.3 2.6 1.3-.1 1.8-.9 3.4-.9s2 .9 3.4.8c1.4 0 2.3-1.3 3.2-2.6 1-1.5 1.4-2.9 1.4-3-.1 0-2.9-1.1-3-4.3zM11.6 2.9c.7-.9 1.2-2.1 1.1-3.3-1 0-2.3.7-3 1.5-.7.8-1.3 2-1.1 3.2 1.1.1 2.3-.6 3-1.4z"/></svg>Pay</button>
+            <div class="or"><span>or pay with card</span></div>
+            <div class="pe">
+                <label class="pe-field full"><span>Card number</span><input id="card" inputmode="numeric" autocomplete="cc-number" value="4242 4242 4242 4242"></label>
+                <label class="pe-field"><span>Expiration</span><input id="exp" inputmode="numeric" autocomplete="cc-exp" value="12 / 34"></label>
+                <label class="pe-field"><span>CVC</span><input id="cvc" inputmode="numeric" autocomplete="cc-csc" value="123"></label>
+                <label class="pe-field full"><span>ZIP</span><input id="zip" inputmode="numeric" autocomplete="postal-code" value="07726"></label>
+            </div>
+            <p class="pay-error" id="pay-error" role="alert"></p>
+            <button type="submit" class="btn btn-dark btn-lg pay-submit" id="pay-submit"></button>
+            <p class="pay-note">Demo checkout. No card is charged.</p>
+        </form>
+    </dialog>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="../cart.js"></script>
+    <script src="pricing.js"></script>
+    <script src="favors.js"></script>
+    <script src="../nav.js"></script>
+    <script src="../assets/bee2.js"></script>
+</body>
+</html>

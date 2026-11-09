@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Pages | Bogabee Hub</title>
+    <link rel="icon" href="../assets/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="editor.css">
+    <style>
+        .p-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+        .form { display: grid; gap: 16px; }
+        .form .panel-body { display: grid; gap: 16px; }
+        .savebar { border-radius: 18px; box-shadow: 0 1px 0 var(--line); }
+        .savebar .btn { padding: 10px 16px; font-size: 14px; }
+        .savebar a.btn { text-decoration: none; }
+        .card { display: grid; gap: 14px; padding: 16px; border-radius: 14px; background: var(--cream); box-shadow: inset 0 0 0 1px var(--line); }
+        .card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+        .card-head b { font-weight: 500; }
+        .order { display: flex; gap: 4px; }
+        .icon-btn { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 8px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); cursor: pointer; font: 500 15px/1 var(--sans); }
+        .icon-btn:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--brown); }
+        .icon-btn:disabled { opacity: .35; cursor: default; }
+        .icon-btn.danger { width: auto; padding: 0 12px; font-size: 13px; }
+        .season { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+        .add { justify-self: start; }
+        .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+
+        .preview { display: none; }
+        @media (min-width: 1320px) {
+            .p-layout { grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); }
+            .preview { display: block; position: sticky; top: 24px; }
+        }
+        .preview .panel-head a { font-size: 14px; color: var(--amber-text); }
+        .frame { position: relative; height: calc(100svh - 140px); overflow: hidden; border-radius: 0 0 18px 18px; background: var(--cream); }
+        .frame iframe { position: absolute; left: 0; top: 0; width: 1280px; border: 0; transform-origin: 0 0; }
+        @media (max-width: 640px) {
+            .season { grid-template-columns: minmax(0, 1fr); }
+            .two { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="hub">
+    <aside class="hub-side" data-screen="pages"></aside>
+
+    <main class="hub-main">
+        <header class="hub-head">
+            <div><span class="eyebrow">Pages</span><h1>The Apiary</h1></div>
+        </header>
+
+        <div class="p-layout">
+            <div class="form">
+                <div class="savebar">
+                    <span class="state" id="state" aria-live="polite"></span>
+                    <span class="tag gold" id="starter" hidden>Starter copy</span>
+                    <a class="btn btn-quiet" href="../apiary/" target="_blank" rel="noopener">View page</a>
+                    <button class="btn btn-quiet" type="button" id="reset">Reset to original</button>
+                    <button class="btn" type="button" id="save">Publish changes</button>
+                </div>
+
+                <section class="panel" aria-labelledby="h-top">
+                    <div class="panel-head"><h2 id="h-top">Top of the page</h2></div>
+                    <div class="panel-body">
+                        <div class="two">
+                            <label class="field"><span>Small heading</span><input type="text" data-key="eyebrow" maxlength="40"></label>
+                            <div class="field"><span>Main photo</span><div id="hero-image"></div></div>
+                        </div>
+                        <label class="field"><span>Headline</span><input type="text" data-key="title" maxlength="90"></label>
+                        <label class="field"><span>Introduction</span><textarea data-key="intro" rows="3" maxlength="400"></textarea></label>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="h-sections">
+                    <div class="panel-head"><h2 id="h-sections">Sections</h2></div>
+                    <div class="panel-body">
+                        <div id="sections" class="form"></div>
+                        <button class="btn btn-quiet btn-small add" type="button" id="add-section">Add a section</button>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="h-seasons">
+                    <div class="panel-head"><h2 id="h-seasons">Seasons</h2></div>
+                    <div class="panel-body">
+                        <label class="field"><span>Heading</span><input type="text" data-key="seasonsTitle" maxlength="60"></label>
+                        <div id="seasons" class="form"></div>
+                        <button class="btn btn-quiet btn-small add" type="button" id="add-season">Add a season</button>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="h-keeper">
+                    <div class="panel-head"><h2 id="h-keeper">The beekeeper</h2></div>
+                    <div class="panel-body">
+                        <div class="two">
+                            <label class="field"><span>Heading</span><input type="text" data-key="keeperTitle" maxlength="60"></label>
+                            <div class="field"><span>Photo</span><div id="keeper-image"></div></div>
+                        </div>
+                        <label class="field"><span>Photo description (for screen readers, optional)</span><input type="text" data-key="keeperImageAlt" maxlength="160" placeholder="What the photo shows"></label>
+                        <div class="field"><span>Text</span><div id="keeper"></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="panel preview" aria-labelledby="h-preview">
+                <div class="panel-head"><h2 id="h-preview">Preview, with your unsaved changes</h2><a href="../apiary/" target="_blank" rel="noopener">Open the live page</a></div>
+                <div class="frame" id="frame"></div>
+            </aside>
+        </div>
+    </main>
+
+    <script src="../store.js"></script>
+    <script src="../shop/shop.js"></script>
+    <script src="seed.js"></script>
+    <script src="../crm.js"></script>
+    <script src="hub.js"></script>
+    <script src="editor.js"></script>
+    <script>
+        const B = window.Bogabee, E = window.BogabeeEditor;
+        const $ = id => document.getElementById(id);
+        const esc = E.esc;
+        const strip = d => { const { updated, ...rest } = d; return rest; };
+
+        let data, savedJSON;
+        const json = () => JSON.stringify(strip(data));
+        const dirty = () => json() !== savedJSON;
+
+        function renderState() {
+            const d = dirty();
+            const st = $('state');
+            const at = B.pages.get('apiary').updated;
+            st.textContent = d ? 'Unsaved changes' : at ? `Published ${Hub.when(at)}` : 'Original copy';
+            st.className = 'state' + (d ? ' dirty' : '');
+            $('save').disabled = !d;
+            // Until Danny publishes his own version, the page still shows the copy written for the demo.
+            $('starter').hidden = !!at;
+            phoneBar(d);
+        }
+        const phoneBar = E.dirtyBar(['save']);
+        const changed = () => { renderState(); queuePreview(); };
+
+        const hero = E.imageField($('hero-image'), { label: 'Photo', context: 'for the top of the page', onChange: v => { data.heroImage = v; changed(); } });
+        const keeperImage = E.imageField($('keeper-image'), { label: 'Photo', context: 'for the beekeeper', onChange: v => { data.keeperImage = v; changed(); } });
+        const keeper = E.create($('keeper'), { label: 'Beekeeper text', short: true, onChange: v => { data.keeper = v; changed(); } });
+
+        document.querySelectorAll('[data-key]').forEach(el => el.addEventListener('input', () => { data[el.dataset.key] = el.value; changed(); }));
+
+        // ---------- Sections: heading, photo and text, in order ----------
+        let sectionEditors = [];
+        function renderSections(focusIndex) {
+            const box = $('sections');
+            sectionEditors.forEach(ed => ed.destroy());
+            sectionEditors = [];
+            box.innerHTML = '';
+            data.sections.forEach((s, i) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<div class="card-head"><b>Section ${i + 1}</b>
+                        <span class="order">
+                            <button type="button" class="icon-btn" data-up aria-label="Move section ${i + 1} up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                            <button type="button" class="icon-btn" data-down aria-label="Move section ${i + 1} down" ${i === data.sections.length - 1 ? 'disabled' : ''}>↓</button>
+                            <button type="button" class="icon-btn danger" data-remove>Remove</button>
+                        </span></div>
+                    <div class="two">
+                        <label class="field"><span>Heading</span><input type="text" maxlength="80" value="${esc(s.heading)}" data-heading></label>
+                        <div class="field"><span>Photo</span><div data-image></div></div>
+                    </div>
+                    <label class="field"><span>Photo description (for screen readers, optional)</span><input type="text" maxlength="160" value="${esc(s.imageAlt || '')}" data-alt placeholder="What the photo shows"></label>
+                    <div class="field"><span>Text</span><div data-body></div></div>`;
+                box.appendChild(card);
+                card.querySelector('[data-heading]').addEventListener('input', e => { s.heading = e.target.value; changed(); });
+                card.querySelector('[data-alt]').addEventListener('input', e => { s.imageAlt = e.target.value; changed(); });
+                E.imageField(card.querySelector('[data-image]'), { value: s.image, label: 'Photo', optional: true, context: `for section ${i + 1}`, onChange: v => { s.image = v; changed(); } });
+                sectionEditors.push(E.create(card.querySelector('[data-body]'), { value: s.body, label: `Section ${i + 1} text`, short: true, onChange: v => { s.body = v; changed(); } }));
+                card.querySelector('[data-up]').addEventListener('click', () => move(data.sections, i, -1, renderSections, '[data-up]'));
+                card.querySelector('[data-down]').addEventListener('click', () => move(data.sections, i, 1, renderSections, '[data-down]'));
+                card.querySelector('[data-remove]').setAttribute('aria-label', `Remove section ${i + 1}`);
+                card.querySelector('[data-remove]').addEventListener('click', () => {
+                    const [gone] = data.sections.splice(i, 1);
+                    renderSections(Math.min(i, data.sections.length - 1)); changed();
+                    if (!data.sections.length) $('add-section').focus();
+                    Hub.toast(`Section ${i + 1} removed`, { undo: () => { data.sections.splice(i, 0, gone); renderSections(i); changed(); } });
+                });
+            });
+            if (focusIndex !== undefined && box.children[focusIndex]) {
+                box.children[focusIndex].querySelector('[data-heading]').focus();
+            }
+        }
+
+        // Move an item up or down and keep focus on the same control so keyboard users stay oriented.
+        function move(list, i, d, render, sel) {
+            const j = i + d;
+            if (j < 0 || j >= list.length) return;
+            [list[i], list[j]] = [list[j], list[i]];
+            render();
+            changed();
+            const host = render === renderSections ? $('sections') : $('seasons');
+            const btn = host.children[j] && host.children[j].querySelector(sel);
+            if (btn && !btn.disabled) btn.focus(); else host.children[j] && host.children[j].querySelector('input').focus();
+        }
+
+        function renderSeasons() {
+            const box = $('seasons');
+            box.innerHTML = '';
+            data.seasons.forEach((s, i) => {
+                const row = document.createElement('div');
+                row.className = 'season';
+                row.innerHTML = `<label class="field"><span>Season</span><input type="text" maxlength="30" value="${esc(s.name)}" data-name></label>
+                    <label class="field"><span>What happens</span><input type="text" maxlength="140" value="${esc(s.text)}" data-text></label>
+                    <span class="order">
+                        <button type="button" class="icon-btn" data-up aria-label="Move ${esc(s.name || 'season')} up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                        <button type="button" class="icon-btn" data-down aria-label="Move ${esc(s.name || 'season')} down" ${i === data.seasons.length - 1 ? 'disabled' : ''}>↓</button>
+                        <button type="button" class="icon-btn" data-remove aria-label="Remove ${esc(s.name || 'season')}">×</button>
+                    </span>`;
+                box.appendChild(row);
+                row.querySelector('[data-name]').addEventListener('input', e => { s.name = e.target.value; changed(); });
+                row.querySelector('[data-text]').addEventListener('input', e => { s.text = e.target.value; changed(); });
+                row.querySelector('[data-up]').addEventListener('click', () => move(data.seasons, i, -1, renderSeasons, '[data-up]'));
+                row.querySelector('[data-down]').addEventListener('click', () => move(data.seasons, i, 1, renderSeasons, '[data-down]'));
+                row.querySelector('[data-remove]').addEventListener('click', () => {
+                    const [gone] = data.seasons.splice(i, 1); renderSeasons(); changed();
+                    const next = box.children[Math.min(i, data.seasons.length - 1)];
+                    (next ? next.querySelector('input') : $('add-season')).focus();
+                    Hub.toast(`${gone.name || 'Season'} removed`, { undo: () => { data.seasons.splice(i, 0, gone); renderSeasons(); changed(); } });
+                });
+            });
+        }
+
+        $('add-section').addEventListener('click', () => {
+            data.sections.push({ heading: '', image: '', imageAlt: '', body: '' });
+            renderSections(data.sections.length - 1);
+            changed();
+        });
+        $('add-season').addEventListener('click', () => {
+            data.seasons.push({ name: '', text: '' });
+            renderSeasons();
+            changed();
+            $('seasons').lastElementChild.querySelector('input').focus();
+        });
+
+        function load() {
+            data = structuredClone(B.pages.get('apiary'));
+            data.sections = data.sections || [];
+            data.seasons = data.seasons || [];
+            savedJSON = json();
+            document.querySelectorAll('[data-key]').forEach(el => { el.value = data[el.dataset.key] || ''; });
+            hero.value = data.heroImage;
+            keeperImage.value = data.keeperImage;
+            keeper.value = data.keeper;
+            renderSections();
+            renderSeasons();
+            renderState();
+        }
+
+        // ---------- Preview: the Apiary page in a frame, fed the unsaved edits ----------
+        // It's only built when there's room to show it, so phones don't download the page twice.
+        // The frame is a picture of the page: inert and hidden from screen readers ("Open the live page" is the real link).
+        let iframe = null, previewTimer = 0;
+        function feedPreview() {
+            try {
+                const W = iframe && iframe.contentWindow;
+                if (!W || !W.Bogabee || !W.Bogabee.pages) return;
+                if (!W.__hubGet) W.__hubGet = W.Bogabee.pages.get;
+                W.Bogabee.pages.get = key => (key === 'apiary' ? structuredClone(data) : W.__hubGet(key));
+                W.dispatchEvent(new W.CustomEvent('bogabee:change', { detail: { key: W.Bogabee.KEYS.pages } }));
+            } catch (e) {}
+        }
+        function queuePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(feedPreview, 250); }
+        function buildPreview() {
+            if (iframe) return;
+            const frame = $('frame');
+            iframe = document.createElement('iframe');
+            iframe.src = '../apiary/';
+            iframe.title = 'Preview of the Apiary page';
+            iframe.setAttribute('inert', '');
+            iframe.setAttribute('aria-hidden', 'true');
+            iframe.addEventListener('load', feedPreview);
+            frame.appendChild(iframe);
+            // Show the page at desktop width, scaled to fit the preview panel.
+            new ResizeObserver(() => {
+                const sc = frame.clientWidth / 1280;
+                iframe.style.transform = `scale(${sc})`;
+                iframe.style.height = frame.clientHeight / sc + 'px';
+            }).observe(frame);
+        }
+        const wide = matchMedia('(min-width: 1320px)');
+        wide.addEventListener('change', () => { if (wide.matches) buildPreview(); });
+        if (wide.matches) buildPreview();
+
+        $('save').addEventListener('click', () => {
+            if (!data.title.trim()) { Hub.toast('The page needs a headline.', { error: true }); document.querySelector('[data-key="title"]').focus(); return; }
+            try {
+                B.pages.save('apiary', strip(data));
+                savedJSON = json();
+                renderState();
+                queuePreview();
+                Hub.toast('Apiary page published');
+            } catch (e) {
+                if (E.isQuota(e)) Hub.toast('Not enough room to save in this demo. Use a smaller photo or one of the site photos.', { error: true });
+                else Hub.toast('Could not save: ' + e.message, { error: true });
+            }
+        });
+        $('reset').addEventListener('click', async () => {
+            const ok = await Hub.confirm({ title: 'Go back to the original copy?', body: 'Your edits to the Apiary page will be replaced with the starting text and photos.', ok: 'Reset', danger: true });
+            if (!ok) return;
+            B.pages.reset('apiary');
+            load();
+            queuePreview();
+            Hub.toast('Apiary page reset to the original copy');
+        });
+        addEventListener('beforeunload', e => { if (dirty()) { e.preventDefault(); e.returnValue = ''; } });
+        // Saved in another tab: take it, unless there are edits here.
+        addEventListener('bogabee:change', e => { if (e.detail.key === B.KEYS.pages && !dirty()) load(); });
+
+        load();
+    </script>
+</body>
+</html>

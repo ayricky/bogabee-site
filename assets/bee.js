@@ -73,7 +73,8 @@
         const s2 = Math.random() * 100;
         const s3 = Math.random() * 100;
 
-        document.addEventListener('mousemove', function(e) {
+        // pointerdown lets a tap call the bee on touch screens, where there is no hover.
+        function onPointer(e) {
             mouseX = e.clientX;
             mouseY = e.clientY;
             lastMouseMoveTime = Date.now();
@@ -87,7 +88,9 @@
                 else if (edge === 2) { beeX = Math.random() * window.innerWidth; beeY = -50; }
                 else { beeX = Math.random() * window.innerWidth; beeY = window.innerHeight + 50; }
             }
-        }, { passive: true });
+        }
+        document.addEventListener('pointermove', onPointer, { passive: true });
+        document.addEventListener('pointerdown', onPointer, { passive: true });
 
         function animate(now) {
             const t = now * 0.001;

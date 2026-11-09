@@ -1,0 +1,121 @@
+/* Guest check-in. Load after ../brand.css. Kiosk mode adds .kiosk to <body>. */
+body.signin { min-height: 100svh; }
+.signin main { width: min(560px, 100% - 2 * var(--gutter)); margin: 0 auto; padding: 108px 0 72px; }
+
+.event-head { text-align: center; margin-bottom: clamp(24px, 4vw, 36px); }
+.event-head .eyebrow { margin-bottom: 14px; }
+.event-head h1 { font-size: clamp(36px, 8vw, 56px); }
+.event-head p { margin: 12px 0 0; color: var(--muted); }
+.event-head .past { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 999px; background: rgb(86 54 33 / 0.08); color: var(--brown); font-size: 14px; }
+.event-head .past[hidden] { display: none; }
+
+.card {
+    padding: clamp(20px, 4vw, 32px);
+    border-radius: calc(var(--radius) + 4px);
+    background: var(--paper);
+    box-shadow: 0 1px 0 var(--line), 0 24px 50px -36px rgb(36 24 14 / 0.45);
+}
+
+.field { display: grid; gap: 6px; margin-bottom: 16px; }
+.field label, .legend { font-size: 14px; font-weight: 500; }
+.field input {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    border: 1px solid rgb(86 54 33 / 0.22);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    transition: border-color .2s, box-shadow .2s;
+}
+.field input:focus { outline: none; border-color: var(--honey); box-shadow: 0 0 0 3px rgb(224 165 38 / 0.25); }
+.field input[aria-invalid="true"] { border-color: #b3401f; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+@media (max-width: 420px) { .row { grid-template-columns: 1fr; } }
+
+.error { margin: 0; font-size: 13px; color: #a3381a; }
+.error[hidden] { display: none; }
+.contact-error { margin: -6px 0 16px; }
+
+fieldset { border: 0; padding: 0; margin: 4px 0 18px; }
+.legend { padding: 0; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 42px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid rgb(86 54 33 / 0.22);
+    background: #fff;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color .2s, border-color .2s;
+}
+.chip input:checked + span { background: var(--gold); border-color: var(--gold); color: var(--brown); }
+.chip input:checked + span::before { content: "✓"; font-size: 13px; }
+.chip input:focus-visible + span { outline: 2px solid var(--honey); outline-offset: 2px; }
+
+.check { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; margin: 4px 0 22px; font-size: 15px; cursor: pointer; }
+.check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--brown); }
+
+.submit { width: 100%; justify-content: center; }
+.fine { margin: 14px 0 0; font-size: 13px; color: var(--muted); text-align: center; }
+
+.done { text-align: center; padding-block: clamp(28px, 6vw, 48px); }
+.done[hidden], .signin-form[hidden], .done [hidden] { display: none; }
+.done .tick { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%; background: var(--gold); color: var(--brown); }
+.done .tick svg { width: 30px; height: 30px; }
+.done h2 { font-size: clamp(32px, 6vw, 44px); }
+.done p { margin: 10px 0 0; color: var(--muted); }
+.done .btn { margin-top: 26px; }
+.countdown { height: 4px; margin: 26px auto 0; max-width: 240px; border-radius: 4px; background: rgb(86 54 33 / 0.12); overflow: hidden; }
+.countdown i { display: block; height: 100%; background: var(--brown); transform-origin: left; animation: drain 8s linear both; }
+@keyframes drain { to { transform: scaleX(0); } }
+
+.missing { text-align: center; padding-top: 40px; }
+.missing h1 { font-size: clamp(32px, 7vw, 48px); }
+.missing p { color: var(--muted); }
+
+/* ---------- Kiosk: a tablet on the market table ---------- */
+body.kiosk { background: var(--cream); }
+.kiosk .nav, .kiosk .site-foot { display: none; }
+.kiosk main { width: min(760px, 100% - 2 * var(--gutter)); padding: clamp(28px, 5vh, 56px) 0 48px; }
+.kiosk .kiosk-logo { display: block; width: 84px; margin: 0 auto 18px; }
+.kiosk .event-head h1 { font-size: clamp(44px, 7vw, 72px); }
+.kiosk .field input { min-height: 60px; font-size: 20px; }
+.kiosk .field label, .kiosk .legend { font-size: 17px; }
+.kiosk .chip span { min-height: 52px; padding: 12px 22px; font-size: 18px; }
+.kiosk .check { font-size: 18px; }
+.kiosk .submit { min-height: 64px; font-size: 19px; }
+.kiosk-logo { display: none; }
+
+/* Landscape tablets: keep Check in above the fold. */
+@media (min-aspect-ratio: 4/3) and (max-height: 900px) {
+    .kiosk main { width: min(940px, 100% - 2 * var(--gutter)); padding-top: 20px; }
+    .kiosk .kiosk-logo { width: 56px; margin-bottom: 8px; }
+    .kiosk .event-head { margin-bottom: 16px; }
+    .kiosk .event-head .eyebrow { margin-bottom: 8px; }
+    .kiosk .event-head h1 { font-size: clamp(36px, 5vw, 48px); }
+    .kiosk .event-head p { margin-top: 6px; }
+    .kiosk .card { padding: 22px 26px; }
+    .kiosk .signin-form:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; }
+    .kiosk .signin-form > .row, .kiosk .signin-form > fieldset, .kiosk .signin-form > .check,
+    .kiosk .signin-form > .submit, .kiosk .signin-form > .fine, .kiosk .signin-form > .contact-error { grid-column: 1 / -1; }
+    .kiosk .field { margin-bottom: 12px; }
+    .kiosk .field input { min-height: 54px; }
+    .kiosk fieldset { margin-bottom: 12px; }
+    .kiosk .check { margin-bottom: 14px; }
+}
+
+/* A small footer on phones (not on the tablet). */
+.site-foot { padding: 48px 0 40px; }
+.site-foot .row-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-bottom: 18px; color: rgb(255 249 235 / 0.72); }
+.site-foot .row-links a { text-decoration: none; }
+.site-foot .row-links a:hover { color: var(--gold); }
+.site-foot small { padding-top: 18px; }
+
+@media (prefers-reduced-motion: reduce) { .countdown i { animation: none; } }

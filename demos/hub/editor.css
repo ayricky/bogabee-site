@@ -1,0 +1,153 @@
+/* Rich-text editor, image fields and the save bar for the hub's Journal and Pages screens. Load after hub.css. */
+
+/* ---------- Form fields ---------- */
+.field { display: grid; gap: 6px; min-width: 0; }
+.field > * { min-width: 0; }
+.field > span, .field > label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.field input, .field textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 0;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--line);
+    font: 400 15px/1.45 var(--sans);
+    color: var(--ink);
+}
+.field textarea { resize: vertical; min-height: 76px; }
+.field input:focus, .field textarea:focus { outline: none; box-shadow: inset 0 0 0 2px var(--honey); }
+.field small { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+
+/* ---------- Rich-text editor ---------- */
+.rte { min-width: 0; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.rte:focus-within { box-shadow: inset 0 0 0 2px var(--honey); }
+.rte-bar {
+    position: sticky;
+    top: calc(var(--hub-top) + var(--savebar-h));
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 6px;
+    border-bottom: 1px solid var(--line);
+    border-radius: 12px 12px 0 0;
+    background: var(--paper);
+}
+.rte-bar .sep { width: 1px; margin: 4px 4px; background: var(--line); }
+.rte-bar button {
+    display: grid;
+    place-items: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--ink);
+    font: 500 13px/1 var(--sans);
+    cursor: pointer;
+}
+.rte-bar button:hover { background: rgb(86 54 33 / 0.07); }
+.rte-bar button[aria-pressed="true"] { background: var(--ink); color: var(--cream); }
+.rte-bar button svg { width: 17px; height: 17px; }
+.rte-bar button.b { font-weight: 700; }
+.rte-bar button.i { font-style: italic; font-family: var(--display); font-size: 15px; }
+.rte-area {
+    min-height: 220px;
+    padding: 16px 18px;
+    font: 400 16px/1.65 var(--sans);
+    color: var(--ink);
+    outline: none;
+    overflow-wrap: anywhere;
+}
+.rte.short .rte-area { min-height: 110px; }
+.rte-area:empty::before { content: attr(data-placeholder); color: var(--muted); }
+.rte-area > :first-child { margin-top: 0; }
+.rte-area p { margin: 0 0 .9em; }
+.rte-area h2 { margin: 1.2em 0 .4em; font: italic 400 26px/1.15 var(--display); }
+.rte-area h3 { margin: 1.1em 0 .35em; font: 500 18px/1.3 var(--sans); }
+.rte-area blockquote { margin: 1em 0; padding: 4px 0 4px 16px; border-left: 3px solid var(--gold); font: italic 400 19px/1.45 var(--display); }
+.rte-area ul, .rte-area ol { margin: 0 0 .9em; padding-left: 22px; }
+.rte-area a { color: var(--amber-text); }
+.rte-area figure { margin: 1em 0; }
+.rte-area img { display: block; max-width: 100%; height: auto; border-radius: 10px; }
+.rte-area figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+/* ---------- Image field ---------- */
+.img-field { display: flex; align-items: center; gap: 12px; }
+.img-field .thumb {
+    flex: none;
+    width: 88px;
+    aspect-ratio: 4 / 3;
+    border-radius: 10px;
+    background: rgb(86 54 33 / 0.06) center / cover no-repeat;
+    box-shadow: inset 0 0 0 1px var(--line);
+}
+.img-field .thumb.empty { display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.img-field .acts { display: flex; flex-wrap: wrap; gap: 6px; }
+
+
+/* ---------- Photo picker (dialog styles are in hub.css) ---------- */
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.photo-grid button {
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: none;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px var(--line);
+}
+.photo-grid button img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.photo-grid button[aria-pressed="true"] { outline: 3px solid var(--honey); outline-offset: 2px; }
+.upload { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.upload input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.upload label { cursor: pointer; }
+.upload:focus-within label { outline: 2px solid var(--honey); outline-offset: 3px; }
+
+/* ---------- Save bar ---------- */
+.savebar {
+    position: sticky;
+    top: var(--hub-top);
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+    border-radius: 18px 18px 0 0;
+    background: rgb(255 253 247 / 0.94);
+    backdrop-filter: blur(8px);
+}
+.savebar .state { margin-right: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.savebar .state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #8fb37a; }
+.savebar .state.dirty { color: var(--brown); }
+.savebar .state.dirty::before { background: var(--honey); }
+.savebar .state.draft::before { background: rgb(86 54 33 / 0.3); }
+
+/* ---------- Phones ---------- */
+/* The save bar stays at the top of the form; a slim bar above the tabs appears whenever there are
+   unsaved changes, so saving is always one thumb away. The toolbar is one row that scrolls sideways. */
+.dirtybar { display: none; }
+@media (max-width: 860px) {
+    .savebar { position: static; }
+    .rte-bar { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .rte-bar button { flex: none; }
+    .dirtybar.on {
+        position: fixed;
+        z-index: 35;
+        left: 8px;
+        right: 8px;
+        bottom: calc(var(--tabs-h, 0px) + 8px);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 8px 8px 14px;
+        border-radius: 14px;
+        background: var(--paper);
+        box-shadow: 0 0 0 1px var(--line), 0 14px 30px -12px rgb(0 0 0 / 0.35);
+    }
+    .dirtybar span { margin-right: auto; font-size: 14px; color: var(--brown); }
+    .dirtybar .btn { padding: 10px 14px; font-size: 14px; }
+}

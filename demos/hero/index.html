@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero photo layouts | Bogabee Apiaries</title>
+    <meta name="description" content="Six ways to show the Market Day photo at the top of the Bogabee Apiaries homepage.">
+    <link rel="icon" type="image/png" href="../assets/favicon-32.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="stylesheet" href="../demo.css">
+    <style>
+        .page { padding: clamp(110px, 12vw, 150px) 0 clamp(80px, 10vw, 120px); }
+        .page h1 { font-size: clamp(44px, 6vw, 80px); margin: 12px 0 clamp(32px, 5vw, 56px); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: clamp(20px, 3vw, 40px); }
+        .card { display: grid; gap: 16px; padding: clamp(14px, 1.6vw, 20px); border-radius: calc(var(--radius) + 4px); background: var(--paper); box-shadow: 0 1px 0 var(--line), 0 24px 50px -36px rgb(36 24 14 / 0.45); }
+        .shots { position: relative; display: block; padding-right: 22%; }
+        .shots img { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 0 0 1px var(--line); }
+        .shots .phone { position: absolute; right: 0; bottom: -6%; width: 26%; border-radius: 16px; border: 4px solid var(--ink); box-shadow: 0 18px 30px -16px rgb(36 24 14 / 0.6); }
+        .meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding-top: 10px; }
+        .meta h2 { margin: 0; font: italic 400 clamp(26px, 2.4vw, 32px)/1.1 var(--display); }
+        .meta h2 small { margin-left: 8px; font: 500 12px/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--amber-text); font-style: normal; }
+        .meta p { flex-basis: 100%; margin: 0; color: var(--muted); }
+        .sharp { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+        .sharp span { padding: 5px 10px; border-radius: 99px; font-size: 13px; background: rgb(86 54 33 / .07); }
+        .sharp span.ok { background: #e3f1e0; color: #24502a; }
+        .sharp span.soft { background: #f8e3d6; color: #7a3412; }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <div class="wrap">
+            <span class="eyebrow">Market Day photo</span>
+            <h1 class="display">Six ways to show it.</h1>
+            <div class="grid" id="grid"></div>
+        </div>
+    </main>
+    <nav class="demo-switch" aria-label="Demo"><a href="../">Showcase</a><a href="../compare/">Before &amp; after</a><a href="./" aria-current="page">Photo layouts</a><a href="../refined/">Site</a><a href="../hub/">Owner hub</a></nav>
+    <script>
+        // Sharpness: how far the browser stretches the 1500px photo (under 1x is sharp), measured
+        // on a 1440px retina laptop and an iPhone.
+        const LAYOUTS = [
+            { id: 'split', name: 'Split screen', note: 'The photo fills the right half, edge to edge. On phones it fills the top and the words sit below it. Wave 1 uses this one.', laptop: 0.91, phone: 0.79 },
+            { id: 'framed', name: 'Framed', note: 'Beside the headline as a framed photo, over a blurred copy of itself. Full screen on phones.', laptop: 0.72, phone: 1.28 },
+            { id: 'print', name: 'Snapshot', note: 'A printed photo taped up on cream, with the logo as a sticker. The only light version.', laptop: 0.56, phone: 0.60 },
+            { id: 'arch', name: 'Arch', note: 'An arched window with the headline over its foot, everything centered.', laptop: 0.47, phone: 0.57 },
+            { id: 'collage', name: 'Collage', note: 'The market photo with two smaller snapshots, a honey jar and a sunflower, tucked around it.', laptop: 0.56, phone: 0.48 },
+            { id: 'full', name: 'Full screen', note: 'The photo fills the whole screen behind the words. Soft on laptops until we have the original file.', laptop: 1.92, phone: 1.28 },
+        ];
+        const tag = (label, x) => `<span class="${x <= 1 ? 'ok' : x < 1.5 ? '' : 'soft'}">${label}: ${x <= 1 ? 'sharp' : x < 1.5 ? 'slightly soft' : 'soft'}</span>`;
+        document.getElementById('grid').innerHTML = LAYOUTS.map((l, i) => `
+            <article class="card">
+                <a class="shots" href="../refined/?hero=${l.id}" aria-label="Open ${l.name} on the site">
+                    <img src="img/${l.id}-d.webp" width="1200" height="750" alt="${l.name} on a laptop" loading="${i < 2 ? 'eager' : 'lazy'}">
+                    <img class="phone" src="img/${l.id}-m.webp" width="390" height="844" alt="${l.name} on a phone" loading="${i < 2 ? 'eager' : 'lazy'}">
+                </a>
+                <div class="meta">
+                    <h2>${l.name}<small>${i + 1}</small></h2>
+                    <a class="btn" href="../refined/?hero=${l.id}">Open it</a>
+                    <p>${l.note}</p>
+                    <span class="sharp">${tag('Laptop', l.laptop)}${tag('Phone', l.phone)}</span>
+                </div>
+            </article>`).join('');
+    </script>
+</body>
+</html>

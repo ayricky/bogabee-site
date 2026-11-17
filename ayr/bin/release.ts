@@ -16,7 +16,7 @@ import { exec as realExec, type Exec } from '../src/adapters/process.ts';
 import { createReviewDir } from '../src/adapters/review-dir.ts';
 import { createWorkTree } from '../src/adapters/work.ts';
 import { createButton, PRESS_FILE } from '../src/button.ts';
-import { diagnose, doctorLine, type Facts } from '../src/doctor.ts';
+import { diagnose, doctorLine, pushBlocks, type Facts, type MainGuards } from '../src/doctor.ts';
 import { parseConfig } from '../src/config.ts';
 import { makeMedia } from '../src/media.ts';
 import {
@@ -361,6 +361,70 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
     resendSecret = null;
   }
 
+  let push: Facts['push'] = null;
+  try {
+    const token = await githubToken(env, exec);
+    const ask = async (path: string): Promise<{ status: number; body: unknown }> => {
+      const answer = await fetcher(`https://api.github.com/repos/${repo}${path}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'ayr-client-kit' },
+      });
+      return { status: answer.status, body: await answer.json().catch(() => null) };
+    };
+    // A private repo on GitHub's free plan can have neither rulesets nor branch protection, and is told so with a 403.
+    const none = (status: number, body: unknown): boolean => status === 404 || (status === 403 && /upgrade to github pro|make this repository public/i.test(String((body as { message?: unknown } | null)?.message ?? '')));
+    const about = await ask('');
+    const admin = Boolean((about.body as { permissions?: { admin?: boolean } } | null)?.permissions?.admin);
+    // Every page of the branch's rules, up to ten of a hundred.
+    const found: MainGuards['rules'] = [];
+    let rulesOk = true;
+    let complete = false;
+    for (let page = 1; page <= 10; page++) {
+      const rules = await ask(`/rules/branches/main?per_page=100&page=${page}`);
+      if (rules.status !== 200 || !Array.isArray(rules.body)) {
+        // A first page GitHub says can't exist is no rules. A later page that fails leaves the rest unread.
+        rulesOk = page > 1 || none(rules.status, rules.body);
+        complete = page === 1 && rulesOk;
+        break;
+      }
+      found.push(...(rules.body as MainGuards['rules']));
+      if (rules.body.length < 100) {
+        complete = true;
+        break;
+      }
+    }
+    const protection = await ask('/branches/main/protection');
+    // GitHub answers 404 both for no protection and for protection an account that isn't an admin may not see.
+    const shielded: MainGuards['protection'] | null = protection.status === 200 ? 'present' : none(protection.status, protection.body) ? (protection.status === 404 && !admin ? 'unknown' : 'none') : null;
+    const pushSets = await ask('/rulesets?targets=push&per_page=100');
+    if (about.status === 200 && rulesOk && shielded !== null && (pushSets.status === 200 || none(pushSets.status, pushSets.body))) {
+      const rulesets: MainGuards['rulesets'] = {};
+      for (const id of new Set(found.map(rule => rule.ruleset_id))) {
+        const ruleset = await ask(`/rulesets/${id}`);
+        rulesets[id] = ruleset.status === 200 ? (ruleset.body as MainGuards['rulesets'][number]) : { name: String(id) };
+      }
+      const pushRulesets: MainGuards['pushRulesets'] = [];
+      const listed = pushSets.status === 200 && Array.isArray(pushSets.body) ? (pushSets.body as { id: number; name: string; enforcement?: string }[]) : [];
+      for (const summary of listed.filter(ruleset => ruleset.enforcement === 'active')) {
+        const ruleset = await ask(`/rulesets/${summary.id}`);
+        pushRulesets.push(ruleset.status === 200 ? (ruleset.body as MainGuards['pushRulesets'][number]) : { name: summary.name });
+      }
+      // The rules are read as the account gh is signed in as, which is the account git pushes as when gh is its
+      // credential helper or the SSH key is that account's. The doctor names it rather than guess at git's credentials.
+      const me = await fetcher('https://api.github.com/user', { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'ayr-client-kit' } })
+        .then(answer => (answer.ok ? answer.json() : null)).then(body => String((body as { login?: unknown } | null)?.login ?? ''), () => '');
+      // The repo a push goes to, which must be the one whose rules were read: a push URL can point at a fork.
+      const pushed = await exec('git', ['remote', 'get-url', '--push', 'origin'], { cwd: root });
+      const target = pushed.code === 0 ? repoOfRemote(pushed.stdout.toString('utf8')) : null;
+      const pushesHere = target !== null && target.toLowerCase() === repo.toLowerCase();
+      const enforceAdmins = Boolean((protection.body as { enforce_admins?: { enabled?: boolean } } | null)?.enforce_admins?.enabled);
+      // A full page of push rulesets may have more behind it, which weren't read.
+      const allRead = complete && listed.length < 100;
+      push = { ...pushBlocks({ rules: found, rulesets, protection: shielded, enforceAdmins, admin, pushRulesets, pushesHere, complete: allRead }), account: me };
+    }
+  } catch {
+    push = null;
+  }
+
   let pages: Facts['pages'] = null;
   if (env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID) {
     try {
@@ -379,7 +443,7 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   if (config.release.staging) {
     staging = await fetcher(config.release.staging, { method: 'GET', redirect: 'follow' }).then(answer => answer.status, () => null);
   }
-  return { release: config.release, repo, origin, secretsFile, workflows, notes, wrangler, resendSecret, pages, staging };
+  return { release: config.release, repo, origin, secretsFile, workflows, notes, wrangler, resendSecret, pages, staging, push };
 }
 
 export interface ReleaseFlags {

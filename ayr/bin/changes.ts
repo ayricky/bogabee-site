@@ -102,8 +102,9 @@ export function checkChangeFiles(config: ClientConfig, pr: string | null, run: G
   if (pr !== null) {
     const range = `${pr}...HEAD`;
     const changedFiles = lines(gitOrThrow(run, ['diff', '--name-only', range]));
-    const added = new Set(lines(gitOrThrow(run, ['diff', '--name-only', '--diff-filter=A', range, '--', CHANGE_DIR])));
-    findings.push(...checkPullRequest({ changedFiles, addedChanges: changes.filter(change => added.has(change.file)), config }));
+    const createdFiles = lines(gitOrThrow(run, ['diff', '--name-only', '--diff-filter=A', range]));
+    const added = new Set(createdFiles.filter(path => path.startsWith(`${CHANGE_DIR}/`)));
+    findings.push(...checkPullRequest({ changedFiles, addedChanges: changes.filter(change => added.has(change.file)), config, createdFiles }));
   }
   if (parsed.length === 0 && pr === null) return 0;
   findings.forEach(print);

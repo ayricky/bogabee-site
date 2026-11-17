@@ -625,8 +625,11 @@ export function checkPullRequest(input: {
   changedFiles: string[];
   addedChanges: Change[];
   config: ClientConfig;
+  /** Files the pull request creates. A client's setup creates PATCH_NOTES.md, which only the release edits after. */
+  createdFiles?: string[];
 }): Finding[] {
   const { changedFiles, addedChanges, config } = input;
+  const created = new Set(input.createdFiles ?? []);
   const findings: Finding[] = [];
   const own = new Set(addedChanges.map(change => change.file));
   const owned = releaseOwned(config);
@@ -634,6 +637,7 @@ export function checkPullRequest(input: {
     ({ entry: path, line: 0, rule: 'pull-request', severity: 'error', message, fix });
 
   for (const path of changedFiles) {
+    if (path === 'PATCH_NOTES.md' && created.has(path)) continue;
     if (owned.some(prefix => under(path, prefix))) {
       findings.push(release(path, 'The release writes this file. A pull request never edits it.', `Undo the edit (git checkout origin/main -- ${path}) and describe the change in a change file.`));
     } else if (/^changes\/[^/]+\.md$/.test(path) && !own.has(path)) {

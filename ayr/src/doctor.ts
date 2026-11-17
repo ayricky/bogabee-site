@@ -25,10 +25,86 @@ export interface Facts {
   pages: { gitConnected: boolean; productionBranch: string } | 'missing' | null;
   /** What the staging site answered, when the config names one. Null: not asked, or no answer. */
   staging: number | null;
+  /** Whether main takes a direct push from this account, from pushBlocks. Null: GitHub could not be asked. */
+  push: (PushVerdict & { account: string }) | null;
+}
+
+/** What GitHub says guards main, as the doctor reads it. */
+export interface MainGuards {
+  /** The ruleset rules on main (GET /repos/{repo}/rules/branches/main). */
+  rules: { type: string; ruleset_id: number }[];
+  /** Each of those rulesets, by id: its name and whether this account may bypass it, which GitHub works out for the account asking. */
+  rulesets: Record<number, { name: string; current_user_can_bypass?: string }>;
+  /** Classic branch protection on main: 'none', 'present', or 'unknown' when GitHub would not say (a 404 to an account that isn't an admin). */
+  protection: 'none' | 'present' | 'unknown';
+  /** Whether classic protection is enforced for admins. */
+  enforceAdmins: boolean;
+  /** Whether this account is an admin of the repo. */
+  admin: boolean;
+  /** Push rulesets (they guard files, not branches), with whether this account may bypass each. */
+  pushRulesets: { name: string; current_user_can_bypass?: string }[];
+  /** Whether origin's push URL is the repo whose rules were read. */
+  pushesHere: boolean;
+  /** Whether every page of the branch's rules and of the push rulesets was read. */
+  complete: boolean;
+}
+
+/** `blocks`: rules that refuse the push. `unsure`: why the push can't be confirmed either way, and what would settle it. */
+export interface PushVerdict {
+  blocks: string[];
+  unsure: { why: string; fix: string } | null;
+}
+
+// Rules a plain fast-forward push of a new commit always meets.
+const MEETS: ReadonlySet<string> = new Set(['non_fast_forward', 'deletion', 'creation', 'required_linear_history']);
+
+// Ruleset rules that can refuse a plain push of a new commit. A linear-history or no-force-push rule can't: a draft is a fast-forward.
+const REFUSES_PUSH: Record<string, string> = {
+  pull_request: 'changes must come through a pull request',
+  update: 'updates are restricted',
+  required_status_checks: 'checks must pass before a push',
+  required_signatures: 'commits must be signed',
+  required_deployments: 'a deployment must succeed first',
+  merge_queue: 'changes must go through a merge queue',
+  commit_message_pattern: 'commit messages must match a pattern',
+  commit_author_email_pattern: 'commit authors must match a pattern',
+  committer_email_pattern: 'committers must match a pattern',
+};
+
+/**
+ * Whether main takes the draft's direct push from this account. Rulesets are read exactly: GitHub says
+ * whether the asking account may bypass each. Classic branch protection is not judged rule by rule, since its
+ * allowlists, bypass lists and lock don't all show to every account: it binds unless it spares admins and
+ * this account is one, and then the push can't be confirmed.
+ */
+export function pushBlocks(guards: MainGuards): PushVerdict {
+  const blocks = [...new Set(guards.rules.flatMap(rule => {
+    const why = REFUSES_PUSH[rule.type];
+    const ruleset = guards.rulesets[rule.ruleset_id];
+    return why && ruleset?.current_user_can_bypass !== 'always' ? [`ruleset "${ruleset?.name ?? rule.ruleset_id}": ${why}`] : [];
+  }))];
+  const spared = guards.admin && !guards.enforceAdmins;
+  const unknown = [...new Set(guards.rules.map(rule => rule.type).filter(type => !MEETS.has(type) && !REFUSES_PUSH[type]))];
+  const binding = guards.pushRulesets.filter(ruleset => ruleset.current_user_can_bypass !== 'always').map(ruleset => `"${ruleset.name}"`);
+  const bypass = 'Add the Repository admin role to the ruleset\'s bypass list, or replace branch protection with a ruleset that does.';
+  const unsure = !guards.pushesHere
+    ? { why: 'origin pushes to another repo than this one', fix: 'Point origin\'s push URL at the client repo.' }
+    : !guards.complete
+      ? { why: 'there are more rulesets than the doctor read', fix: 'Check the rulesets let this account push to main.' }
+      : guards.protection === 'unknown'
+        ? { why: 'GitHub would not show main\'s branch protection to this account', fix: bypass }
+        : guards.protection === 'present' && !spared
+          ? { why: 'main has branch protection that binds this account, and the doctor does not judge its rules', fix: bypass }
+          : binding.length > 0
+            ? { why: `the push ruleset ${binding.join(', ')} may refuse the files a draft changes`, fix: 'Add the Repository admin role to that ruleset\'s bypass list.' }
+            : unknown.length > 0
+              ? { why: `main has ruleset rules the doctor does not know (${unknown.join(', ')})`, fix: 'Check those rules let this account push.' }
+              : null;
+  return { blocks, unsure };
 }
 
 export interface Check {
-  id: 'origin' | 'notify' | 'checks' | 'notes' | 'wrangler' | 'resend' | 'pages' | 'staging' | 'secrets';
+  id: 'origin' | 'push' | 'notify' | 'checks' | 'notes' | 'wrangler' | 'resend' | 'pages' | 'staging' | 'secrets';
   ok: boolean;
   /** Only for a check that needs something the machine can't give right now, such as a token. */
   skipped?: true;
@@ -150,6 +226,17 @@ export function diagnose(facts: Facts): Check[] {
   checks.push(facts.origin !== null && facts.origin.toLowerCase() === facts.repo.toLowerCase()
     ? { id: 'origin', ok: true, detail: `This checkout is of ${facts.repo}.` }
     : { id: 'origin', ok: false, detail: `This checkout's origin is ${facts.origin ?? 'not set'}, but the config is for ${facts.repo}. The release commands refuse it.`, fix: 'Run this from a checkout of the client repo, or correct `repo` in the config.' });
+
+  // A draft commits the note and pushes it to main, so main must take a push from the account that releases.
+  if (facts.push === null) {
+    checks.push({ id: 'push', ok: false, skipped: true, detail: `GitHub could not be asked what guards main in ${facts.repo}.`, fix: 'Sign in with `gh auth login`, then run this again.' });
+  } else if (facts.push.blocks.length > 0) {
+    checks.push({ id: 'push', ok: false, detail: `main refuses a direct push from ${facts.push.account || 'this account'} (${facts.push.blocks.join('; ')}), and a draft pushes its commit there.`, fix: `In ${facts.repo}'s settings, add the Repository admin role to the ruleset's bypass list.` });
+  } else if (facts.push.unsure) {
+    checks.push({ id: 'push', ok: false, skipped: true, detail: `${facts.push.unsure.why}, so whether main takes a draft's push can't be confirmed.`, fix: facts.push.unsure.fix });
+  } else {
+    checks.push({ id: 'push', ok: true, detail: `main takes a direct push from ${facts.push.account || 'this account'}, the account gh is signed in as, which git must push as.` });
+  }
 
   const notify = named(release.notifyWorkflow);
   if (!notify) {

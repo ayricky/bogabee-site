@@ -35,7 +35,7 @@
       "kind": "pages",
       "project": "bogabee-apiaries",
       "dir": "dist",
-      "build": ["npm install --no-audit --no-fund", "npm run build"]
+      "build": ["npm run build"]
     },
     "secrets": "bogabee-site/cloudflare-pages",
     "staging": "https://bogabee-site.pages.dev",
@@ -43,7 +43,6 @@
       "command": "npm run build && python3 -m http.server 8767 --bind 127.0.0.1 --directory dist",
       "url": "http://127.0.0.1:8767"
     },
-    "setup": ["npm install --no-audit --no-fund"],
     "checks": ["npm run build"],
     "checksWorkflow": "Checks"
   }

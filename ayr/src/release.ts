@@ -529,10 +529,14 @@ export async function runDraft(deps: DraftDeps): Promise<DraftOutcome> {
   }
   const heading = plan.kind === 'note' ? plan.heading : null;
 
-  // What setup leaves behind (a copied .dev.vars, an install) is not part of the release.
+  // The checkout was clean, so anything git sees now is setup's. `ayr release run` refuses a checkout with
+  // changes, so a draft made over them could never be released: refuse it here, before anything is written.
   for (const command of release.setup) await git.run(command);
-  const before = new Set(await git.dirty());
-  const stepsChanged = async (): Promise<string[]> => (await git.dirty()).filter(path => !before.has(path));
+  const left = await git.dirty();
+  if (left.length > 0) {
+    throw new Error(`release.setup left ${left.slice(0, 5).join(', ')}${left.length > 5 ? ` and ${left.length - 5} more` : ''} in the checkout, and \`ayr release run\` refuses a checkout with changes. Remove them, then ignore them in .gitignore or change the command: \`npm install\` writes package-lock.json when the repo has none. Nothing was drafted.`);
+  }
+  const stepsChanged = (): Promise<string[]> => git.dirty();
   let made: Made = { pictures: [], video: null };
   let derived: Derived;
   try {

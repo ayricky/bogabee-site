@@ -58,12 +58,50 @@ function items(block: string, key: string): string[] | null {
   const indent = (at[1] ?? '').length;
   const found: string[] = [];
   for (const line of block.slice(at.index + at[0].length).split('\n').slice(1)) {
-    if (!line.trim()) continue;
+    if (!line.trim() || /^\s*#/.test(line)) continue;
+    // YAML lets a list's `- ` items sit at the key's own indent, or further in.
     const match = /^(\s*)-\s*['"]?([^'"#\s]+)['"]?/.exec(line);
-    if (!match || (match[1] ?? '').length <= indent) break;
+    if (!match || (match[1] ?? '').length < indent) break;
     found.push(match[2] ?? '');
   }
   return found;
+}
+
+/**
+ * Whether the step that runs `ayr send release` passes each picture and has the RESEND_API_KEY secret
+ * in its own env: a key mapped on another step, or commented out, never reaches the send.
+ */
+function sendStep(text: string): boolean {
+  const lines = text.split('\n').filter(line => !/^\s*#/.test(line));
+  const sends = lines.findIndex(line => /ayr\/bin\/ayr\.ts send release/.test(line));
+  if (sends < 0) return false;
+  // The step is the lines from its `- ` up to the next step at the same indent.
+  let start = sends;
+  while (start > 0 && !/^\s*- /.test(lines[start] ?? '')) start -= 1;
+  const indent = (lines[start] ?? '').search(/-/);
+  let end = start + 1;
+  while (end < lines.length && !((lines[end] ?? '').search(/\S/) <= indent && /\S/.test(lines[end] ?? ''))) end += 1;
+  const step = lines.slice(start, end).join('\n');
+  return /--picture/.test(step) && /^\s*RESEND_API_KEY:\s*\$\{\{\s*secrets\.RESEND_API_KEY\s*\}\}\s*$/m.test(step);
+}
+
+/** Whether a path list takes a file, as GitHub reads it: in order, the last pattern that matches decides, and `!` takes a file back out. */
+function filtered(patterns: string[], file: string): boolean {
+  let taken = false;
+  for (const pattern of patterns) {
+    if (pattern.startsWith('!')) {
+      if (globMatch(pattern.slice(1), file)) taken = false;
+    } else if (globMatch(pattern, file)) {
+      taken = true;
+    }
+  }
+  return taken;
+}
+
+/** GitHub's path glob, as far as a workflow uses it: `**` any depth, `*` within one folder, `?` one character. */
+function globMatch(pattern: string, file: string): boolean {
+  const source = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*\/?/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\?/g, '[^/]').replace(/\u0000/g, '.*');
+  return new RegExp(`^${source}$`).test(file);
 }
 
 /** Whether a branch filter pattern takes main: main itself, or a glob GitHub reads as every branch. */
@@ -87,6 +125,14 @@ export function runsOnPushToMain(text: string): boolean {
     lines.push(line);
   }
   const block = lines.join('\n');
+  // A path filter must let every draft through. The one file each draft changes is a change file it deletes:
+  // a quiet release changes nothing else, so a filter that skips changes/ would start no run for it, and
+  // `run` would wait for nothing.
+  const always = 'changes/a-change.md';
+  const paths = items(block, 'paths');
+  if (paths && !filtered(paths, always)) return false;
+  const pathsIgnore = items(block, 'paths-ignore');
+  if (pathsIgnore && filtered(pathsIgnore, always)) return false;
   const branches = items(block, 'branches');
   const ignored = items(block, 'branches-ignore');
   if (branches) return branches.some(takesMain) && !branches.some(pattern => pattern === '!main');
@@ -108,7 +154,7 @@ export function diagnose(facts: Facts): Check[] {
   const notify = named(release.notifyWorkflow);
   if (!notify) {
     checks.push({ id: 'notify', ok: false, detail: `No workflow is named "${release.notifyWorkflow}", so a published Release emails nobody.`, fix: 'Run `node <kit>/bin/ayr.ts init <repo> --client <config> --force` from the kit, which writes .github/workflows/notify-release.yml.' });
-  } else if (!/release:[\s\S]*published/.test(triggers(notify.text)) || !/ayr\/bin\/ayr\.ts send release/.test(notify.text) || !/--picture/.test(notify.text) || !/RESEND_API_KEY:\s*\$\{\{\s*secrets\.RESEND_API_KEY\s*\}\}/.test(notify.text)) {
+  } else if (!/release:[\s\S]*published/.test(triggers(notify.text)) || !sendStep(notify.text)) {
     checks.push({ id: 'notify', ok: false, detail: `${notify.file} is named "${release.notifyWorkflow}" but is not the kit's: it must run on a published release, give the send the RESEND_API_KEY secret, and pass each picture to \`ayr send release\`.`, fix: 'Write it again with `ayr init --force` from the kit.' });
   } else {
     checks.push({ id: 'notify', ok: true, detail: `${notify.file} emails the client when a Release is published.` });

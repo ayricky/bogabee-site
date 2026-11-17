@@ -338,8 +338,10 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   let secretsFile: boolean | null = null;
   if (config.release.secrets) {
     const listed = await exec('secrets', ['ls'], { cwd: root }).catch(() => null);
+    // The files `secrets run` tries for a name, in its order: providers/ and projects/, with .env and then as given.
     const name = config.release.secrets;
-    if (listed?.code === 0) secretsFile = listed.stdout.toString('utf8').split('\n').some(line => [`projects/${name}.env`, `providers/${name}.env`, `${name}.env`].includes(line.trim().split(/\s+/)[0] ?? ''));
+    const candidates = [`providers/${name}.env`, `projects/${name}.env`, `providers/${name}`, `projects/${name}`];
+    if (listed?.code === 0) secretsFile = listed.stdout.toString('utf8').split('\n').some(line => candidates.includes(line.trim().split(/\s+/)[0] ?? ''));
   }
   const folder = join(root, '.github', 'workflows');
   const workflows = existsSync(folder)

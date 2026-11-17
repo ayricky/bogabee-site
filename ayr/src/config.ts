@@ -322,7 +322,8 @@ function parseRelease(value: unknown, contacts: Contact[], replyTo: unknown): Re
       dir: repoPath(deploy.dir, 'release.deploy.dir'),
       build: commands(deploy.build, 'release.deploy.build'),
     },
-    ...(raw.secrets === undefined ? {} : { secrets: matching(raw.secrets, 'release.secrets', value => /^[a-z0-9][a-z0-9._-]*(\/[a-z0-9][a-z0-9._-]*)*$/.test(value), 'a secrets file name, such as bogabee-site/cloudflare-pages') }),
+    // As `secrets run` names it: without the providers/ or projects/ folder it adds itself.
+    ...(raw.secrets === undefined ? {} : { secrets: matching(raw.secrets, 'release.secrets', value => /^[a-z0-9][a-z0-9._-]*(\/[a-z0-9][a-z0-9._-]*)*$/.test(value) && !/^(providers|projects)\//.test(value), 'a secrets name as `secrets run` takes it, such as bogabee-site/cloudflare-pages, without providers/ or projects/') }),
     ships: raw.ships === undefined
       ? []
       : list(raw.ships, 'release.ships').map((path, index) => repoPath(path, `release.ships[${index}]`, { folder: true })),

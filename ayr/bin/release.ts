@@ -333,6 +333,14 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   if (top.code !== 0) throw new Error(`${here} is not inside a git checkout. Run this from the client repo.`);
   const root = top.stdout.toString('utf8').trim();
   const repo = config.repo ?? '';
+  const remote = await exec('git', ['remote', 'get-url', 'origin'], { cwd: root });
+  const origin = remote.code === 0 ? repoOfRemote(remote.stdout.toString('utf8')) : null;
+  let secretsFile: boolean | null = null;
+  if (config.release.secrets) {
+    const listed = await exec('secrets', ['ls'], { cwd: root }).catch(() => null);
+    const name = config.release.secrets;
+    if (listed?.code === 0) secretsFile = listed.stdout.toString('utf8').split('\n').some(line => [`projects/${name}.env`, `providers/${name}.env`, `${name}.env`].includes(line.trim().split(/\s+/)[0] ?? ''));
+  }
   const folder = join(root, '.github', 'workflows');
   const workflows = existsSync(folder)
     ? readdirSync(folder).filter(file => /\.ya?ml$/.test(file)).sort().map(file => ({ file: join('.github', 'workflows', file), text: readFileSync(join(folder, file), 'utf8') }))
@@ -369,7 +377,7 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   if (config.release.staging) {
     staging = await fetcher(config.release.staging, { method: 'GET', redirect: 'follow' }).then(answer => answer.status, () => null);
   }
-  return { release: config.release, repo, workflows, notes, wrangler, resendSecret, pages, staging };
+  return { release: config.release, repo, origin, secretsFile, workflows, notes, wrangler, resendSecret, pages, staging };
 }
 
 export interface ReleaseFlags {

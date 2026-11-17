@@ -35,7 +35,7 @@
       "kind": "pages",
       "project": "bogabee-apiaries",
       "dir": "dist",
-      "build": ["npm run build"]
+      "build": ["npm install --no-audit --no-fund", "npm run build"]
     },
     "secrets": "bogabee-site/cloudflare-pages",
     "staging": "https://bogabee-site.pages.dev",

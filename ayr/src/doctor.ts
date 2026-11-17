@@ -10,6 +10,10 @@ import type { ReleaseConfig } from './config.ts';
 export interface Facts {
   release: ReleaseConfig;
   repo: string;
+  /** The repo the checkout's origin names, as owner/name, or null when it has none. */
+  origin: string | null;
+  /** Whether `secrets ls` lists release.secrets. Null: no `secrets` here, or no release.secrets to look for. */
+  secretsFile: boolean | null;
   /** Every workflow under .github/workflows, by file name. */
   workflows: { file: string; text: string }[];
   /** PATCH_NOTES.md, or null when the repo has none. */
@@ -24,7 +28,7 @@ export interface Facts {
 }
 
 export interface Check {
-  id: 'notify' | 'checks' | 'notes' | 'wrangler' | 'resend' | 'pages' | 'staging' | 'secrets';
+  id: 'origin' | 'notify' | 'checks' | 'notes' | 'wrangler' | 'resend' | 'pages' | 'staging' | 'secrets';
   ok: boolean;
   /** Only for a check that needs something the machine can't give right now, such as a token. */
   skipped?: true;
@@ -43,23 +47,75 @@ function triggers(text: string): string {
   return at[0] + (end < 0 ? rest : rest.slice(0, end));
 }
 
+/** The items of a YAML list written `[a, b]`, or as `- a` lines under a key, unquoted. */
+function items(block: string, key: string): string[] | null {
+  const inline = new RegExp(`^[ \\t]*${key}:[ \\t]*\\[([^\\]]*)\\]`, 'm').exec(block);
+  if (inline) return (inline[1] ?? '').split(',').map(item => item.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+  const single = new RegExp(`^[ \\t]*${key}:[ \\t]*(['"]?)([^\\s'"#]+)\\1[ \\t]*$`, 'm').exec(block);
+  if (single) return [single[2] ?? ''];
+  const at = new RegExp(`^([ \\t]*)${key}:[ \\t]*$`, 'm').exec(block);
+  if (!at) return null;
+  const indent = (at[1] ?? '').length;
+  const found: string[] = [];
+  for (const line of block.slice(at.index + at[0].length).split('\n').slice(1)) {
+    if (!line.trim()) continue;
+    const match = /^(\s*)-\s*['"]?([^'"#\s]+)['"]?/.exec(line);
+    if (!match || (match[1] ?? '').length <= indent) break;
+    found.push(match[2] ?? '');
+  }
+  return found;
+}
+
+/** Whether a branch filter pattern takes main: main itself, or a glob GitHub reads as every branch. */
+const takesMain = (pattern: string): boolean => pattern === 'main' || pattern === '*' || pattern === '**' || pattern === 'refs/heads/main';
+
+/** Whether a workflow runs on a push to main, as GitHub reads its `on:`. */
+export function runsOnPushToMain(text: string): boolean {
+  const on = triggers(text);
+  if (!on) return false;
+  const head = /^(?:on|'on'|"on"):[ \t]*(.*)$/m.exec(on)?.[1]?.trim() ?? '';
+  // `on: push` or `on: [push, pull_request]`: every push, main's included.
+  if (head && !head.startsWith('#')) return /^\[?\s*(?:[\w-]+\s*,\s*)*push\b/.test(head.replace(/['"]/g, ''));
+  const push = /^([ \t]+)push:[ \t]*(.*)$/m.exec(on);
+  if (!push) return false;
+  if ((push[2] ?? '').trim() && !(push[2] ?? '').trim().startsWith('#')) return (push[2] ?? '').trim() !== 'null' ? false : true;
+  // Its own block: the lines under push: indented past it.
+  const indent = (push[1] ?? '').length;
+  const lines: string[] = [];
+  for (const line of on.slice(push.index + push[0].length).split('\n').slice(1)) {
+    if (line.trim() && line.search(/\S/) <= indent) break;
+    lines.push(line);
+  }
+  const block = lines.join('\n');
+  const branches = items(block, 'branches');
+  const ignored = items(block, 'branches-ignore');
+  if (branches) return branches.some(takesMain) && !branches.some(pattern => pattern === '!main');
+  if (ignored) return !ignored.some(takesMain);
+  // Only tags or paths named: tags alone never run on a branch push.
+  return items(block, 'tags') === null;
+}
+
 export function diagnose(facts: Facts): Check[] {
   const { release } = facts;
   const checks: Check[] = [];
   const named = (name: string) => facts.workflows.find(workflow => nameOf(workflow.text) === name);
   const run = release.secrets ? `secrets run ${release.secrets} -- node ayr/bin/ayr.ts release doctor` : 'secrets run <client file> -- node ayr/bin/ayr.ts release doctor';
 
+  checks.push(facts.origin !== null && facts.origin.toLowerCase() === facts.repo.toLowerCase()
+    ? { id: 'origin', ok: true, detail: `This checkout is of ${facts.repo}.` }
+    : { id: 'origin', ok: false, detail: `This checkout's origin is ${facts.origin ?? 'not set'}, but the config is for ${facts.repo}. The release commands refuse it.`, fix: 'Run this from a checkout of the client repo, or correct `repo` in the config.' });
+
   const notify = named(release.notifyWorkflow);
   if (!notify) {
     checks.push({ id: 'notify', ok: false, detail: `No workflow is named "${release.notifyWorkflow}", so a published Release emails nobody.`, fix: 'Run `node <kit>/bin/ayr.ts init <repo> --client <config> --force` from the kit, which writes .github/workflows/notify-release.yml.' });
-  } else if (!/release:[\s\S]*published/.test(triggers(notify.text)) || !/ayr\/bin\/ayr\.ts send release/.test(notify.text) || !/--picture/.test(notify.text)) {
-    checks.push({ id: 'notify', ok: false, detail: `${notify.file} is named "${release.notifyWorkflow}" but is not the kit's: it must run on a published release and pass each picture to \`ayr send release\`.`, fix: 'Write it again with `ayr init --force` from the kit.' });
+  } else if (!/release:[\s\S]*published/.test(triggers(notify.text)) || !/ayr\/bin\/ayr\.ts send release/.test(notify.text) || !/--picture/.test(notify.text) || !/RESEND_API_KEY:\s*\$\{\{\s*secrets\.RESEND_API_KEY\s*\}\}/.test(notify.text)) {
+    checks.push({ id: 'notify', ok: false, detail: `${notify.file} is named "${release.notifyWorkflow}" but is not the kit's: it must run on a published release, give the send the RESEND_API_KEY secret, and pass each picture to \`ayr send release\`.`, fix: 'Write it again with `ayr init --force` from the kit.' });
   } else {
     checks.push({ id: 'notify', ok: true, detail: `${notify.file} emails the client when a Release is published.` });
   }
 
   const ci = named(release.checksWorkflow);
-  const onPush = ci ? /push:/.test(triggers(ci.text)) && /\bmain\b/.test(triggers(ci.text)) : false;
+  const onPush = ci ? runsOnPushToMain(ci.text) : false;
   checks.push(ci && onPush
     ? { id: 'checks', ok: true, detail: `${ci.file} runs "${release.checksWorkflow}" on every push to main.` }
     : {
@@ -68,7 +124,9 @@ export function diagnose(facts: Facts): Check[] {
       fix: 'Add a workflow with that `name:` that runs the site\'s build and tests `on: push: branches: [main]`, or set release.checksWorkflow to the one that does.',
     });
 
-  checks.push(facts.notes !== null && /^-{3,}\s*$/m.test(facts.notes)
+  // The newest entry goes under the `---` that ends the file's opening, before any entry, as insertEntry puts it.
+  const opening = facts.notes === null ? '' : facts.notes.slice(0, facts.notes.search(/^## /m) < 0 ? facts.notes.length : facts.notes.search(/^## /m));
+  checks.push(facts.notes !== null && /^-{3,}[ \t]*$/m.test(opening)
     ? { id: 'notes', ok: true, detail: 'PATCH_NOTES.md is ready for entries.' }
     : { id: 'notes', ok: false, detail: facts.notes === null ? 'There is no PATCH_NOTES.md, where each release writes its note.' : 'PATCH_NOTES.md has no `---` line under its opening, where the newest entry goes.', fix: '`ayr init` writes one.' });
 
@@ -103,9 +161,15 @@ export function diagnose(facts: Facts): Check[] {
       : { id: 'staging', ok: false, detail: `${release.staging} did not answer${facts.staging === null ? '' : ` (${facts.staging})`}, and the review page links each page there.`, fix: 'Point release.staging at the site that deploys main, or leave it out.' });
   }
 
-  checks.push(release.secrets
-    ? { id: 'secrets', ok: true, detail: `The deploy token is in ${release.secrets}.` }
-    : { id: 'secrets', ok: false, detail: 'release.secrets is not set, so the review page\'s buttons have no deploy token unless the page is served with --run-with.', fix: 'Set release.secrets to the client\'s secrets file, such as "bogabee-site/cloudflare-pages".' });
+  if (!release.secrets) {
+    checks.push({ id: 'secrets', ok: false, detail: 'release.secrets is not set, so the review page\'s buttons have no deploy token unless the page is served with --run-with.', fix: 'Set release.secrets to the client\'s secrets file, such as "bogabee-site/cloudflare-pages".' });
+  } else if (facts.secretsFile === null) {
+    checks.push({ id: 'secrets', ok: false, skipped: true, detail: `\`secrets ls\` could not be run here, so ${release.secrets} could not be looked for.`, fix: 'Run this on the devbox that releases.' });
+  } else {
+    checks.push(facts.secretsFile
+      ? { id: 'secrets', ok: true, detail: `The deploy token is in ${release.secrets}.` }
+      : { id: 'secrets', ok: false, detail: `\`secrets ls\` lists no ${release.secrets}, so a press on the review page would start a release with no deploy token.`, fix: `Add it with \`secrets set\`, or correct release.secrets.` });
+  }
 
   return checks;
 }

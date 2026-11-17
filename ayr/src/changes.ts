@@ -229,9 +229,10 @@ function parsePicture(file: string, picture: Value, alt: Value | undefined, fall
   if (!alt) {
     throw new ChangeError(file, fallback, 'Missing `alt:`. Describe the picture for someone who can\'t see it.');
   }
-  // The alt text goes inside ![…](…) in the email's copy of the note. A bracket there would end it early and start something else.
-  if (/[[\]]/.test(alt.value)) {
-    throw new ChangeError(file, alt.line, '`alt:` has a square bracket, which would break the picture in the email. Describe it in plain words.');
+  // The alt text goes inside ![…](…) in the email's copy of the note. A bracket there would end it early and start
+  // something else, and a backslash would escape the bracket that ends it.
+  if (/[[\]\\]/.test(alt.value)) {
+    throw new ChangeError(file, alt.line, '`alt:` has a square bracket or a backslash, which would break the picture in the email. Describe it in plain words.');
   }
   return {
     show: match[1] as Picture['show'],

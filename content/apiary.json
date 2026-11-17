@@ -1,0 +1,22 @@
+{
+    "eyebrow": "The Apiary",
+    "title": "Where the honey comes from.",
+    "intro": "Our hives sit in Manalapan Township, New Jersey. The bees forage the wildflowers around them, and everything in a Bogabee jar comes from those hives.",
+    "heroImage": "danny",
+    "sections": [
+        { "heading": "The bees", "image": "hello_honey_bee", "body": "<p>Honey bees do almost all the work here. Each colony raises its own young, builds its own wax comb, and stores more honey than it needs for winter. The extra is what goes in the jar.</p>" },
+        { "heading": "What they forage", "image": "sunflower", "body": "<p>A honey bee can fly a few miles from the hive for nectar. Ours visit the wildflowers, gardens and fields around Manalapan, which is why the honey is called wildflower: its color and taste follow whatever is in bloom.</p>" },
+        { "heading": "How it gets to the jar", "image": "honey_overflow", "body": "<p>We take frames the bees have finished and capped with wax, spin the honey out, and pour it into jars by hand in small batches. It is never filtered, so the natural pollen and enzymes stay in.</p>" }
+    ],
+    "seasonsTitle": "A year at the hives",
+    "seasons": [
+        { "name": "Spring", "text": "Colonies grow fast as the first blooms open." },
+        { "name": "Summer", "text": "The main nectar flow. Honey supers go on and fill up." },
+        { "name": "Late summer", "text": "Harvest. Capped frames come off and get jarred." },
+        { "name": "Winter", "text": "The bees cluster to stay warm and live on the honey they kept." }
+    ],
+    "keeperTitle": "The beekeeper",
+    "keeper": "<p>Danny keeps the Bogabee hives. Follow along on <a href=\"https://www.instagram.com/bogabee_apiaries/\">Instagram</a> for the hives, the harvests and the occasional sunflower.</p>",
+    "keeperImage": "market",
+    "keeperImageAlt": "Danny at the Bogabee Apiaries table at an outdoor market"
+}

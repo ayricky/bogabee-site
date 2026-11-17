@@ -1,28 +1,34 @@
 # Bogabee Apiaries
 
-A simple static website for Bogabee Apiaries — small-batch, raw honey from Monroe Township, NJ.
+The website for Bogabee Apiaries: raw, small-batch honey from Manalapan Township, NJ.
 
 ## Structure
 
 ```
-├── index.html          # Main website
-├── assets/
-│   ├── bee.css         # Animated bee styles
-│   ├── bee.js          # Bee cursor-following behavior
-│   ├── logo.png
-│   └── *.jpg           # Product and lifestyle images
-└── README.md
+content/            Text that changes: the Apiary page and Journal posts (one JSON file per post)
+src/                Page templates: layout.mjs (head, nav, footer), home.mjs, content.mjs
+public/assets/      CSS, JS (site.js, bee.js) and photos, copied as they are
+tools/build.mjs     Renders everything into dist/
 ```
 
-## Development
+## Build and preview
 
-Open `index.html` in a browser to preview the site. The site uses Tailwind CSS via CDN.
+```
+npm run build       # writes dist/
+npm run preview     # builds, then serves dist/ on 127.0.0.1:4518
+```
 
-### Bee Animation
+Cloudflare Pages (project `bogabee-site`) runs `npm run build` and publishes `dist/` for every push. A merge to `main` goes live at bogabeeapiaries.com; other branches get a preview at `<branch>.bogabee-site.pages.dev`. Google Tag Manager loads only on bogabeeapiaries.com, so previews don't count as visits.
 
-The interactive bee that follows the cursor is modularized into:
-- `assets/bee.css` — Styling and wing animation
-- `assets/bee.js` — Cursor tracking and hover behavior
+## Journal posts
+
+Add `content/journal/<slug>.json` with `slug` (same as the file name), `status` (`published` or `draft`), `date` (`2026-10-29`), `title`, `excerpt`, `cover` and `body` (HTML). Each published post gets `/journal/<slug>/`, a card on the Journal page, and a spot on the homepage if it's one of the three newest.
+
+Photos are named without an extension (`sunflower`), from the list in `src/content.mjs`. Each one has `NAME.webp` and a smaller copy in `public/assets/img`.
+
+## The bee
+
+`public/assets/js/bee.js` draws the bee that follows the pointer. It keeps its distance from fast moves and dozes when the visitor stops. The footer has a "Hide the bee" switch, and with reduced motion turned on the bee sits still.
 
 ## Links
 

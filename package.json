@@ -1,0 +1,10 @@
+{
+  "name": "bogabee-site",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "preview": "npm run build && python3 -m http.server 4518 --bind 127.0.0.1 --directory dist"
+  }
+}

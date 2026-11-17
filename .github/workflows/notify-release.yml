@@ -1,0 +1,89 @@
+name: Notify release
+
+# Emails the client the release's note. A failed or misconfigured send fails
+# this job: there is no skip path.
+#
+# Recipients are release.to in ayr/client.json. A client with no release block
+# sets the repo variable NOTIFY_EMAILS instead.
+#
+# Safe to rerun. Resend sees the same Idempotency-Key, <slug>-<tag>, for 24
+# hours and won't send twice. If the note fails `ayr check`, fix it with
+# `gh release edit <tag> --notes-file <file>` and rerun this job. The same goes
+# for a note identical to the previous prod-* release, which this job refuses.
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  email:
+    # A test or draft-style tag must never reach the client.
+    if: startsWith(github.event.release.tag_name, 'prod-')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      # The kit is TypeScript that Node runs directly (Node 22.18+).
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '^24.22.1'
+          check-latest: true
+      - name: Install the kit's dependencies
+        run: npm install --prefix ayr --omit=dev --no-audit --no-fund
+      # The release body is the note, read fresh so an edited release is what
+      # a rerun sends. The pictures and video on the release go in the email:
+      # each picture shown inline, the video attached. None is on the site.
+      - name: Fetch the release note, pictures and video
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json body --jq .body > release-note.md
+          mkdir -p release-media
+          files=$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '[.assets[].name | select(endswith(".mp4") or endswith(".jpg"))] | length')
+          if [ "$files" -gt 0 ]; then
+            gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.mp4' --pattern '*.jpg' --dir release-media
+          fi
+      # The same note under a new tag means the wrong entry went out, or none was
+      # written. A rerun of this release is fine: it isn't its own previous one.
+      - name: Refuse a repeat of the previous release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          tags=$(gh release list --repo "$GITHUB_REPOSITORY" --exclude-drafts --limit 100 --json tagName --jq '.[].tagName')
+          previous=$(printf '%s\n' "$tags" | awk -v tag="$RELEASE_TAG" '/^prod-/ && $0 != tag && !found { print; found = 1 }')
+          if [ -n "$previous" ]; then
+            gh release view "$previous" --repo "$GITHUB_REPOSITORY" --json body --jq .body > previous-note.md
+            if diff -qbB previous-note.md release-note.md > /dev/null; then
+              echo "::error::This note is identical to $previous. Write this release's entry, then fix the body with gh release edit and rerun."
+              exit 1
+            fi
+          fi
+      - name: Email the release note
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          # The fallback when ayr/client.json has no release.to. Unset is fine otherwise.
+          NOTIFY_EMAILS: ${{ vars.NOTIFY_EMAILS }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          PUBLISHED_AT: ${{ github.event.release.published_at }}
+        run: |
+          # Past the 24 hours Resend remembers the key, a rerun could send twice.
+          age=$(( $(date +%s) - $(date -d "$PUBLISHED_AT" +%s) ))
+          if [ "$age" -gt 82800 ]; then
+            echo "::error::This release is over 23 hours old, so the idempotency key may have expired. Check the Resend log before sending by hand."
+            exit 1
+          fi
+          media_flags=()
+          for file in release-media/*.jpg; do
+            if [ -f "$file" ]; then
+              media_flags+=(--picture "$file")
+            fi
+          done
+          for file in release-media/*.mp4; do
+            if [ -f "$file" ]; then
+              media_flags+=(--video "$file")
+            fi
+          done
+          node ayr/bin/ayr.ts send release --client ayr/client.json --notes release-note.md --tag "$RELEASE_TAG" "${media_flags[@]}"

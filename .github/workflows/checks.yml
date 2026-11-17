@@ -1,0 +1,30 @@
+name: Checks
+
+# Builds the site on every push to main and every pull request. A release
+# draft lands on main, and `ayr release run` deploys it only once this passes.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '^24.22.1'
+          check-latest: true
+      - name: Build the site
+        run: npm run build
+      - name: Every page was built
+        run: |
+          for page in dist/index.html dist/apiary/index.html dist/journal/index.html; do
+            test -s "$page" || { echo "::error::$page was not built"; exit 1; }
+          done

@@ -18,7 +18,11 @@ npm run build       # writes dist/
 npm run preview     # builds, then serves dist/ on 127.0.0.1:4518
 ```
 
-Cloudflare Pages (project `bogabee-site`) runs `npm run build` and publishes `dist/` for every push. A merge to `main` goes live at bogabeeapiaries.com; other branches get a preview at `<branch>.bogabee-site.pages.dev`. Google Tag Manager loads only on bogabeeapiaries.com, so previews don't count as visits.
+Staging is the Cloudflare Pages project `bogabee-site`: it runs `npm run build` and publishes `dist/` for every push. A merge to `main` shows at https://bogabee-site.pages.dev, and other branches get a preview at `<branch>.bogabee-site.pages.dev`. Google Tag Manager loads only on bogabeeapiaries.com, so staging and previews don't count as visits.
+
+## Releases
+
+Production, bogabeeapiaries.com and www, is the Direct Upload Pages project `bogabee-apiaries`. Merging never deploys it. A release does, through the AYR client kit in `ayr/`: it drafts the client note, the owner reads its review page and presses Release, and the kit builds and deploys that draft, checks the live site, tags it and emails Danny. `CLAUDE.md` has the rules, and `node ayr/bin/ayr.ts release doctor` checks the setup.
 
 ## Journal posts
 

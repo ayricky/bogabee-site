@@ -46,7 +46,7 @@ step:
 
 const GUIDE = `Fill in the keys and write one bullet below the second ---:
   action:  none, or You need to: <what>.
-  picture: after|compare phone|desktop /path [#section], or none
+  picture: after|compare both|phone|desktop /path [#section], or none. both shows phone and desktop
   alt:     what the picture shows
   record:  phone /path, then step: lines ending with a see step
   step:    tap "text" | type "field" "text" | see "text" | scroll "text" | wait 1500 | back

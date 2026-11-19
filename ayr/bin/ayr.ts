@@ -43,7 +43,7 @@ const USAGE = `ayr: looks after a client after launch.
   ayr release serve --review-dir dir --port n [--origin url --allow-login login] [--run-with "prefix"]
                                                     the review page with Release and Rehearse buttons
   ayr release wait --review-dir dir [--timeout s]   return when a release of that draft ends
-  ayr release doctor                                whether this repo is set up to release, and what to fix
+  ayr release doctor [--fix]                        whether this repo is set up to release; --fix makes the changes it can
 `;
 
 const { values: flags, positionals } = parseArgs({
@@ -57,6 +57,7 @@ const { values: flags, positionals } = parseArgs({
     commit: { type: 'string' },
     date: { type: 'string' },
     'dry-run': { type: 'boolean' },
+    fix: { type: 'boolean' },
     force: { type: 'boolean' },
     from: { type: 'string' },
     help: { type: 'boolean' },
@@ -399,6 +400,7 @@ async function main(): Promise<void> {
     case 'init': return init(argument);
     case 'release': {
       const status = await releaseCommand(argument, {
+        ...(flags.fix ? { fix: true } : {}),
         ...(flags.rehearsal ? { rehearsal: true } : {}),
         ...(flags['review-dir'] ? { reviewDir: flags['review-dir'] } : {}),
         ...(flags.commit === undefined ? {} : { commit: flags.commit }),

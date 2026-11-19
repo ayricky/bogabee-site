@@ -352,7 +352,8 @@ export function composeHtml(shots: Shots[]): string {
   const sections = shots.map(({ on, before, after }) => {
     const side = before !== null && on === 'phone';
     const columns = side ? '1fr 48px 1fr' : '1fr';
-    const arrow = `<div class="arrow" aria-hidden="true">${side ? '&rarr;' : '&darr;'}</div>`;
+    // Drawn, not a font glyph: a glyph sits on its text baseline, low and off centre in the circle.
+    const arrow = `<div class="arrow ${side ? 'right' : 'down'}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`;
     const narrow = titled && !before && on === 'phone' ? ' narrow' : '';
     const heading = titled ? `<h2>${on === 'phone' ? 'Phone' : 'Desktop'}</h2>` : '';
     const body = before ? figure('before', before) + arrow + figure('after', after) : figure(null, after);
@@ -375,7 +376,9 @@ figcaption strong { font-size: 30px; letter-spacing: 0.04em; text-transform: upp
 figcaption span { font-size: 20px; font-weight: 400; opacity: 0.9; }
 figcaption.before { background: #8b9099; }
 figcaption.after { background: #15803d; }
-.arrow { justify-self: center; align-self: center; width: 48px; height: 48px; border-radius: 50%; background: #15803d; color: #fff; font-size: 30px; line-height: 48px; text-align: center; }
+.arrow { justify-self: center; align-self: center; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #15803d; }
+.arrow svg { width: 28px; height: 28px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.arrow.down svg { transform: rotate(90deg); }
 </style></head><body>${sections.join('')}</body></html>`;
 }
 

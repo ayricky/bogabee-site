@@ -16,7 +16,7 @@ import { exec as realExec, type Exec } from '../src/adapters/process.ts';
 import { createReviewDir } from '../src/adapters/review-dir.ts';
 import { createWorkTree } from '../src/adapters/work.ts';
 import { createButton, PRESS_FILE } from '../src/button.ts';
-import { diagnose, doctorLine, pushBlocks, type Facts, type MainGuards } from '../src/doctor.ts';
+import { ADMIN_BYPASS, diagnose, doctorLine, pushBlocks, type Facts, type MainGuards } from '../src/doctor.ts';
 import { parseConfig } from '../src/config.ts';
 import { makeMedia } from '../src/media.ts';
 import {
@@ -36,7 +36,7 @@ const USAGE = [
   '       ayr release undo [--review-dir dir]',
   '       ayr release serve --review-dir dir --port n [--origin url --allow-login login]... [--run-with "command prefix"]',
   '       ayr release wait --review-dir dir [--timeout seconds]',
-  '       ayr release doctor',
+  '       ayr release doctor [--fix]',
 ].join('\n');
 
 type Env = Record<string, string | undefined>;
@@ -446,7 +446,47 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   return { release: config.release, repo, origin, secretsFile, workflows, notes, wrangler, resendSecret, pages, staging, push };
 }
 
+/**
+ * What `ayr release doctor --fix` changes, from the facts the doctor read: each of the repo's own rulesets that
+ * refuses the draft's push gets the Repository admin role on its bypass list, and a missing wrangler is installed.
+ * Every other rule of those rulesets stays. `fixed` hears each change as it lands, so a later refusal, which
+ * throws, can't hide an earlier change. Returns the same lines.
+ */
+export async function applyFixes(facts: Facts, env: Env, options: WiringOptions = {}, fixed: (line: string) => void = () => {}): Promise<string[]> {
+  // The rulesets changed are the config's repo's, so the checkout must be of it: a config copied into another client's repo would change the wrong one.
+  if (facts.origin === null || facts.origin.toLowerCase() !== facts.repo.toLowerCase()) {
+    throw new Error(`This checkout's origin is ${facts.origin ?? 'not set'}, but the config is for ${facts.repo}. Nothing was changed.`);
+  }
+  const exec = options.exec ?? realExec;
+  const fetcher = options.fetch ?? fetch;
+  const done: string[] = [];
+  const say = (line: string): void => {
+    done.push(line);
+    fixed(line);
+  };
+  for (const id of facts.push?.fixable ?? []) {
+    const token = await githubToken(env, exec);
+    const url = `https://api.github.com/repos/${facts.repo}/rulesets/${id}`;
+    const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'ayr-client-kit' };
+    const read = await fetcher(url, { headers });
+    if (read.status !== 200) throw new Error(`GitHub would not show ruleset ${id} of ${facts.repo} (${read.status}), so its bypass list was left as it is.`);
+    const ruleset = (await read.json()) as { name?: string; bypass_actors?: { actor_id: number | null; actor_type: string; bypass_mode?: string }[] };
+    // An admin entry that bypasses only through pull requests is replaced, since a draft pushes directly.
+    const others = (ruleset.bypass_actors ?? []).filter(actor => !(actor.actor_type === ADMIN_BYPASS.actor_type && actor.actor_id === ADMIN_BYPASS.actor_id));
+    const wrote = await fetcher(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ bypass_actors: [...others, ADMIN_BYPASS] }) });
+    if (wrote.status !== 200) throw new Error(`GitHub refused to change ruleset "${ruleset.name ?? id}" of ${facts.repo} (${wrote.status}: ${await wrote.text().catch(() => '')}).`);
+    say(`Ruleset "${ruleset.name ?? id}" now lets the Repository admin role push to main. Its rules and other bypasses are as they were.`);
+  }
+  if (!facts.wrangler) {
+    const installed = await exec('npm', ['install', '--prefix', KIT, '--no-save', 'wrangler@4'], { cwd: KIT });
+    if (installed.code !== 0) throw new Error(`npm could not install wrangler: ${String(installed.stderr).trim().slice(-500)}`);
+    say('Installed wrangler next to the kit.');
+  }
+  return done;
+}
+
 export interface ReleaseFlags {
+  fix?: boolean;
   rehearsal?: boolean;
   reviewDir?: string;
   commit?: string;
@@ -464,7 +504,9 @@ export interface ReleaseFlags {
  */
 export async function releaseCommand(what: string | undefined, flags: ReleaseFlags, env: Env = process.env): Promise<number> {
   if (what !== 'status' && what !== 'draft' && what !== 'run' && what !== 'undo' && what !== 'serve' && what !== 'wait' && what !== 'doctor') throw new Error(USAGE);
+  if (flags.fix && what !== 'doctor') throw new Error(`--fix goes with doctor.\n${USAGE}`);
   if (what === 'doctor') {
+    if (flags.fix) await applyFixes(await gatherFacts(env), env, {}, line => log('doctor.fixed', { what: line }));
     const checks = diagnose(await gatherFacts(env));
     console.log(`${JSON.stringify({ kind: 'doctor', ok: checks.every(check => check.ok), checks })}\n${doctorLine(checks)}`);
     return checks.every(check => check.ok) ? 0 : 1;

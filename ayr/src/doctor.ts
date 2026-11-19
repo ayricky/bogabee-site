@@ -31,8 +31,8 @@ export interface Facts {
 
 /** What GitHub says guards main, as the doctor reads it. */
 export interface MainGuards {
-  /** The ruleset rules on main (GET /repos/{repo}/rules/branches/main). */
-  rules: { type: string; ruleset_id: number }[];
+  /** The ruleset rules on main (GET /repos/{repo}/rules/branches/main). The source type is 'Repository' for the repo's own rulesets. */
+  rules: { type: string; ruleset_id: number; ruleset_source_type?: string }[];
   /** Each of those rulesets, by id: its name and whether this account may bypass it, which GitHub works out for the account asking. */
   rulesets: Record<number, { name: string; current_user_can_bypass?: string }>;
   /** Classic branch protection on main: 'none', 'present', or 'unknown' when GitHub would not say (a 404 to an account that isn't an admin). */
@@ -49,11 +49,20 @@ export interface MainGuards {
   complete: boolean;
 }
 
-/** `blocks`: rules that refuse the push. `unsure`: why the push can't be confirmed either way, and what would settle it. */
+/**
+ * `blocks`: rules that refuse the push. `unsure`: why the push can't be confirmed either way, and what would settle it.
+ * `fixable`: the repo's own rulesets among those that block, which `doctor --fix` can open to the admin role when this
+ * account is an admin. `elsewhere`: the names of blocking rulesets it can't change.
+ */
 export interface PushVerdict {
   blocks: string[];
   unsure: { why: string; fix: string } | null;
+  fixable: number[];
+  elsewhere: string[];
 }
+
+/** The bypass entry `doctor --fix` adds: GitHub's built-in Repository admin role, with direct pushes allowed. */
+export const ADMIN_BYPASS = { actor_id: 5, actor_type: 'RepositoryRole', bypass_mode: 'always' } as const;
 
 // Rules a plain fast-forward push of a new commit always meets.
 const MEETS: ReadonlySet<string> = new Set(['non_fast_forward', 'deletion', 'creation', 'required_linear_history']);
@@ -77,15 +86,19 @@ const REFUSES_PUSH: Record<string, string> = {
  * allowlists, bypass lists and lock don't all show to every account: it binds unless it spares admins and
  * this account is one, and then the push can't be confirmed.
  */
+// What GitHub says this account's bypass is: 'always' bypasses, 'exempt' means the rules don't run for it, and
+// 'pull_requests_only' or 'never' leave a direct push bound.
+const passes = (bypass: string | undefined): boolean => bypass === 'always' || bypass === 'exempt';
+
 export function pushBlocks(guards: MainGuards): PushVerdict {
-  const blocks = [...new Set(guards.rules.flatMap(rule => {
-    const why = REFUSES_PUSH[rule.type];
-    const ruleset = guards.rulesets[rule.ruleset_id];
-    return why && ruleset?.current_user_can_bypass !== 'always' ? [`ruleset "${ruleset?.name ?? rule.ruleset_id}": ${why}`] : [];
-  }))];
+  const blocking = guards.rules.filter(rule => REFUSES_PUSH[rule.type] && !passes(guards.rulesets[rule.ruleset_id]?.current_user_can_bypass));
+  const blocks = [...new Set(blocking.map(rule => `ruleset "${guards.rulesets[rule.ruleset_id]?.name ?? rule.ruleset_id}": ${REFUSES_PUSH[rule.type]}`))];
+  const ours = (rule: MainGuards['rules'][number]): boolean => guards.admin && rule.ruleset_source_type === 'Repository';
+  const fixable = [...new Set(blocking.filter(ours).map(rule => rule.ruleset_id))];
+  const elsewhere = [...new Set(blocking.filter(rule => !ours(rule)).map(rule => `"${guards.rulesets[rule.ruleset_id]?.name ?? rule.ruleset_id}"`))];
   const spared = guards.admin && !guards.enforceAdmins;
   const unknown = [...new Set(guards.rules.map(rule => rule.type).filter(type => !MEETS.has(type) && !REFUSES_PUSH[type]))];
-  const binding = guards.pushRulesets.filter(ruleset => ruleset.current_user_can_bypass !== 'always').map(ruleset => `"${ruleset.name}"`);
+  const binding = guards.pushRulesets.filter(ruleset => !passes(ruleset.current_user_can_bypass)).map(ruleset => `"${ruleset.name}"`);
   const bypass = 'Add the Repository admin role to the ruleset\'s bypass list, or replace branch protection with a ruleset that does.';
   const unsure = !guards.pushesHere
     ? { why: 'origin pushes to another repo than this one', fix: 'Point origin\'s push URL at the client repo.' }
@@ -100,7 +113,7 @@ export function pushBlocks(guards: MainGuards): PushVerdict {
             : unknown.length > 0
               ? { why: `main has ruleset rules the doctor does not know (${unknown.join(', ')})`, fix: 'Check those rules let this account push.' }
               : null;
-  return { blocks, unsure };
+  return { blocks, unsure, fixable, elsewhere };
 }
 
 export interface Check {
@@ -231,7 +244,15 @@ export function diagnose(facts: Facts): Check[] {
   if (facts.push === null) {
     checks.push({ id: 'push', ok: false, skipped: true, detail: `GitHub could not be asked what guards main in ${facts.repo}.`, fix: 'Sign in with `gh auth login`, then run this again.' });
   } else if (facts.push.blocks.length > 0) {
-    checks.push({ id: 'push', ok: false, detail: `main refuses a direct push from ${facts.push.account || 'this account'} (${facts.push.blocks.join('; ')}), and a draft pushes its commit there.`, fix: `In ${facts.repo}'s settings, add the Repository admin role to the ruleset's bypass list.` });
+    checks.push({
+      id: 'push',
+      ok: false,
+      detail: `main refuses a direct push from ${facts.push.account || 'this account'} (${facts.push.blocks.join('; ')}), and a draft pushes its commit there.`,
+      fix: [
+        ...(facts.push.fixable.length > 0 ? ['Run `node ayr/bin/ayr.ts release doctor --fix`, which adds the Repository admin role to the bypass list of the repo\'s own rulesets that refuse it, and leaves their rules and other bypasses as they are.'] : []),
+        ...(facts.push.elsewhere.length > 0 ? [`An admin of the repo or organization that owns ${facts.push.elsewhere.join(', ')} adds the Repository admin role to its bypass list.`] : []),
+      ].join(' '),
+    });
   } else if (facts.push.unsure) {
     checks.push({ id: 'push', ok: false, skipped: true, detail: `${facts.push.unsure.why}, so whether main takes a draft's push can't be confirmed.`, fix: facts.push.unsure.fix });
   } else {
@@ -265,7 +286,7 @@ export function diagnose(facts: Facts): Check[] {
 
   checks.push(facts.wrangler
     ? { id: 'wrangler', ok: true, detail: 'wrangler is installed next to the kit.' }
-    : { id: 'wrangler', ok: false, detail: 'wrangler is not installed next to the kit, and `ayr release run` deploys with it.', fix: 'npm install --prefix ayr --no-save wrangler@4' });
+    : { id: 'wrangler', ok: false, detail: 'wrangler is not installed next to the kit, and `ayr release run` deploys with it.', fix: 'Run `node ayr/bin/ayr.ts release doctor --fix`, which installs it with `npm install --prefix ayr --no-save wrangler@4`.' });
 
   if (facts.resendSecret === null) {
     checks.push({ id: 'resend', ok: false, skipped: true, detail: `GitHub could not be asked whether ${facts.repo} has a RESEND_API_KEY secret.`, fix: 'Sign in with `gh auth login`, then run this again.' });

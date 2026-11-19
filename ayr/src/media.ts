@@ -233,14 +233,31 @@ async function settle(page: Page): Promise<void> {
 
 // ── Pictures ───────────────────────────────────────────────────────────────
 
+/** One viewport's shots for a picture: the live site's (null for `after`) and this release's. */
+export interface Shots {
+  on: Viewport;
+  before: Uint8Array | null;
+  after: Uint8Array;
+}
+
 async function shoot(browser: Browser, picture: Picture, sites: Sites): Promise<Uint8Array> {
-  const after = await capture(browser, picture, sites.local, 'local');
-  const before = picture.show === 'compare' ? await capture(browser, picture, sites.live, 'live') : null;
-  if (before && (await changedShare(browser, before, after)) < SAME_SHOT_SHARE) {
-    const section = picture.selector ? ` ${picture.selector}` : '';
+  const shots: (Shots & { same: boolean })[] = [];
+  for (const on of picture.on === 'both' ? (['phone', 'desktop'] as const) : [picture.on]) {
+    const after = await capture(browser, picture, on, sites.local, 'local');
+    const before = picture.show === 'compare' ? await capture(browser, picture, on, sites.live, 'live') : null;
+    shots.push({ on, before, after, same: before !== null && (await changedShare(browser, before, after)) < SAME_SHOT_SHARE });
+  }
+  const section = picture.selector ? ` ${picture.selector}` : '';
+  if (shots.every(shot => shot.same)) {
     throw new Problem(`Before and After look the same on ${picture.path}${section}, so the picture shows no change. Fix: use \`picture: after ${picture.on} ${picture.path}${section}\`, or \`picture: none\`.`);
   }
-  return compose(browser, composeHtml(picture.on, before, after));
+  // With both, a size that didn't change would be a Before and After that look the same: show only the one that did.
+  const same = shots.find(shot => shot.same);
+  const changed = shots.find(shot => !shot.same);
+  if (same && changed) {
+    throw new Problem(`Before and After look the same on the ${same.on} on ${picture.path}${section}, so only the ${changed.on} shows the change. Fix: use \`picture: compare ${changed.on} ${picture.path}${section}\`.`);
+  }
+  return compose(browser, composeHtml(shots));
 }
 
 /**
@@ -281,8 +298,8 @@ async function changedShare(browser: Browser, a: Uint8Array, b: Uint8Array): Pro
 }
 
 // A PNG of the first screen, or of the selected element, at the viewport's own pixel ratio.
-async function capture(browser: Browser, picture: Picture, base: string, which: 'live' | 'local'): Promise<Buffer> {
-  const context = await browser.newContext({ ...size(picture.on), reducedMotion: 'reduce' });
+async function capture(browser: Browser, picture: Picture, on: Viewport, base: string, which: 'live' | 'local'): Promise<Buffer> {
+  const context = await browser.newContext({ ...size(on), reducedMotion: 'reduce' });
   try {
     const usage = `use \`picture: after ${picture.on} ${picture.path}${picture.selector ? ` ${picture.selector}` : ''}\`.`;
     const page = await open(context, base, picture.path, which, usage);
@@ -317,23 +334,34 @@ async function capture(browser: Browser, picture: Picture, base: string, which: 
 /**
  * The page that becomes the picture: PICTURE_WIDTH CSS pixels wide, shot at a
  * pixel ratio of 1. Shots wider than a column scale down; narrower ones sit
- * centred. Phones compare side by side, desktops one above the other.
+ * centred. Phones compare side by side, desktops one above the other. With
+ * more than one size, each gets a Phone or Desktop heading, and a phone shown
+ * alone takes half the width so it doesn't tower over the desktop.
  */
-export function composeHtml(on: Viewport, before: Uint8Array | null, after: Uint8Array): string {
+export function composeHtml(shots: Shots[]): string {
   const src = (png: Uint8Array) => `data:image/png;base64,${Buffer.from(png).toString('base64')}`;
   const figure = (label: 'Before' | 'After' | null, png: Uint8Array) => `<figure>${label ? `<figcaption class="${label.toLowerCase()}">${label}</figcaption>` : ''}<img src="${src(png)}" alt=""></figure>`;
-  const shots = before ? figure('Before', before) + figure('After', after) : figure(null, after);
+  const titled = shots.length > 1;
+  const sections = shots.map(({ on, before, after }) => {
+    const columns = before && on === 'phone' ? '1fr 1fr' : '1fr';
+    const narrow = titled && !before && on === 'phone' ? ' narrow' : '';
+    const heading = titled ? `<h2>${on === 'phone' ? 'Phone' : 'Desktop'}</h2>` : '';
+    return `<section>${heading}<main class="${before ? 'compare' : 'after'}${narrow}" style="grid-template-columns: ${columns};">${before ? figure('Before', before) + figure('After', after) : figure(null, after)}</main></section>`;
+  });
   return `<!doctype html><html><head><meta charset="utf-8"><style>
 html, body { margin: 0; background: #fff; }
 body { width: ${PICTURE_WIDTH}px; font: 700 22px/1 "Helvetica Neue", Arial, "Liberation Sans", sans-serif; }
-main { display: grid; gap: 16px; grid-template-columns: ${before && on === 'phone' ? '1fr 1fr' : '1fr'}; }
+section + section { margin-top: 32px; }
+h2 { margin: 0 0 12px; font-size: 26px; color: #1c1d20; }
+main { display: grid; gap: 16px; }
+main.narrow figure { width: 50%; justify-self: center; }
 figure { margin: 0; min-width: 0; display: flex; flex-direction: column; align-items: center; }
 img { display: block; max-width: 100%; height: auto; }
 main.compare figure { border: 1px solid #d8d8d8; border-radius: 8px; overflow: hidden; background: #fff; }
 figcaption { align-self: stretch; padding: 10px 16px; color: #fff; letter-spacing: 0.02em; }
 figcaption.before { background: #6b6f76; }
 figcaption.after { background: #1c1d20; }
-</style></head><body><main class="${before ? 'compare' : 'after'}">${shots}</main></body></html>`;
+</style></head><body>${sections.join('')}</body></html>`;
 }
 
 async function compose(browser: Browser, html: string): Promise<Uint8Array> {

@@ -43,7 +43,7 @@ export type Viewport = 'phone' | 'desktop';
 
 /**
  * `after` shoots this release. `compare` also shoots the live site, which is the
- * last release, and stacks them with Before and After labels, 1072px wide.
+ * last release, and stacks them with Before and After labels, 2144px wide (1072 at 2x).
  * `both` shoots the phone and the desktop into the one picture, phone first: the
  * usual choice, since a client looks at their site on both.
  * The file says `picture: none` to mean null: the key is required on every

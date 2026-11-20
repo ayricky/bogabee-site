@@ -2,7 +2,7 @@
 //
 // A plain file server shows the review page, and the owner says "send it" in a
 // thread. This serves the same folder and adds one thing: the page's Release
-// and Rehearse buttons, which start `ayr release run` for the draft the page
+// and Test on a preview buttons, which start `ayr release run` for the draft the page
 // is of. Nothing else is asked of it, so the page under a plain file server
 // still works, without buttons.
 //

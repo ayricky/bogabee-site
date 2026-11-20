@@ -340,7 +340,7 @@ details.checks > ul { margin-top: 6px; }
 // half-written file keeps what the page already shows.
 const SCRIPT = `
 (function () {
-  var CHIP = { draft: 'Draft, not sent', releasing: 'Releasing', done: 'Released', rehearsed: 'Rehearsed', failed: 'Stopped', withdrawn: 'Taken back' };
+  var CHIP = { draft: 'Draft, not sent', releasing: 'Releasing', done: 'Released', rehearsed: 'Tested on a preview', failed: 'Stopped', withdrawn: 'Taken back' };
   var el = function (id) { return document.getElementById(id); };
   var web = function (text) { return /^https:\\/\\/\\S+$/.test(text); };
   function link(href, text) {
@@ -385,7 +385,7 @@ const SCRIPT = `
     // One line under the buttons, the first of: what this tab's press came to; that a run is starting,
     // for a tab opened meanwhile; why the last run stopped before it wrote any progress.
     var text = note;
-    if (!text && api && api.running) text = api.running.rehearsal ? 'A rehearsal is starting' : 'A release is starting';
+    if (!text && api && api.running) text = api.running.rehearsal ? 'A test is starting' : 'A release is starting';
     if (!text && api && api.last && !api.last.ok) text = (cut ? 'The release stopped before it finished. Ask in the thread. ' : '') + String(api.last.message);
     tell(open ? text : '');
     // status.json still says releasing, but the server saw the run end badly: the page must not say it keeps going.
@@ -430,7 +430,7 @@ const SCRIPT = `
           answered = asked;
           api.running = { rehearsal: rehearsal };
           api.last = null;
-          note = rehearsal ? 'Starting the rehearsal' : 'Starting the release';
+          note = rehearsal ? 'Starting the test' : 'Starting the release';
         } else note = String(got.answer && got.answer.error || 'That did not start.');
         bar();
       })
@@ -467,7 +467,7 @@ const SCRIPT = `
     // Refused before it began, a run started nothing, release or rehearsal: the review is still where the owner is.
     refused = status.state === 'failed' && !!status.failure && status.failure.at === 'review';
     var going = shown && !rehearsal && !refused;
-    el('chip').textContent = rehearsal && status.state === 'releasing' ? 'Rehearsing' : CHIP[status.state];
+    el('chip').textContent = rehearsal && status.state === 'releasing' ? 'Testing on a preview' : CHIP[status.state];
     el('chip').setAttribute('data-state', status.state);
     state = status.state;
     STEPS.forEach(function (id) {
@@ -483,9 +483,9 @@ const SCRIPT = `
     review.setAttribute('data-s', going ? 'ok' : 'here');
     el('review-title').textContent = going ? 'Approved' : 'Your review';
     el('review-meta').textContent = going ? 'The release started.'
-      : status.state === 'rehearsed' ? 'The rehearsal passed. Release when ready.'
+      : status.state === 'rehearsed' ? 'The test passed. Release when ready.'
       : refused ? 'It did not start.'
-      : shown ? (status.state === 'failed' ? 'The rehearsal stopped.' : 'Rehearsing on a preview first.')
+      : shown ? (status.state === 'failed' ? 'The test stopped.' : 'Testing on a preview. Nothing goes live and nobody is emailed.')
       : review.getAttribute('data-meta');
     // What goes out folds away once it is going out, and stays one tap away.
     el('look').open = !going;
@@ -504,7 +504,7 @@ const SCRIPT = `
     if (status.state === 'done' && to.site) links.appendChild(link(String(to.site), 'Live site'));
     if (status.state === 'done' && to.release) links.appendChild(link(String(to.release), 'GitHub Release'));
     if (status.state === 'done' && to.run) links.appendChild(link(String(to.run), 'Email job'));
-    if (status.state === 'rehearsed' && to.site) links.appendChild(link(String(to.site), 'Rehearsal preview'));
+    if (status.state === 'rehearsed' && to.site) links.appendChild(link(String(to.site), 'Test preview'));
     links.hidden = !links.firstChild;
     bar();
   }
@@ -664,7 +664,7 @@ ${nodes.join('\n')}
 <div id="bar">
 <p id="say">Reply “send it” in the thread to release <code>${e(review.commit.slice(0, 7))}</code></p>
 <div id="act" hidden>
-<button id="rehearse" type="button">Rehearse</button>
+<button id="rehearse" type="button">Test on a preview</button>
 <button id="release" type="button" data-commit="${e(review.commit)}" data-review="${reviewDigest(review)}" data-label="Release ${e(review.commit.slice(0, 7))}" data-confirm="${e(confirm)}">Release ${e(review.commit.slice(0, 7))}</button>
 </div>
 <p id="told" role="status" hidden></p>

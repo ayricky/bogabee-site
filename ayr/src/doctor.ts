@@ -25,6 +25,12 @@ export interface Facts {
   pages: { gitConnected: boolean; productionBranch: string } | 'missing' | null;
   /** What the staging site answered, when the config names one. Null: not asked, or no answer. */
   staging: number | null;
+  /**
+   * The kit commit this repo's copy came from (ayr/kit.json), and the files the kit has changed since
+   * that a copy holds. Null behind: GitHub could not be asked. `unknown`: GitHub has no such commit.
+   * `offMain`: a branch commit main never took, so the copy holds code main doesn't.
+   */
+  kit: { commit: string | null; behind: string[] | null; unknown?: true; offMain?: true };
   /** Whether main takes a direct push from this account, from pushBlocks. Null: GitHub could not be asked. */
   push: (PushVerdict & { account: string }) | null;
 }
@@ -117,7 +123,7 @@ export function pushBlocks(guards: MainGuards): PushVerdict {
 }
 
 export interface Check {
-  id: 'origin' | 'push' | 'notify' | 'checks' | 'notes' | 'wrangler' | 'resend' | 'pages' | 'staging' | 'secrets';
+  id: 'origin' | 'push' | 'notify' | 'checks' | 'notes' | 'wrangler' | 'resend' | 'pages' | 'staging' | 'secrets' | 'kit';
   ok: boolean;
   /** Only for a check that needs something the machine can't give right now, such as a token. */
   skipped?: true;
@@ -230,6 +236,50 @@ export function runsOnPushToMain(text: string): boolean {
   return items(block, 'tags') === null;
 }
 
+export const KIT_REPO = 'ayricky/ayr-client-kit';
+
+/** Whether a file in the kit is one `ayr init` copies into a client repo, so a change to it leaves copies behind. */
+export function copiedFromKit(path: string): boolean {
+  return /^(src|bin|templates\/messages)\//.test(path) || path === 'package.json' || /^templates\/repo\/[^/]+\.ya?ml$/.test(path);
+}
+
+/**
+ * The files a client copy is behind by, from the `files` of GitHub's compare of the stamped commit
+ * with the kit's main. A file renamed out of a copied folder counts, and since GitHub lists at most
+ * 300 files, a list that long with none of them copied may have left them out.
+ */
+export function behindBy(files: { filename?: unknown; previous_filename?: unknown }[]): string[] {
+  const touched = files.flatMap(file => [file.filename, file.previous_filename].filter((name): name is string => typeof name === 'string'));
+  const copied = [...new Set(touched.filter(copiedFromKit))];
+  return copied.length === 0 && files.length >= 300 ? ['over 300 files'] : copied;
+}
+
+/**
+ * What `ayr init` writes to ayr/kit.json: the kit commit it copies, or null when the kit has uncommitted
+ * changes to files it copies, since the copy then isn't any commit. Null overall: the kit isn't a git
+ * checkout. `git` runs git in the kit and returns its output, throwing when git fails.
+ */
+export function stampFor(git: (...args: string[]) => string): { commit: string | null } | null {
+  try {
+    const commit = git('rev-parse', 'HEAD').trim();
+    // With -z, each record is two status letters, a space and the path, unquoted, ending in NUL. A rename
+    // or copy is followed by one more record, the path it came from.
+    const records = git('status', '--porcelain', '-z', '--untracked-files=all').split('\0');
+    const changed: string[] = [];
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i] ?? '';
+      if (record.length < 4) continue;
+      changed.push(record.slice(3));
+      // Either column can say renamed or copied: the index (first) or the worktree (second).
+      if (/[RC]/.test(record.slice(0, 2))) changed.push(records[++i] ?? '');
+    }
+    const dirty = changed.some(copiedFromKit);
+    return { commit: dirty ? null : commit };
+  } catch {
+    return null;
+  }
+}
+
 export function diagnose(facts: Facts): Check[] {
   const { release } = facts;
   const checks: Check[] = [];
@@ -257,6 +307,24 @@ export function diagnose(facts: Facts): Check[] {
     checks.push({ id: 'push', ok: false, skipped: true, detail: `${facts.push.unsure.why}, so whether main takes a draft's push can't be confirmed.`, fix: facts.push.unsure.fix });
   } else {
     checks.push({ id: 'push', ok: true, detail: `main takes a direct push from ${facts.push.account || 'this account'}, the account gh is signed in as, which git must push as.` });
+  }
+
+  // Every client runs the same kit, so a fix made for one reaches the rest at their next release.
+  const refresh = `Refresh it in its own pull request: from a checkout of ${KIT_REPO} at main, run \`node bin/ayr.ts init <repo> --client clients/<slug>.json --force\`.`;
+  if (facts.kit.commit === null) {
+    checks.push({ id: 'kit', ok: false, detail: 'This repo\'s copy of the kit doesn\'t name the kit commit it came from (ayr/kit.json), so it can\'t be checked against the kit.', fix: refresh });
+  } else if (facts.kit.offMain) {
+    checks.push({ id: 'kit', ok: false, detail: `This repo's copy of the kit came from ${facts.kit.commit.slice(0, 7)}, a commit ${KIT_REPO}'s main doesn't have, so it holds code main doesn't.`, fix: refresh });
+  } else if (facts.kit.unknown) {
+    checks.push({ id: 'kit', ok: false, detail: `This repo's copy of the kit names ${facts.kit.commit.slice(0, 7)}, which ${KIT_REPO} on GitHub doesn't have, so it came from a kit that was never pushed.`, fix: refresh });
+  } else if (facts.kit.behind === null) {
+    checks.push({ id: 'kit', ok: false, skipped: true, detail: `GitHub could not be asked what changed in ${KIT_REPO} since ${facts.kit.commit.slice(0, 7)}.`, fix: 'Sign in with `gh auth login`, then run this again.' });
+  } else if (facts.kit.behind.length > 0) {
+    const shown = facts.kit.behind.slice(0, 5).join(', ');
+    const more = facts.kit.behind.length > 5 ? ` and ${facts.kit.behind.length - 5} more` : '';
+    checks.push({ id: 'kit', ok: false, detail: `This repo's copy of the kit is behind ${KIT_REPO}'s main: ${shown}${more} changed since ${facts.kit.commit.slice(0, 7)}.`, fix: refresh });
+  } else {
+    checks.push({ id: 'kit', ok: true, detail: `This repo's copy of the kit matches ${KIT_REPO}'s main.` });
   }
 
   const notify = named(release.notifyWorkflow);

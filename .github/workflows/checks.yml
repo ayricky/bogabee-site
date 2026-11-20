@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: '^24.22.1'
           check-latest: true
+      - name: Install
+        run: npm ci
       - name: Build the site
         run: npm run build
       - name: Every page was built
@@ -28,3 +30,5 @@ jobs:
           for page in dist/index.html dist/apiary/index.html dist/journal/index.html; do
             test -s "$page" || { echo "::error::$page was not built"; exit 1; }
           done
+      - name: Sanitizer and hub API tests
+        run: npm test

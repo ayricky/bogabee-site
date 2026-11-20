@@ -3,9 +3,10 @@
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { layout, ORIGIN } from '../src/layout.mjs';
-import { apiaryMain, journalMain, postMain, published, postPath, photoUrl } from '../src/content.mjs';
-import { homeMain, homeHead } from '../src/home.mjs';
+import { ORIGIN } from '../src/layout.mjs';
+import { published, postPath, PHOTOS } from '../src/content.mjs';
+import { homePage, apiaryPage, journalPage, postPage, notFoundPage } from '../src/pages.mjs';
+import { hubPages } from '../src/hub.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'dist');
@@ -25,58 +26,24 @@ const live = published(posts);
 
 rmSync(out, { recursive: true, force: true });
 cpSync(join(root, 'public'), out, { recursive: true });
+// The owner hub's photo picker offers the same site photos the pages use.
+for (const [path, html] of hubPages()) { mkdirSync(dirname(join(out, path)), { recursive: true }); writeFileSync(join(out, path), html); }
+writeFileSync(join(out, 'hub/photos.js'), `window.HUB_PHOTOS = ${JSON.stringify(PHOTOS)};\n`);
 const page = (path, html) => {
     const file = join(out, path, path.endsWith('/') ? 'index.html' : '');
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, html);
 };
 
-page('/', layout({
-    title: 'Bogabee Apiaries | Manalapan Township, NJ Honey',
-    description: 'Raw, unfiltered wildflower honey from our hives in Manalapan Township, New Jersey. Small-batch, hand-poured, and ordered by DM on Instagram.',
-    path: '/', overHero: true, head: homeHead, body: homeMain(posts),
-}));
+page('/', homePage(posts));
+page('/apiary/', apiaryPage(apiary));
+page('/journal/', journalPage(posts));
+for (const p of live) page(postPath(p), postPage(p, posts));
+writeFileSync(join(out, '404.html'), notFoundPage());
 
-page('/apiary/', layout({
-    title: `${apiary.title.replace(/\.$/, '')} | Bogabee Apiaries`,
-    description: apiary.intro,
-    path: '/apiary/', active: 'apiary',
-    image: apiary.heroImage ? photoUrl(apiary.heroImage) : undefined,
-    body: `    <main>${apiaryMain(apiary)}\n    </main>`,
-}));
-
-page('/journal/', layout({
-    title: 'Journal | Bogabee Apiaries',
-    description: 'Notes from the Bogabee Apiaries hives in Manalapan Township, NJ: the bees, the harvest and raw wildflower honey.',
-    path: '/journal/', active: 'journal', body: `    <main>${journalMain(posts)}\n    </main>`,
-}));
-
-for (const p of live) {
-    page(postPath(p), layout({
-        title: `${p.title} | Bogabee Apiaries`,
-        description: p.excerpt || 'Notes from the Bogabee Apiaries hives in Manalapan Township, NJ.',
-        path: postPath(p), active: 'journal', type: 'article',
-        image: p.cover ? photoUrl(p.cover) : undefined,
-        head: `<script type="application/ld+json">${JSON.stringify({
-            '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, description: p.excerpt || undefined,
-            datePublished: p.date, image: p.cover ? new URL(photoUrl(p.cover), ORIGIN).href : undefined,
-            author: { '@type': 'Organization', name: 'Bogabee Apiaries' }, publisher: { '@type': 'Organization', name: 'Bogabee Apiaries' },
-        }).replace(/</g, '\\u003c')}</script>`,
-        body: `    <main>${postMain(p, posts)}\n    </main>`,
-    }));
-}
-
-writeFileSync(join(out, '404.html'), layout({
-    title: 'Page not found | Bogabee Apiaries', description: 'This page is not here.', path: '/404', noindex: true,
-    body: `    <main>
-        <div class="missing">
-            <span class="eyebrow">Not found</span>
-            <h1 class="display">That page isn't here.</h1>
-            <p>It may have moved. The honey is still on the homepage.</p>
-            <a class="btn" href="/">Back to the homepage</a>
-        </div>
-    </main>`,
-}));
+// What the owner hub starts from the first time it opens (see seedIfEmpty in server/store.js).
+mkdirSync(join(out, '_seed'), { recursive: true });
+writeFileSync(join(out, '_seed/content.json'), JSON.stringify({ apiary, posts: live }));
 
 const urls = ['/', '/apiary/', '/journal/', ...live.map(postPath)];
 writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>

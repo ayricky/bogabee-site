@@ -18,13 +18,18 @@ import { join } from 'node:path';
 import type { Browser, BrowserContext, Locator, Page } from 'playwright-core';
 import { pictureFile, type Change, type ChangeId, type Picture, type Recording, type SitePath, type Step, type Viewport } from './changes.ts';
 import type { ClientConfig } from './config.ts';
+import { imageWidth } from './lint.ts';
 import { sha256Hex, type Sha256 } from './types.ts';
 
 export const MAX_VIDEO_BYTES = 25 * 1024 * 1024; // Resend's 40 MB limit counts the encoded size, about 4/3 of the file
 
-export const PICTURE_WIDTH = 1072; // the lint's width rule
+// A picture is laid out PICTURE_WIDTH CSS pixels wide and saved at PICTURE_SCALE times that, so it
+// stays sharp on a high-density screen: the email shows it 516 CSS pixels wide, the review page
+// about 730, and a laptop or phone needs two or three device pixels for each.
+export const PICTURE_WIDTH = 1072;
+export const PICTURE_SCALE = 2;
 export const PHONE = { width: 390, height: 844, deviceScaleFactor: 3 } as const;
-export const DESKTOP = { width: 1280, height: 800, deviceScaleFactor: 1 } as const;
+export const DESKTOP = { width: 1280, height: 800, deviceScaleFactor: PICTURE_SCALE } as const;
 export const STEP_TIMEOUT_MS = 10_000; // how long a step waits for its text
 
 const VIDEO = { width: 780, height: 1688 } as const; // screencast frames: the phone at 2x
@@ -333,8 +338,8 @@ async function capture(browser: Browser, picture: Picture, on: Viewport, base: s
 
 /**
  * The page that becomes the picture: PICTURE_WIDTH CSS pixels wide, shot at a
- * pixel ratio of 1. Shots wider than a column scale down; narrower ones sit
- * centred. Phones compare side by side with an arrow from Before to After,
+ * pixel ratio of PICTURE_SCALE. Each shot shows at its own pixel size, scaled
+ * down when wider than its column and never up; narrower ones sit centred. Phones compare side by side with an arrow from Before to After,
  * desktops one above the other with an arrow down. Before is framed in grey
  * and labelled "Old version", After in green and "New version", so the two
  * can't be mixed up at a glance. With more than one size, each gets a Phone or
@@ -346,7 +351,10 @@ export function composeHtml(shots: Shots[]): string {
   const LABELS = { before: ['Before', 'Old version'], after: ['After', 'New version'] } as const;
   const figure = (label: 'before' | 'after' | null, png: Uint8Array) => {
     const caption = label ? `<figcaption class="${label}"><strong>${LABELS[label][0]}</strong><span>${LABELS[label][1]}</span></figcaption>` : '';
-    return `<figure${label ? ` class="${label}"` : ''}>${caption}<img src="${src(png)}" alt=""></figure>`;
+    // A shot shows at one of its pixels per picture pixel, or smaller to fit: never stretched.
+    const natural = imageWidth(png);
+    const width = natural ? ` style="width: ${natural / PICTURE_SCALE}px"` : '';
+    return `<figure${label ? ` class="${label}"` : ''}>${caption}<img src="${src(png)}"${width} alt=""></figure>`;
   };
   const titled = shots.length > 1;
   const sections = shots.map(({ on, before, after }) => {
@@ -383,7 +391,7 @@ figcaption.after { background: #15803d; }
 }
 
 async function compose(browser: Browser, html: string): Promise<Uint8Array> {
-  const context = await browser.newContext({ viewport: { width: PICTURE_WIDTH, height: 200 }, deviceScaleFactor: 1 });
+  const context = await browser.newContext({ viewport: { width: PICTURE_WIDTH, height: 200 }, deviceScaleFactor: PICTURE_SCALE });
   try {
     const page = await context.newPage();
     await page.setContent(html, { waitUntil: 'load' });

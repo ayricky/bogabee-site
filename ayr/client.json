@@ -23,9 +23,16 @@
     "footer": "Bogabee Apiaries · Manalapan Township, NJ"
   },
   "contacts": [
-    { "name": "Danny", "email": "bogabeeapiaries@gmail.com", "role": "owner" }
+    {
+      "name": "Danny",
+      "email": "bogabeeapiaries@gmail.com",
+      "role": "owner"
+    }
   ],
-  "monitor": { "url": "https://bogabeeapiaries.com", "expect": "Bogabee" },
+  "monitor": {
+    "url": "https://bogabeeapiaries.com",
+    "expect": "Bogabee"
+  },
   "release": {
     "to": [
       "ayrsoftwaredev@gmail.com",
@@ -35,15 +42,28 @@
       "kind": "pages",
       "project": "bogabee-apiaries",
       "dir": "dist",
-      "build": ["npm run build"]
+      "build": [
+        "npm ci",
+        "npm run build"
+      ]
     },
+    "ships": [
+      "functions",
+      "server"
+    ],
     "secrets": "bogabee-site/cloudflare-pages",
     "staging": "https://bogabee-site.pages.dev",
     "serve": {
       "command": "npm run build && python3 -m http.server 8767 --bind 127.0.0.1 --directory dist",
       "url": "http://127.0.0.1:8767"
     },
-    "checks": ["npm run build"],
+    "setup": [
+      "npm ci"
+    ],
+    "checks": [
+      "npm run build",
+      "npm test"
+    ],
     "checksWorkflow": "Checks"
   }
 }

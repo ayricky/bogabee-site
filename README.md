@@ -43,7 +43,14 @@ Danny edits the Journal and the Apiary page at `/hub/`. Orders, events, party fa
 - **Sign-in** is Cloudflare Access. Every hub request checks the Access JWT's signature, issuer, audience, expiry and email (`ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, `HUB_EMAILS`). Requests that change things must also come from the site itself. Without these settings the hub answers 503.
 - **Saved rich text** goes through `server/sanitize.js`, an allowlist, before it's stored, because public pages render it as is.
 
-To launch the hub, the production Pages project `bogabee-apiaries` (and `bogabee-site`, for staging) needs a D1 database bound as `DB`, an R2 bucket bound as `MEDIA`, an Access application covering `/hub*` and `/api/hub/*` with email one-time codes for the owners, and those three variables set. Production is a Direct Upload, so the release has to deploy `functions/` along with `dist/` and install `jose` first.
+Where it runs:
+
+| | Production (`bogabee-apiaries`) | Staging and previews (`bogabee-site`) |
+| --- | --- | --- |
+| `DB` | D1 `bogabee-hub` | D1 `bogabee-hub-staging` |
+| `MEDIA` | R2 `bogabee-media` | R2 `bogabee-media-staging` |
+
+Both projects set `ACCESS_TEAM_DOMAIN` (`ayrsoftware.cloudflareaccess.com`), `ACCESS_AUD` and `HUB_EMAILS`. The Access application "Bogabee owner hub" covers `/hub` and `/api/hub` on both domains and every preview, signs in with an emailed code, and lets in only the `HUB_EMAILS` addresses. A release runs `npm ci` before it builds, and deploys from the repo root so `functions/` ships with `dist/`.
 
 ## The bee
 

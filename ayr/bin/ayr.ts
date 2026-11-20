@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { parseConfig, type ClientConfig } from '../src/config.ts';
+import { stampFor } from '../src/doctor.ts';
 import { changeCommand, checkChangeFiles, hasChangeFiles, nextReleaseEmail } from './changes.ts';
 import { isDate } from '../src/dates.ts';
 import { dueItems } from '../src/due.ts';
@@ -41,7 +43,7 @@ const USAGE = `ayr: looks after a client after launch.
                                                     check, deploy, check live, tag, and have GitHub email the client
   ayr release undo [--review-dir dir]               take back a draft nobody released
   ayr release serve --review-dir dir --port n [--origin url --allow-login login] [--run-with "prefix"]
-                                                    the review page with Release and Rehearse buttons
+                                                    the review page with Release and Test on a preview buttons
   ayr release wait --review-dir dir [--timeout s]   return when a release of that draft ends
   ayr release doctor [--fix]                        whether this repo is set up to release; --fix makes the changes it can
 `;
@@ -300,6 +302,16 @@ function ignoreCache(repo: string, verb: string): void {
   console.log(`${verb} .gitignore, adding .cache/`);
 }
 
+// The kit commit a copy came from, so `ayr release doctor` can tell when the kit has moved on.
+function kitStamp(): { path: string; content: Buffer }[] {
+  const stamp = stampFor((...args) => execFileSync('git', ['-C', KIT, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+  if (!stamp) return [];
+  if (stamp.commit === null) {
+    console.log('The kit has uncommitted changes to files init copies, so ayr/kit.json names no commit and `ayr release doctor` will fail until the copy is made from a committed kit.');
+  }
+  return [{ path: join('ayr', 'kit.json'), content: Buffer.from(`${JSON.stringify(stamp)}\n`) }];
+}
+
 function init(repo: string | undefined): void {
   const target = required('<repo-path>', repo);
   if (!existsSync(target)) throw new Error(`No repo at ${target}.`);
@@ -315,6 +327,8 @@ function init(repo: string | undefined): void {
       content: readFileSync(join(KIT, file)),
     })),
     { path: join('ayr', 'client.json'), content: readFileSync(clientPath()) },
+    // The kit commit this copy came from, so `ayr release doctor` can tell when the kit has moved on.
+    ...kitStamp(),
     // No lockfile: package.json pins exact versions, and the workflows install from it.
     { path: join('ayr', '.gitignore'), content: Buffer.from('node_modules/\npackage-lock.json\n') },
     ...workflows,

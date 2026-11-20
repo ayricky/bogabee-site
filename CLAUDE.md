@@ -41,7 +41,7 @@ The release turns each change file into one bullet of the client's note. The `cl
 ```md
 ---
 action: none
-picture: compare both /start #book
+picture: compare /start #book
 alt: The booking form on a phone and a laptop, before and after this update
 record: phone /start
 step: tap "Book a call"
@@ -51,7 +51,7 @@ step: see "Pick a time"
 and get a confirmation on the spot. → [Get Started](https://example.com/start#book)
 ```
 
-`action:` is `none` or `You need to: <what>.` `picture:` is `after` or `compare`, then `both`, `phone` or `desktop`, a path and an optional section, or `none`. `both` puts the phone and the desktop in one picture; use it unless the change shows on only one size. `record:` and its `step:` lines are optional, and the last step is a `see`. An `*Under the hood:*` change has only the bullet.
+`action:` is `none` or `You need to: <what>.` `picture:` is `after` or `compare`, a path and an optional section, or `none`. It shows the phone and the desktop. `phone` or `desktop` before the path limits it to one size, which the kit allows only when the change shows on that size alone. `record:` and its `step:` lines are optional, and the last step is a `see`. An `*Under the hood:*` change has only the bullet.
 
 ### Writing the bullet
 

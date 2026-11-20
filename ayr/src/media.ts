@@ -31,6 +31,7 @@ export const PICTURE_SCALE = 2;
 export const PHONE = { width: 390, height: 844, deviceScaleFactor: 3 } as const;
 export const DESKTOP = { width: 1280, height: 800, deviceScaleFactor: PICTURE_SCALE } as const;
 export const STEP_TIMEOUT_MS = 10_000; // how long a step waits for its text
+const SHOWN_WAIT_MS = 5_000; // how long a picture waits for its section to show
 
 const VIDEO = { width: 780, height: 1688 } as const; // screencast frames: the phone at 2x
 const VIDEO_WIDTH = 720; // the mp4, scaled from VIDEO
@@ -245,24 +246,94 @@ export interface Shots {
   after: Uint8Array;
 }
 
+// Not on the page at that size, or not on the live site yet.
+const missing = (error: unknown) => error instanceof Problem && /matches nothing|has no \//.test(error.message);
+
 async function shoot(browser: Browser, picture: Picture, sites: Sites): Promise<Uint8Array> {
+  const section = picture.selector ? ` ${picture.selector}` : '';
+  const form = (show: Picture['show'], on: Picture['on']) => `\`picture: ${show}${on === 'both' ? '' : ` ${on}`} ${picture.path}${section}\``;
+  const sizes = picture.on === 'both' ? (['phone', 'desktop'] as const) : [picture.on];
   const shots: (Shots & { same: boolean })[] = [];
-  for (const on of picture.on === 'both' ? (['phone', 'desktop'] as const) : [picture.on]) {
-    const after = await capture(browser, picture, on, sites.local, 'local');
-    const before = picture.show === 'compare' ? await capture(browser, picture, on, sites.live, 'live') : null;
+  for (const on of sizes) {
+    const other: Viewport = on === 'phone' ? 'desktop' : 'phone';
+    // Whether the other size has the section in this release.
+    const otherHas = () => capture(browser, picture, other, sites.local, 'local').then(() => true, failure => {
+      if (missing(failure)) return false;
+      throw failure;
+    });
+    let after: Buffer;
+    try {
+      after = await capture(browser, picture, on, sites.local, 'local');
+    } catch (error) {
+      // Both sizes asked for, and this one doesn't have the section: name the size that does.
+      if (picture.on === 'both' && missing(error) && (await otherHas())) {
+        throw new Problem(`${picture.path}${section} isn't on the ${on}, only the ${other}. Fix: use ${form(picture.show, other)}.`);
+      }
+      throw error;
+    }
+    let before: Buffer | null = null;
+    try {
+      before = picture.show === 'compare' ? await capture(browser, picture, on, sites.live, 'live') : null;
+    } catch (error) {
+      // Nothing live to compare with: After it is, on both sizes when the other has the section too.
+      if (error instanceof Problem && /yet, so there is nothing to compare\. Fix: /.test(error.message)) {
+        throw new Problem(error.message.replace(/Fix: .*$/s, `Fix: use ${form('after', (await otherHas()) ? 'both' : on)}.`));
+      }
+      throw error;
+    }
     shots.push({ on, before, after, same: before !== null && (await changedShare(browser, before, after)) < SAME_SHOT_SHARE });
   }
-  const section = picture.selector ? ` ${picture.selector}` : '';
   if (shots.every(shot => shot.same)) {
-    throw new Problem(`Before and After look the same on ${picture.path}${section}, so the picture shows no change. Fix: use \`picture: after ${picture.on} ${picture.path}${section}\`, or \`picture: none\`.`);
+    // One size named and unchanged: the change may be on the other size alone.
+    const [only] = sizes;
+    const elsewhere = picture.on !== 'both' && only ? only === 'phone' ? 'desktop' : 'phone' : null;
+    const there = elsewhere ? await otherSizeShows(browser, picture, elsewhere, sites) : null;
+    const fix = elsewhere && there === 'change' ? form('compare', elsewhere)
+      : elsewhere && there === 'new' ? form('after', elsewhere)
+      : `${form('after', picture.on)}, or \`picture: none\``;
+    throw new Problem(`Before and After look the same on ${picture.path}${section}${elsewhere ? ` on the ${picture.on}` : ''}, so the picture shows no change. Fix: use ${fix}.`);
   }
   // With both, a size that didn't change would be a Before and After that look the same: show only the one that did.
   const same = shots.find(shot => shot.same);
   const changed = shots.find(shot => !shot.same);
   if (same && changed) {
-    throw new Problem(`Before and After look the same on the ${same.on} on ${picture.path}${section}, so only the ${changed.on} shows the change. Fix: use \`picture: compare ${changed.on} ${picture.path}${section}\`.`);
+    throw new Problem(`Before and After look the same on the ${same.on} on ${picture.path}${section}, so only the ${changed.on} shows the change. Fix: use ${form('compare', changed.on)}.`);
+  }
+  // One size named: the client looks at their site on both, so it must not leave the other out.
+  const [named] = sizes;
+  if (picture.on !== 'both' && named) {
+    const other: Viewport = named === 'phone' ? 'desktop' : 'phone';
+    const shows = await otherSizeShows(browser, picture, other, sites);
+    if (shows === 'change') throw new Problem(`The change also shows on the ${other}, and the client looks at both. Fix: use ${form('compare', 'both')}.`);
+    if (shows === 'section') throw new Problem(`${picture.path}${section} also shows on the ${other}, and the client looks at both. Fix: use ${form('after', 'both')}.`);
+    // Without a Before on the other size, both sizes can only show how they look now.
+    if (shows === 'new') throw new Problem(`${picture.path}${section} is new on the ${other}, and the client looks at both. Fix: use ${form('after', 'both')}.`);
   }
   return compose(browser, composeHtml(shots));
+}
+
+/**
+ * What a picture limited to one size would leave out on the other: the change (`compare`), the section
+ * as it is now (`after`, when that size changed or is new), or a section new on that size, which has
+ * no Before there. Null: nothing, since that size doesn't show the section or didn't change.
+ */
+async function otherSizeShows(browser: Browser, picture: Picture, on: Viewport, sites: Sites): Promise<'change' | 'section' | 'new' | null> {
+  let after: Buffer;
+  try {
+    after = await capture(browser, picture, on, sites.local, 'local');
+  } catch (error) {
+    if (missing(error)) return null;
+    throw error;
+  }
+  let before: Buffer;
+  try {
+    before = await capture(browser, picture, on, sites.live, 'live');
+  } catch (error) {
+    if (missing(error)) return picture.show === 'after' ? 'section' : 'new';
+    throw error;
+  }
+  if ((await changedShare(browser, before, after)) < SAME_SHOT_SHARE) return null;
+  return picture.show === 'after' ? 'section' : 'change';
 }
 
 /**
@@ -306,23 +377,31 @@ async function changedShare(browser: Browser, a: Uint8Array, b: Uint8Array): Pro
 async function capture(browser: Browser, picture: Picture, on: Viewport, base: string, which: 'live' | 'local'): Promise<Buffer> {
   const context = await browser.newContext({ ...size(on), reducedMotion: 'reduce' });
   try {
-    const usage = `use \`picture: after ${picture.on} ${picture.path}${picture.selector ? ` ${picture.selector}` : ''}\`.`;
+    const usage = `use \`picture: after${picture.on === 'both' ? '' : ` ${picture.on}`} ${picture.path}${picture.selector ? ` ${picture.selector}` : ''}\`.`;
     const page = await open(context, base, picture.path, which, usage);
     if (picture.selector === null) return await page.screenshot({ type: 'png', animations: 'disabled' });
-    const element = page.locator(picture.selector);
-    const count = await element.count().catch(() => {
+    const matches = page.locator(picture.selector);
+    // Counting checks the selector parses.
+    await matches.count().catch(() => {
       throw new Problem(`"${picture.selector}" is not a valid selector. Fix: use a CSS selector such as #book.`);
     });
-    if (count === 0 && which === 'live') {
+    // Only a match the page shows at this size counts: a section a phone layout hides isn't on the desktop.
+    // One that appears a moment after the page settles still counts, so wait a little for it.
+    const element = matches.filter({ visible: true });
+    // A section inserted late counts too, so wait even when nothing matches yet.
+    const shown = await element.first().waitFor({ state: 'visible', timeout: SHOWN_WAIT_MS }).then(() => true, () => false);
+    if (!shown && which === 'live') {
       throw new Problem(`"${picture.selector}" matches nothing on the live ${picture.path} yet, so there is nothing to compare. Fix: ${usage}`);
     }
-    if (count === 0) {
-      throw new Problem(`"${picture.selector}" matches nothing on ${picture.path}. Fix: point the picture at an element that page has.`);
+    if (!shown) {
+      throw new Problem(`"${picture.selector}" matches nothing on ${picture.path} on the ${on}. Fix: point the picture at an element that page shows.`);
     }
     // A bar pinned to the screen (a sticky header, a phone's call button) would sit on top of the
     // element in the shot. Hide every pinned element that isn't part of the element itself.
+    // The shot is of the first match the page shows, so mark that one: an earlier hidden match isn't it.
+    await element.first().evaluate((target: { setAttribute(name: string, value: string): void }) => target.setAttribute('data-ayr-shot', ''));
     await page.evaluate(`(() => {
-      const target = document.querySelector(${JSON.stringify(picture.selector)});
+      const target = document.querySelector('[data-ayr-shot]');
       for (const other of document.querySelectorAll('body *')) {
         const position = getComputedStyle(other).position;
         if ((position === 'fixed' || position === 'sticky') && !other.contains(target) && !target.contains(other)) {

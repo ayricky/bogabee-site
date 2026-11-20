@@ -16,7 +16,7 @@ import { exec as realExec, type Exec } from '../src/adapters/process.ts';
 import { createReviewDir } from '../src/adapters/review-dir.ts';
 import { createWorkTree } from '../src/adapters/work.ts';
 import { createButton, PRESS_FILE } from '../src/button.ts';
-import { ADMIN_BYPASS, diagnose, doctorLine, pushBlocks, type Facts, type MainGuards } from '../src/doctor.ts';
+import { ADMIN_BYPASS, behindBy, diagnose, doctorLine, KIT_REPO, pushBlocks, type Facts, type MainGuards } from '../src/doctor.ts';
 import { parseConfig } from '../src/config.ts';
 import { makeMedia } from '../src/media.ts';
 import {
@@ -49,6 +49,8 @@ export interface WiringOptions {
   fetch?: typeof fetch;
   exec?: Exec;
   wrangler?: string;
+  /** ayr/kit.json, the kit commit this copy came from. Defaults to the one next to the kit. */
+  kitStamp?: string;
 }
 
 const sleep = (ms: number): Promise<void> => new Promise(done => setTimeout(done, ms));
@@ -186,7 +188,7 @@ export interface ServeOptions {
 const lastLine = (text: string): string => text.trim().split('\n').map(line => line.trim()).filter(Boolean).pop() ?? '';
 
 /**
- * `ayr release serve`: the review page with its Release and Rehearse buttons. Resolves once it
+ * `ayr release serve`: the review page with its Release and Test on a preview buttons. Resolves once it
  * listens, with a way to stop it. A press runs `ayr release run` for the page's draft from `cwd`,
  * the client checkout, exactly as the thread would.
  */
@@ -324,6 +326,34 @@ export async function waitForRelease(dir: string, { timeoutMs, pollMs = 2000, pa
  * What `ayr release doctor` looks at, read from the checkout, GitHub and Cloudflare. A source that can't
  * be asked (no GitHub login, no Cloudflare token) is null, and the doctor says so rather than guess.
  */
+/**
+ * The doctor's kit facts: the commit ayr/kit.json names, and what GitHub says changed in the kit since.
+ * A 404 is either a commit GitHub doesn't have or a token that can't see the kit, so it asks for the
+ * kit itself to tell them apart. Any failure to ask leaves `behind` null.
+ */
+export async function kitFacts(stamp: string, ask: (url: string) => Promise<{ status: number; body: unknown }>): Promise<Facts['kit']> {
+  let commit: string | null = null;
+  try {
+    const named = (JSON.parse(readFileSync(stamp, 'utf8')) as { commit?: unknown }).commit;
+    commit = typeof named === 'string' && /^[0-9a-f]{40}$/.test(named) ? named : null;
+  } catch {
+    commit = null;
+  }
+  if (!commit) return { commit, behind: null };
+  try {
+    const compare = await ask(`https://api.github.com/repos/${KIT_REPO}/compare/${commit}...main?per_page=300`);
+    const { files, status } = (compare.body ?? {}) as { files?: unknown; status?: unknown };
+    // The stamp must be on main: main the same as it, or ahead of it. A copy from a branch commit main never
+    // took (behind or diverged) holds code main doesn't, and GitHub lists only what main changed since they split.
+    if (compare.status === 200 && (status === 'behind' || status === 'diverged')) return { commit, behind: null, offMain: true };
+    if (compare.status === 200 && Array.isArray(files)) return { commit, behind: behindBy(files as { filename?: unknown; previous_filename?: unknown }[]) };
+    if (compare.status === 404 && (await ask(`https://api.github.com/repos/${KIT_REPO}`)).status === 200) return { commit, behind: null, unknown: true };
+  } catch {
+    // No token, or no answer: the doctor says to sign in.
+  }
+  return { commit, behind: null };
+}
+
 export async function gatherFacts(env: Env, options: WiringOptions = {}): Promise<Facts> {
   const exec = options.exec ?? realExec;
   const fetcher = options.fetch ?? fetch;
@@ -360,6 +390,12 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   } catch {
     resendSecret = null;
   }
+
+  const kit = await kitFacts(options.kitStamp ?? join(KIT, 'kit.json'), async (url: string) => {
+    const token = await githubToken(env, exec);
+    const answer = await fetcher(url, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'ayr-client-kit' } });
+    return { status: answer.status, body: await answer.json().catch(() => null) };
+  });
 
   let push: Facts['push'] = null;
   try {
@@ -443,7 +479,7 @@ export async function gatherFacts(env: Env, options: WiringOptions = {}): Promis
   if (config.release.staging) {
     staging = await fetcher(config.release.staging, { method: 'GET', redirect: 'follow' }).then(answer => answer.status, () => null);
   }
-  return { release: config.release, repo, origin, secretsFile, workflows, notes, wrangler, resendSecret, pages, staging, push };
+  return { release: config.release, repo, origin, secretsFile, workflows, notes, wrangler, resendSecret, pages, staging, push, kit };
 }
 
 /**

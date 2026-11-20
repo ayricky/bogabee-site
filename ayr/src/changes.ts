@@ -13,7 +13,7 @@
 //
 //   ---
 //   action: none
-//   picture: compare both /start #book
+//   picture: compare /start #book
 //   alt: The booking form on a phone and a laptop, before and after this update
 //   record: phone /start
 //   step: tap "Book a call"
@@ -119,7 +119,7 @@ const LEADS: Kind[] = ['New', 'Changed', 'Fixed'];
 
 const STEP_FORMS = 'tap "text", type "field" "text", see "text", scroll "text", wait 1500 or back';
 const ACTION_FIX = 'Write `action: none`, or `action: You need to: <what>`.';
-const PICTURE_FIX = 'Write `picture: compare both /path #section`, `picture: after phone /path`, or `picture: none`.';
+const PICTURE_FIX = 'Write `picture: compare /path #section`, `picture: after /path`, or `picture: none`.';
 
 export const CHANGE_DIR = 'changes';
 
@@ -226,7 +226,7 @@ function parsePicture(file: string, picture: Value, alt: Value | undefined, fall
     if (alt) throw new ChangeError(file, alt.line, '`alt:` describes a picture, and this change has `picture: none`. Remove it.');
     return null;
   }
-  const match = /^(after|compare)\s+(phone|desktop|both)\s+(\/\S*)(?:\s+(.+))?$/.exec(picture.value);
+  const match = /^(after|compare)\s+(?:(phone|desktop|both)\s+)?(\/\S*)(?:\s+(.+))?$/.exec(picture.value);
   if (!match) throw new ChangeError(file, picture.line, `"${picture.value}" is not a picture. ${PICTURE_FIX}`);
   if (!alt) {
     throw new ChangeError(file, fallback, 'Missing `alt:`. Describe the picture for someone who can\'t see it.');
@@ -238,7 +238,7 @@ function parsePicture(file: string, picture: Value, alt: Value | undefined, fall
   }
   return {
     show: match[1] as Picture['show'],
-    on: match[2] as Picture['on'],
+    on: (match[2] ?? 'both') as Picture['on'],
     path: match[3] as SitePath,
     selector: match[4]?.trim() ?? null,
     alt: alt.value,

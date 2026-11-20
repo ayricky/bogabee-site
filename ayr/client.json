@@ -1,0 +1,49 @@
+{
+  "slug": "bogabee",
+  "name": "Bogabee Apiaries",
+  "plan": "none",
+  "launched": "2025-12-19",
+  "repo": "ayricky/bogabee-site",
+  "site": "https://bogabeeapiaries.com",
+  "noun": "Site update",
+  "from": "Bogabee Apiaries <updates@ayrsoftware.com>",
+  "replyTo": "ayrsoftwaredev@gmail.com",
+  "notesSince": "2026-11-17",
+  "brand": {
+    "logoUrl": "https://bogabeeapiaries.com/assets/logo.png",
+    "logoWidth": 120,
+    "accent": "#94570c",
+    "ink": "#24180e",
+    "body": "#3b2c1e",
+    "muted": "#6f6253",
+    "paper": "#fff9eb",
+    "line": "#efe2c4",
+    "headingFont": "Georgia,'Times New Roman',serif",
+    "bodyFont": "-apple-system,'Segoe UI',Arial,sans-serif",
+    "footer": "Bogabee Apiaries · Manalapan Township, NJ"
+  },
+  "contacts": [
+    { "name": "Danny", "email": "bogabeeapiaries@gmail.com", "role": "owner" }
+  ],
+  "monitor": { "url": "https://bogabeeapiaries.com", "expect": "Bogabee" },
+  "release": {
+    "to": [
+      "ayrsoftwaredev@gmail.com",
+      "bogabeeapiaries@gmail.com"
+    ],
+    "deploy": {
+      "kind": "pages",
+      "project": "bogabee-apiaries",
+      "dir": "dist",
+      "build": ["npm run build"]
+    },
+    "secrets": "bogabee-site/cloudflare-pages",
+    "staging": "https://bogabee-site.pages.dev",
+    "serve": {
+      "command": "npm run build && python3 -m http.server 8767 --bind 127.0.0.1 --directory dist",
+      "url": "http://127.0.0.1:8767"
+    },
+    "checks": ["npm run build"],
+    "checksWorkflow": "Checks"
+  }
+}
